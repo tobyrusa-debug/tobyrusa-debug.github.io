@@ -1,0 +1,24 @@
+name: Set custom domain
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/set-domain.yml'
+      - 'CNAME'
+permissions:
+  pages: write
+  contents: read
+jobs:
+  set-domain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Attach northline-studio.fit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -sS -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/tobyrusa-debug/tobyrusa-debug.github.io/pages \
+            -d '{"cname":"northline-studio.fit","https_enforced":false,"source":{"branch":"main","path":"/"}}'

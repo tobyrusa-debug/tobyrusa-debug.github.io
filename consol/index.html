@@ -5066,10 +5066,10 @@ function chipsFor(){
   const s=ship(), q=openQuote();
   const all={
     ops:["Any delayed shipments?", s&&`Where's ${s.id}?`, s&&`Move ${s.id} to the next milestone`],
-    sales:["Do we have any sales meetings today?","How's the pipeline?", q&&`Book ${q.id}`, "Who should I call today?"],
+    sales:["Who's our biggest customer?","What campaigns should we run?","Do we have any sales meetings today?","How's the pipeline?", q&&`Book ${q.id}`, "Who should I call today?"],
     fin:["How much did we make yesterday?","What's our forecast for the month?","What needs my approval?", "Any duplicate bills?"],
     cs:["Any tickets for me?", "What did customers ask today?"],
-    auto:["How much did we make yesterday?","Any delayed shipments?","Do we have sales meetings today?","Who's my top salesperson?","Have we lost any customers?","What's our forecast for the month?","Give me today's report", q&&`Book ${q.id}`, "What needs my approval?"]
+    auto:["How much did we make yesterday?","Who's our biggest customer?","Any delayed shipments?","What campaigns should we run?","Do we have sales meetings today?","Who's my top salesperson?","Have we lost any customers?","What's our forecast for the month?","Give me today's report", q&&`Book ${q.id}`, "What needs my approval?"]
   };
   return (all[to]||all.auto).filter(Boolean);
 }
@@ -5100,7 +5100,9 @@ function route(t){
   if(/forecast|month.?end|this month|projection|on track for/.test(l)) intent="forecast";
   if(/top sales|best sales|salesperson|sales ?rep|who sold|top seller|leaderboard/.test(l)) intent="toprep";
   if(/lost|churn|stopped shipping|lose any|losing/.test(l)&&/customer|client|account|any/.test(l)) intent="lost";
-  const ownerOf={where:"ops",advance:"ops",blocked:"ops",pipeline:"sales",call:"sales",book:"ops",approve:"auto",dupes:"fin",value:"fin",tickets:"cs",report:"auto",help:"auto",meetings:"sales",delayed:"ops",systems:"auto",yday:"fin",forecast:"fin",toprep:"sales",lost:"sales"};
+  if(/biggest|largest|top (customer|account|client)|best customer/.test(l)) intent="bigcust";
+  if(/campaign|cross.?sell|upsell|grow (the |our )?(account|business|customers)|diversif|what else (can|could) we sell/.test(l)) intent="campaigns";
+  const ownerOf={where:"ops",advance:"ops",blocked:"ops",pipeline:"sales",call:"sales",book:"ops",approve:"auto",dupes:"fin",value:"fin",tickets:"cs",report:"auto",help:"auto",meetings:"sales",delayed:"ops",systems:"auto",yday:"fin",forecast:"fin",toprep:"sales",lost:"sales",bigcust:"sales",campaigns:"sales"};
   if(!named) who = ownerOf[intent]==="auto" ? to : ownerOf[intent];
   return {who,intent,l};
 }
@@ -5162,6 +5164,12 @@ function answer(r){
     case "report": { const open=S.deals.filter(d=>["Lead","Qualified","Quoted"].includes(d.stage)).reduce((a,d)=>a+d.value,0), m=S.shipments.filter(x=>x.step<MILESTONES.length-1).length; let w=0; try{ AGENTS.forEach(g=>w+=g.waiting().length); }catch(e){}
       A.txt=`Morning. Pipeline is <b>${money(open)}</b>, ${m} shipment${m===1?"":"s"} moving, and <b>${w}</b> decision${w===1?"":"s"} waiting for you. Want me to go through them?`;
       A.act={label:"Read full report", run:()=>{ go("aiteam"); try{ teamReport(); }catch(e){} }}; break; }
+    case "bigcust": { const c=INS.cust.slice().sort((a,b)=>b.rev-a.rev)[0], T=INS.cust.reduce((a,x)=>a+x.rev,0), a=(window.ACCT_DATA||{})[c.name]||{gaps:[],risks:[]};
+      A.txt=`Our biggest customer is <b>${c.name}</b>: ${k$v(c.rev)} in 13 weeks, ${(c.rev/T*100).toFixed(0)}% of revenue, up ${Math.round(c.chg)}%. ${a.why&&a.why[0]?a.why[0]+". ":""}Most of their spend is ${(PRODUCTS[Object.keys(a.mix||{})[0]]||{n:"air export"}).n.toLowerCase()}. To keep them: ${a.retain&&a.retain[2]?a.retain[2].charAt(0).toLowerCase()+a.retain[2].slice(1):"stay close to them"}. To grow them: offer ${a.gaps.slice(0,2).map(g=>(PRODUCTS[g.p]||{n:g.p}).n.toLowerCase()).join(" and ")}, worth about ${k$v(a.gaps.reduce((s,g)=>s+g.est,0))} a year.${trc([["TMS","revenue by customer"],["HubSpot","contacts"],["Accounting","overdue"]])}`;
+      A.act={label:"Open account plan", run:()=>{ try{ S.acct=S.acct||{sel:null,camp:{}}; S.acct.sel=c.name; }catch(e){} go("accounts"); }}; break; }
+    case "campaigns": { const C=window.ACCT_CAMPS||[];
+      A.txt=`I'd run ${C.length} campaigns. Top three: <b>${C[0].n}</b> for ${C[0].accts.length} importers who clear elsewhere, <b>${C[1].n}</b> for accounts that only fly, and <b>${C[4].n}</b>, worth about ${k$v(C[0].est+C[1].est+C[4].est)} a year together. Emails are drafted for your approval, nothing goes out on its own.${trc([["TMS","products by customer"],["HubSpot","contacts"],["Calendar","Chinese New Year"]])}`;
+      A.act={label:"See campaigns", run:()=>go("accounts")}; break; }
     default: A.txt=`I can check shipments, book quotes, chase customers, flag bills and read your report. Try one of the suggestions below.`;
   }
   return A;
@@ -5224,7 +5232,7 @@ document.addEventListener("keydown",e=>{ if(e.key.toLowerCase()!=="v"||e.repeat|
 const AGENT="agent_2401m72y5nx0etc920bf451y60x0", SDK="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.35.0/+esm", DEMO="https://northline-studio.fit/consol/";
 let EL=null, elP=null, elStatus="off", elMode="listening", lastSent="", agRow=null;
 const norm=x=>String(x||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-const SCREENS=["dashboard","jobs","ops","pipeline","insights","billing","aiteam","exceptions","support","growth","calendar","intel","process","transition","claims","integrations","value"];
+const SCREENS=["accounts","dashboard","jobs","ops","pipeline","insights","billing","aiteam","exceptions","support","growth","calendar","intel","process","transition","claims","integrations","value"];
 function setStatus(st){ elStatus=st; const b=$v("#vLive"); if(b){ b.dataset.s=st; b.textContent={off:"● Start live voice",connecting:"Connecting to your AI team…",listening:"● Live · listening",speaking:"● Live · speaking",failed:"Live voice unavailable here"}[st]||st; }
   mic.classList.toggle("live",st==="listening"||st==="speaking"); }
 function whoOf(txt){ const m=txt.match(/^\s*(sales|operations|ops|finance|customer service|service)\b/i); if(!m) return MG.auto; const k=m[1].toLowerCase(); return MG[{sales:"sales",operations:"ops",ops:"ops",finance:"fin","customer service":"cs",service:"cs"}[k]]||MG.auto; }
@@ -5922,6 +5930,161 @@ const css=document.createElement("style"); css.textContent=`.chB{display:inline-
 .chChat{display:flex;flex-direction:column;gap:6px;margin-top:10px;max-width:560px}.chIn,.chOut{padding:8px 12px;border-radius:14px;font-size:13px;line-height:1.4;max-width:85%}
 .chIn{background:#f1f3f7;align-self:flex-start;border-bottom-left-radius:4px}.chOut{background:color-mix(in srgb,var(--cc) 14%,#fff);align-self:flex-end;border-bottom-right-radius:4px}
 .chOut.draft{background:#fff7e6;border:1px dashed #eda100}.chOut .chFt{display:block;font-size:10.5px;color:#6b7280;margin-top:4px;text-align:right}`; document.head.appendChild(css);
+})();
+</script>
+
+<script id="accounts-js">
+/* ---------- Account growth: biggest customers, why, product white space, and campaigns planned by the Sales manager (AI) ---------- */
+(function(){
+const PK=["aix","aii","ocx","oci","dtr","itr","whs","dst","cus"];
+// mix = share of the account's spend by product. gaps = products worth offering, with the reason and a yearly revenue estimate.
+const ACCT={
+ "Coastal Parts Co":{ind:"Auto parts distributor, Carson CA. Ships replacement parts to dealers in Asia and Europe.",contact:"Megan Hughes, Logistics manager",owner:"Emma Clarke",
+  mix:{aix:72,dtr:18,oci:7,cus:3},
+  why:["Weekly urgent parts to dealers in Hong Kong and Germany: 52 jobs in 13 weeks, about 900 kg each","Fastest-growing big account: bookings up 66% on the previous month","We price LAX and HKG lanes every week, so we win the repeat business on speed of quote"],
+  risks:["15% of all revenue sits with one customer","Single-threaded: almost every booking comes through Megan","$32k overdue on 45-day terms","Q-2041 rate hold to Friday is still open"],
+  retain:["Confirm the Q-2041 rate hold today and book it when the PO lands","Quarterly business review with Megan and their finance lead before year-end","Meet their warehouse and purchasing leads so we're not single-threaded","Agree a lane rate for LAX to HKG for Q1"],
+  gaps:[{p:"ocx",why:"Planned dealer restocking goes by air today. Moving the non-urgent half to ocean or sea-air cuts their cost by about 40% and keeps the account sticky.",est:60000},
+        {p:"whs",why:"A forward stock of fast-moving parts near LAX means same-day dispatch without paying air for everything.",est:38000},
+        {p:"aii",why:"They bring components in from Asian suppliers on someone else's air import contract.",est:26000}]},
+ "Summit Freight Partners":{ind:"Regional retail distributor, Chicagoland. Store replenishment and home deliveries.",contact:"Ryan Cole, Transport manager",owner:"Ava Brooks",
+  mix:{dtr:64,dst:36},
+  why:["Daily store runs: 77 jobs in 13 weeks","Distribution routes of 30 to 40 drops a day","Up 57% on the previous month"],
+  risks:["Only buys trucking and distribution, so it's easy for a cheaper carrier to take","Rates up for renewal in January"],
+  retain:["Lock Thanksgiving and Christmas capacity now","Send a monthly on-time and POD report so they see the service, not just the price"],
+  gaps:[{p:"whs",why:"They hold store stock in their own space. Our warehouse feeding the same routes removes a handling step.",est:45000},
+        {p:"oci",why:"Their seasonal imports from Asia are booked by a forwarder in another city and arrive at our dock anyway.",est:30000}]},
+ "Brightline Imports":{ind:"Home goods importer, Chicago. Containers from China and Vietnam, some exports to Europe.",contact:"Dana Ellis, Supply chain lead",owner:"Sam",
+  mix:{oci:48,whs:30,ocx:14,dtr:8},
+  why:["Steady container flow from Yantian and Ho Chi Minh, plus 142 pallets in our Elk Grove warehouse","81 jobs in 13 weeks, the most of any customer","Up 59% on the previous month"],
+  risks:["Uses another broker for customs on every import, so a competitor sees all their freight","Chinese New Year pre-book not yet agreed"],
+  retain:["Agree Chinese New Year space for mid-January now","Monthly warehouse stock report with ageing"],
+  gaps:[{p:"cus",why:"Every container they import is cleared by another broker. Bringing customs in-house is the easiest win we have.",est:34000},
+        {p:"dst",why:"Pallets already sit in our warehouse. Delivering to their retail customers keeps the whole flow with us.",est:28000}]},
+ "Northgate Logistics":{ind:"Cross-border shipper, Irving TX to Monterrey.",contact:"Oliver Hart, Operations director",owner:"Sam",
+  mix:{itr:58,dtr:27,cus:15},
+  why:["Daily Laredo crossings","Up 84% on the previous month"],
+  risks:["Border delays (4 hours at Laredo today) hit their service","$22k overdue"],
+  retain:["Give them a corridor-specific ETA, not a national average","Fix the overdue balance before quoting more volume"],
+  gaps:[{p:"whs",why:"A cross-dock near Laredo lets them build loads before the border and cut empty miles.",est:32000}]},
+ "Pacific Rim Traders":{ind:"Consumer electronics importer, Long Beach.",contact:"Grace Lin, Import manager",owner:"Emma Clarke",
+  mix:{oci:70,ocx:20,dtr:10},
+  why:["Large ocean volume from Asia"],
+  risks:["Bookings down 16% on the previous month: watch closely"],
+  retain:["Call this week to find out why volume dropped"],
+  gaps:[{p:"cus",why:"Clears with another broker.",est:22000},{p:"aii",why:"Urgent launches fly in on someone else's contract.",est:18000}]},
+ "Golfo Cargo Internacional":{ind:"Mexican forwarder partner.",contact:"Daniel Ruiz",owner:"Ava Brooks",mix:{itr:80,dtr:20},why:["Steady cross-border volume"],risks:[],retain:[],gaps:[{p:"cus",why:"US-side customs is done by another broker.",est:16000}]},
+ "Lakefront Machinery":{ind:"Industrial machinery, oversize imports from Germany.",contact:"Mark Webb",owner:"Sam",mix:{oci:55,dtr:30,cus:15},why:["High-value oversize freight"],risks:["$18k overdue on 52-day terms"],retain:[],gaps:[{p:"ocx",why:"Machines go back to Germany for refurbishment on another forwarder.",est:15000}]},
+ "Harbor & Pine Trading":{ind:"Specialty food exporter to the Gulf.",contact:"Jess Moore",owner:"Sam",mix:{aix:60,dtr:40},why:["Regular air exports to Dubai"],risks:[],retain:[],gaps:[{p:"ocx",why:"Shelf-stable lines could go by sea.",est:14000}]},
+ "Bayou Chemical":{ind:"Specialty chemicals, Houston.",contact:"Lauren Price",owner:"Emma Clarke",mix:{ocx:70,cus:30},why:[],risks:["Bookings down 67%","Pays in 74 days, $38k overdue"],retain:["Credit review before the next booking","Check-in call: find out where the freight went"],gaps:[]},
+ "Hanse Air Logistik":{ind:"German forwarder partner (inbound agent).",contact:"Thomas Becker",owner:"Ava Brooks",mix:{aii:100},why:[],risks:[],retain:[],gaps:[{p:"aix",why:"Reciprocal export volume to Germany.",est:12000}]},
+ "Keystone Exports":{ind:"Industrial exporter to the Middle East.",contact:"Paul Grant",owner:"Sam",mix:{aix:55,ocx:45},why:[],risks:[],retain:[],gaps:[{p:"cus",why:"Export compliance and AES filing are done in-house by them.",est:8000}]},
+ "Ridgeway Components":{ind:"Electronic components maker, Ohio.",contact:"Chris Hale",owner:"Emma Clarke",mix:{aix:100},why:[],risks:["Only buys air export"],retain:[],
+  gaps:[{p:"aii",why:"Buys chips and boards from Taiwan; inbound air is booked by their supplier.",est:24000},{p:"cus",why:"Their imports need a broker.",est:11000},{p:"ocx",why:"Heavy enclosures could go by sea.",est:9000}]},
+ "Delta Wire & Cable":{ind:"Wire and cable, Ontario.",contact:"Steve Moran",owner:"Sam",mix:{itr:70,cus:30},why:[],risks:["Nothing booked for 38 days","$26k overdue"],retain:["Win-back call this week"],gaps:[]},
+ "Meridian Medical Supply":{ind:"Medical devices, Miami. Temperature-controlled imports from Frankfurt.",contact:"Lewis Turner",owner:"Emma Clarke",mix:{aii:100},why:[],risks:["New account, only 4 weeks old"],retain:["Perfect first 90 days: daily temperature log to the customer"],gaps:[{p:"whs",why:"Cold-chain storage in Miami.",est:20000}]}
+};
+const CAMPS=[
+ {id:"cmp-cus",n:"Bring customs in-house",tag:"Cross-sell",accts:["Brightline Imports","Pacific Rim Traders","Golfo Cargo Internacional","Ridgeway Components"],
+  why:"Four importers ship with us but clear customs with another broker, so a competitor sees every entry. Customs is our highest-margin product (38%).",
+  offer:"First 3 entries at a flat $95, then our standard rate. Free bond review.",target:"2 of 4 switch by January",est:83000,owner:"Sales manager (AI) + Emma Clarke",
+  plan:["Day 1: personal email from the account owner","Day 3: call with a one-page cost comparison","Day 7: send a short customs case study","Day 10: follow-up and book a 20-minute review"],
+  subj:"Clearing your imports with us",body:a=>`Hi ${first(a)},\n\nEvery container we bring in for ${a} is cleared by another broker, which means two companies handling one shipment and two sets of charges.\n\nWe can file the entry ourselves before the vessel arrives, so the freight and customs sit with one team. For your first three entries we'll charge a flat $95 each so you can compare.\n\nCould we take 20 minutes next week to look at your last few entries together?\n\nSam`},
+ {id:"cmp-sea",n:"Move planned stock from air to ocean",tag:"Develop",accts:["Coastal Parts Co","Ridgeway Components","Harbor & Pine Trading"],
+  why:"These accounts send everything by air, including planned restocking. Offering ocean or sea-air for the non-urgent half cuts their cost and keeps the volume with us before a competitor offers it.",
+  offer:"Side-by-side cost and transit for their top 3 lanes, air vs sea-air vs ocean.",target:"Each account trials one ocean shipment in Q1",est:83000,owner:"Sales manager (AI) + account owners",
+  plan:["Day 1: email with their own lane comparison","Day 4: call to walk through it","Day 10: offer a trial shipment with a fixed rate"],
+  subj:"Cutting your freight cost on planned stock",body:a=>`Hi ${first(a)},\n\nI looked at what ${a} shipped with us over the last 13 weeks. Most of it goes by air, including stock that isn't urgent.\n\nFor your top lanes, moving the planned restocking to ocean or sea-air would cut that part of the bill by roughly 40%, and urgent orders still fly. I've put the side-by-side numbers in the attached sheet.\n\nWorth 15 minutes to see if one trial shipment in January makes sense?\n\nSam`},
+ {id:"cmp-cny",n:"Chinese New Year pre-book",tag:"Retain",accts:["Brightline Imports","Pacific Rim Traders","Coastal Parts Co","Ridgeway Components"],
+  why:"Factories in China slow from late January and space tightens before it. Asking now for pre-holiday volumes protects service and locks in the bookings.",
+  offer:"Guaranteed space on mid-January sailings and flights if volumes are confirmed by December 15.",target:"All 4 confirm pre-holiday volumes",est:0,owner:"Sales manager (AI)",
+  plan:["Day 1: email asking for pre-holiday volumes","Day 5: reminder with the space deadline","Day 8: call anyone who hasn't replied"],
+  subj:"Chinese New Year: let's hold your space now",body:a=>`Hi ${first(a)},\n\nChinese New Year falls on February 6, and factories start winding down from late January. Space gets tight in the run-up every year.\n\nIf you can send me your expected volumes for January by December 15, I'll hold space for ${a} on mid-January sailings and flights.\n\nWhat are you expecting to move?\n\nSam`},
+ {id:"cmp-win",n:"Win back slowing and lost accounts",tag:"Win-back",accts:["Delta Wire & Cable","Bayou Chemical"],
+  why:"Delta Wire & Cable hasn't booked for 38 days and Bayou Chemical is down 67%. Both also owe money, so the call covers service and the account.",
+  offer:"A frank check-in from the owner and a firm rate on their next shipment.",target:"Both book again by mid-December",est:95000,owner:"Sam + Sales manager (AI)",
+  plan:["Day 1: personal email from Sam","Day 2: call from the account owner","Day 7: firm rate on their main lane"],
+  subj:"Did we let you down?",body:a=>`Hi ${first(a)},\n\nIt's been a few weeks since ${a} last shipped with us, and I'd rather ask than guess. If something went wrong on our side, I want to hear it.\n\nIf you have anything moving, send me the lane and I'll come back with a firm rate today.\n\nSam`},
+ {id:"cmp-wh",n:"Warehouse and distribution bundle",tag:"Cross-sell",accts:["Summit Freight Partners","Coastal Parts Co","Northgate Logistics"],
+  why:"These accounts already move freight with us but store stock elsewhere. One price for storage, pick and delivery keeps the whole flow with us.",
+  offer:"First month of storage free for up to 100 pallets.",target:"1 new warehouse account by February",est:115000,owner:"Sales manager (AI) + Ava Brooks",
+  plan:["Day 1: email with a bundle price","Day 5: invite to see the Elk Grove warehouse","Day 12: proposal"],
+  subj:"Storing and delivering your stock in one place",body:a=>`Hi ${first(a)},\n\nWe already move a lot of ${a}'s freight. If your stock sat in our warehouse, we could pick and deliver it the same day, with one invoice for the lot.\n\nFor the first month we'll store up to 100 pallets free so you can see how it runs. Would you like to come and see the Elk Grove site?\n\nSam`}
+];
+const first=a=>((ACCT[a]&&ACCT[a].contact)||"there").split(/[ ,]/)[0];
+const P=()=>window.PRODUCTS||{};
+const pn=k=>(P()[k]||{n:k}).n, pc=k=>(P()[k]||{c:"#64748b"}).c;
+const ins=()=>{ try{ return INS.cust.slice().sort((a,b)=>b.rev-a.rev); }catch(e){ return []; } };
+const tot=()=>ins().reduce((a,c)=>a+c.rev,0);
+const fm=n=>"$"+(n>=1e6?(n/1e6).toFixed(2)+"M":Math.round(n/1e3)+"k");
+function st(){ S.acct=S.acct||{sel:null,camp:{}}; return S.acct; }
+window.acSel=n=>{ st().sel=n; save(); render(); setTimeout(()=>{ const e=document.getElementById("acHero"); if(e) e.scrollIntoView({behavior:"smooth",block:"start"}); },30); };
+function mixBar(m){ return `<div class="acBar">${Object.entries(m).map(([k,v])=>`<i style="width:${v}%;background:${pc(k)}" title="${pn(k)} ${v}%"></i>`).join("")}</div>
+  <div class="acLeg">${Object.entries(m).map(([k,v])=>`<span><b style="background:${pc(k)}"></b>${pn(k)} ${v}%</span>`).join("")}</div>`; }
+function hero(c){ const a=ACCT[c.name]||{mix:{},why:[],risks:[],retain:[],gaps:[]}, share=c.rev/tot()*100, rank=ins().findIndex(x=>x.name===c.name)+1, buys=Object.keys(a.mix);
+  const not=PK.filter(k=>!buys.includes(k)), gapK=a.gaps.map(g=>g.p);
+  return `<div class="card acHero" id="acHero"><div class="ch"><div><div class="eyebrow" style="margin:0">${rank===1?"Biggest customer":"#"+rank+" customer"} · ${share.toFixed(1)}% of revenue</div><h3 style="font-size:20px;margin-top:4px">${c.name}</h3><div class="muted" style="font-size:12.5px">${a.ind||""}${a.contact?` · Main contact: ${a.contact}`:""}${a.owner?` · Owner: ${a.owner}`:""}</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm sec" onclick="contactOpen('${c.name.replace(/'/g,"\\'")}')">Contact</button><button class="btn sm sec" onclick="deckOpen('${c.name.replace(/'/g,"\\'")}')">Review deck</button></div></div>
+   <div class="acK"><div><span>Revenue, 13 weeks</span><b>${fm(c.rev)}</b></div><div><span>Gross profit</span><b>${fm(c.gp)} · ${c.m.toFixed(1)}%</b></div><div><span>Last 4 weeks</span><b class="${c.chg>0?"up":"dn"}">${c.chg===null?"New":(c.chg>0?"+":"")+Math.round(c.chg)+"%"}</b></div><div><span>Jobs</span><b>${c.n}</b></div><div><span>Overdue</span><b class="${c.overdue>0?"dn":""}">${fm(c.overdue)}</b></div></div>
+   <div class="acG">
+    <div><div class="ndh">Why they're ${rank===1?"our biggest customer":"a key account"}</div><ul class="acL">${(a.why.length?a.why:[`${fm(c.rev)} over 13 weeks across ${c.n} jobs`]).map(x=>`<li>${x}</li>`).join("")}</ul>
+     <div class="ndh" style="margin-top:12px">What they buy</div>${mixBar(a.mix)}
+     <div class="acNot"><span class="muted">Not buying:</span>${not.map(k=>`<i class="${gapK.includes(k)?"hot":""}" style="--pc:${pc(k)}">${pn(k)}${gapK.includes(k)?" ★":""}</i>`).join("")}</div></div>
+    <div><div class="ndh">Keep the account</div>${a.risks.length?`<ul class="acL risk">${a.risks.map(x=>`<li>${x}</li>`).join("")}</ul>`:'<div class="muted" style="font-size:12.5px">No risks flagged.</div>'}
+     ${a.retain.length?`<div class="ndh" style="margin-top:10px">Next steps</div><ul class="acL do">${a.retain.map(x=>`<li>${x}</li>`).join("")}</ul>`:""}</div>
+   </div>
+   <div class="ndh" style="margin-top:14px">Grow the account: products to offer</div>
+   ${a.gaps.length?`<div class="acGaps">${a.gaps.map((g,i)=>`<div class="acGap" style="--pc:${pc(g.p)}"><div class="acGh"><b>${pn(g.p)}</b><span>~${fm(g.est)}/yr</span></div><div style="font-size:12.5px">${g.why}</div><button class="btn sm sec" onclick="acPitch('${c.name.replace(/'/g,"\\'")}',${i})">Draft intro email</button></div>`).join("")}</div>`:'<div class="muted" style="font-size:12.5px">Focus on keeping this account before offering more.</div>'}
+  </div>`; }
+function grid(){ const rows=ins();
+  return `<div class="card" style="margin-top:16px"><div class="ch"><div><h3>Every account: what they buy and where the gaps are</h3><div class="muted" style="font-size:12px">● buys today · ★ worth offering · click a row for the account plan</div></div></div>
+  <div style="overflow-x:auto"><table class="raci acT"><thead><tr><th style="text-align:left">Account</th><th>Revenue (13 wks)</th><th>Share</th><th>Trend</th>${PK.map(k=>`<th title="${pn(k)}">${(P()[k]||{s:k}).s||pn(k)}</th>`).join("")}<th>Products</th><th>Potential</th></tr></thead><tbody>
+  ${rows.map(c=>{ const a=ACCT[c.name]||{mix:{},gaps:[]}, g=a.gaps.map(x=>x.p), pot=a.gaps.reduce((s,x)=>s+x.est,0);
+    return `<tr onclick="acSel('${c.name.replace(/'/g,"\\'")}')" class="${st().sel===c.name?"on":""}"><td style="text-align:left"><b>${c.name}</b></td><td>${fm(c.rev)}</td><td>${(c.rev/tot()*100).toFixed(1)}%</td><td><span class="pill ${c.st==="Growing"||c.st==="New"?"ok":c.st==="Steady"?"grey":"warn"}">${c.st}</span></td>
+     ${PK.map(k=>`<td>${a.mix[k]?`<b style="color:${pc(k)}">●</b>`:g.includes(k)?'<span class="acStar">★</span>':""}</td>`).join("")}<td>${Object.keys(a.mix).length}${Object.keys(a.mix).length===1?' <span class="pill warn">1 only</span>':""}</td><td>${pot?fm(pot):"—"}</td></tr>`; }).join("")}
+  </tbody></table></div></div>`; }
+function camps(){ const s=st();
+  return `<h3 class="twh" style="margin-top:22px">Campaigns the Sales manager suggests</h3><div class="muted" style="font-size:12.5px;margin:-6px 0 12px">Built from what each account buys, what it doesn't, and what's coming up. Approving a campaign drafts the emails and books the calls. Nothing is sent until you approve each email.</div>
+  <div class="acCs">${CAMPS.map(c=>{ const on=s.camp[c.id];
+    return `<div class="card acC"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><span class="pill ${c.tag==="Win-back"?"warn":c.tag==="Retain"?"grey":"ok"}">${c.tag}</span><h4 style="margin:8px 0 4px;font-size:15.5px">${c.n}</h4></div>${c.est?`<div class="acEst"><b>${fm(c.est)}</b><span>est. yearly revenue</span></div>`:'<div class="acEst"><b>Protect</b><span>existing volume</span></div>'}</div>
+     <div style="font-size:12.5px;margin-bottom:8px">${c.why}</div>
+     <div class="acCk"><span>Accounts</span><div>${c.accts.map(a=>`<i onclick="acSel('${a.replace(/'/g,"\\'")}')">${a}</i>`).join("")}</div></div>
+     <div class="acCk"><span>Offer</span><div style="font-size:12.5px">${c.offer}</div></div>
+     <div class="acCk"><span>Plan</span><div><ol class="acPl">${c.plan.map(x=>`<li>${x}</li>`).join("")}</ol></div></div>
+     <div class="acCk"><span>Goal</span><div style="font-size:12.5px">${c.target} · ${c.owner}</div></div>
+     <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">${on?`<span class="pill ok">Approved: ${c.accts.length} drafts waiting for you</span><button class="btn sm sec" onclick="go('assistant')">Review drafts</button>`:`<button class="btn sm" onclick="acApprove('${c.id}')">Approve campaign</button><button class="btn sm sec" onclick="acPreview('${c.id}')">Preview email</button>`}</div></div>`; }).join("")}</div>`; }
+V.accounts=()=>{ const r=ins(); if(!r.length) return "<div class='card'>No data</div>"; const s=st(), c=r.find(x=>x.name===s.sel)||r[0], T=tot(), top5=r.slice(0,5).reduce((a,x)=>a+x.rev,0);
+  const one=r.filter(x=>ACCT[x.name]&&Object.keys(ACCT[x.name].mix).length===1).length, pot=Object.values(ACCT).reduce((a,x)=>a+x.gaps.reduce((s,g)=>s+g.est,0),0);
+  return `<header class="top"><div><h1>Account growth</h1><div class="sub">Who your biggest customers are and why, what each one buys and doesn't, and how to keep and grow them. The Sales manager (AI) keeps this current from the TMS, CRM and accounting.</div></div><button class="btn sec" onclick="openVoice&&openVoice()">Ask the Sales manager</button></header>
+  <div class="grid k4"><div class="card kpi"><div class="l">Biggest customer</div><div class="v" style="font-size:20px">${r[0].name}</div><div class="d">${(r[0].rev/T*100).toFixed(1)}% of revenue · ${fm(r[0].rev)} in 13 weeks</div></div>
+   <div class="card kpi"><div class="l">Top 5 share of revenue</div><div class="v">${Math.round(top5/T*100)}%</div><div class="d">Concentration to watch</div></div>
+   <div class="card kpi"><div class="l">Accounts buying one product only</div><div class="v">${one}</div><div class="d">Easiest to lose, easiest to grow</div></div>
+   <div class="card kpi"><div class="l">Cross-sell potential</div><div class="v">${fm(pot)}</div><div class="d">Yearly, from products they don't buy yet</div></div></div>
+  ${hero(c)}${grid()}${camps()}`; };
+window.acPitch=(name,i)=>{ const a=ACCT[name], g=a.gaps[i];
+  const PITCH={ocx:"For the stock that isn't urgent, ocean or sea-air would cut that part of the bill by around 40%, and urgent orders still fly.",whs:"Keeping your fast-moving lines in our warehouse would mean same-day dispatch, without paying to fly everything.",aii:"We could also bring in your inbound shipments from suppliers, so both directions sit with one team.",cus:"We can clear your imports ourselves and file the entry before the freight arrives, so there's no handover to another broker.",dst:"Your pallets are already with us, so we could deliver them to your customers the same day.",oci:"We could book your imports from origin too, so they land on our dock with no handover.",aix:"We could handle your exports as well, with the same team that handles your inbound.",itr:"We could run your Mexico loads too, with customs on both sides arranged by us.",dtr:"We could pick up and deliver locally as well, so one team owns the whole move."};
+  const L=Object.keys(a.mix).map(k=>pn(k).toLowerCase()), list=L.length>1?L.slice(0,-1).join(", ")+" and "+L[L.length-1]:L[0];
+  const body=`Hi ${first(name)},\n\nWe already look after your ${list}. ${PITCH[g.p]||""}\n\nCould I put together a price for one shipment so you can compare it with what you pay today?\n\nSam`;
+  modal(`Intro email · ${pn(g.p)} for ${name}`,`${pn(g.p)}: an idea for ${name}`,body,()=>{ S.drafts.push({id:S.nextD++,status:"Waiting",co:name,to:a.contact||name,kind:"Cross-sell",subj:`${pn(g.p)}: an idea for ${name}`,body:document.getElementById("acTx").value}); log("mail",`${name}: ${pn(g.p)} intro email drafted for review`); toast("Saved as a draft. Review it in Assistant before it goes."); }); };
+window.acPreview=id=>{ const c=CAMPS.find(x=>x.id===id), a=c.accts[0]; modal(`${c.n} · email to ${a}`,c.subj,c.body(a),null,`Each of the ${c.accts.length} accounts gets its own version with their name and numbers.`); };
+window.acApprove=id=>{ const c=CAMPS.find(x=>x.id===id); c.accts.forEach(a=>S.drafts.push({id:S.nextD++,status:"Waiting",co:a,to:(ACCT[a]&&ACCT[a].contact)||a,kind:"Campaign: "+c.n,subj:c.subj,body:c.body(a)}));
+  st().camp[id]=1; try{ cal(2,"10:00",`${c.n}: follow-up calls (${c.accts.length})`,"sales"); }catch(e){} log("crm",`Campaign approved: ${c.n}. ${c.accts.length} emails drafted, calls booked`); save(); toast(`${c.accts.length} emails drafted for your review. Nothing is sent until you approve each one.`); render(); };
+function modal(h,subj,body,onSave,note){ $("#modalBox").innerHTML=`<h3 style="margin-top:0">${h}</h3>${note?`<div class="muted" style="font-size:12px;margin:-6px 0 8px">${note}</div>`:""}
+  <div style="font-size:12px;font-weight:600;margin:6px 0 4px">Subject</div><input style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:13px" value="${subj.replace(/"/g,"&quot;")}">
+  <div style="font-size:12px;font-weight:600;margin:10px 0 4px">Email</div><textarea id="acTx" style="width:100%;min-height:220px;font:inherit;font-size:13px;padding:10px;border:1px solid var(--line);border-radius:10px">${body}</textarea>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn sec" onclick="closeM()">Close</button>${onSave?`<button class="btn" id="acSave">Save as draft</button>`:""}</div>`;
+  $("#modal").classList.add("show"); if(onSave) document.getElementById("acSave").onclick=()=>{ onSave(); closeM(); }; }
+window.ACCT_DATA=ACCT; window.ACCT_CAMPS=CAMPS;
+const css=document.createElement("style"); css.textContent=`.acHero{margin-top:16px}.acK{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0}.acK div{background:#f6f8fb;border-radius:10px;padding:8px 10px}.acK span{display:block;font-size:11px;color:#6b7280}.acK b{font-size:15px}.acK .up{color:#15803d}.acK .dn{color:#b45309}
+.acG{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}.acL{margin:6px 0 0;padding-left:18px;font-size:12.5px;line-height:1.55}.acL.risk li::marker{color:#d97706}.acL.do li::marker{color:#16a34a}
+.acBar{display:flex;height:12px;border-radius:999px;overflow:hidden;margin:8px 0 6px;background:#eef1f6}.acBar i{display:block;height:100%}.acLeg{display:flex;flex-wrap:wrap;gap:10px;font-size:12px}.acLeg b{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.acNot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font-size:12px}.acNot i{font-style:normal;padding:2px 8px;border-radius:999px;border:1px dashed #cbd2dd;color:#6b7280}.acNot i.hot{border:1px solid var(--pc);color:var(--pc);background:color-mix(in srgb,var(--pc) 8%,#fff);font-weight:650}
+.acGaps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:8px}.acGap{border:1px solid #e3e8ef;border-left:4px solid var(--pc);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}.acGh{display:flex;justify-content:space-between;align-items:center}.acGh span{font-size:12px;font-weight:700;color:#15803d}
+.acT td{font-size:12.5px}.acStar{color:#d97706;font-weight:700}.acCs{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}.acEst{text-align:right}.acEst b{display:block;font-size:17px;color:#15803d}.acEst span{font-size:11px;color:#6b7280}
+.acCk{display:grid;grid-template-columns:70px 1fr;gap:8px;margin-top:6px;font-size:12px}.acCk>span{color:#6b7280;font-weight:600;padding-top:2px}.acCk i{font-style:normal;display:inline-block;margin:0 4px 4px 0;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#2b59ff;cursor:pointer;font-size:11.5px}.acPl{margin:0;padding-left:16px;font-size:12px;line-height:1.5}
+@media(max-width:900px){.acG{grid-template-columns:1fr}.acK{grid-template-columns:repeat(2,1fr)}}`; document.head.appendChild(css);
+const nav=document.getElementById("nav"), pb=nav&&nav.querySelector('button[data-v="pipeline"]');
+if(pb){ const b=document.createElement("button"); b.dataset.v="accounts"; b.innerHTML=`<span class="ico">${window.icon?icon("trending-up"):"↗"}</span>Account growth`; b.onclick=()=>go("accounts"); pb.parentNode.insertBefore(b,pb.nextSibling); }
 })();
 </script>
 

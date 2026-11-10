@@ -935,7 +935,7 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .inC{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:9px;border-left:4px solid #cbd5e1}
 .inC.imp-high{border-left-color:#ef4444}.inC.imp-medium{border-left-color:#f59e0b}.inC.imp-low{border-left-color:#94a3b8}
 .inH{display:flex;gap:8px;align-items:center;font-size:12px}
-.inCat{display:inline-flex;align-items:center;background:#eef2ff;color:#2b59ff;border-radius:999px;padding:3px 9px;font-weight:550}
+.inLive{display:inline-flex;align-items:center;background:#e8f8ef;color:#15803d;border-radius:999px;padding:3px 9px;font-weight:700;margin-right:6px}.inCat{display:inline-flex;align-items:center;background:#eef2ff;color:#2b59ff;border-radius:999px;padding:3px 9px;font-weight:550}
 .inImp{border-radius:999px;padding:3px 9px;background:#f1f5f9;color:#475569;font-weight:550}
 .imp-high .inImp{background:#fee2e2;color:#b91c1c}.imp-medium .inImp{background:#fef3c7;color:#92400e}
 .inD{margin-left:auto;color:var(--muted)}
@@ -4514,7 +4514,7 @@ function shTag(id,k){ const s=st().sh[id]||[]; return s.includes(k); }
 function card(it){
   const cs=custFor(it), c=CATS[it.cat];
   return `<div class="inC imp-${it.imp.toLowerCase()}">
-   <div class="inH"><span class="inCat">${ic(c[1])}${c[0]}</span><span class="inImp">${it.imp} impact</span><span class="inD">${it.d}</span></div>
+   <div class="inH">${it.live?'<span class="inLive">● Live</span>':""}<span class="inCat">${ic(c[1])}${c[0]}</span><span class="inImp">${it.imp} impact</span><span class="inD">${it.d}</span></div>
    <div class="inT">${it.t}</div><div class="inS">${it.s}</div>
    <div class="inM"><b>${ic("sparkles")}What it means for your customers</b>${it.m}</div>
    ${cs.length?`<div class="inA"><span>Affects ${cs.length} of your customers</span>${cs.slice(0,5).map(x=>`<i>${x}</i>`).join("")}${cs.length>5?`<i>+${cs.length-5}</i>`:""}</div>`:""}
@@ -4582,6 +4582,23 @@ window.INTEL_ITEMS=ITEMS; window.intelCustFor=custFor;
 const nav=document.getElementById("nav"), gb=nav.querySelector('button[data-v="growth"]')||nav.querySelector('button[data-v="support"]');
 const b=document.createElement("button"); b.dataset.v="intel"; b.innerHTML=`<span class="ico">◎</span>Market intelligence`;
 gb?nav.insertBefore(b, gb.nextSibling):nav.appendChild(b);
+
+/* Live feed: Vercel function pulls freight trade-press RSS hourly. Falls back to the curated snapshot where fetch is blocked (claude.ai artifact). */
+const FEED="https://consol-news.vercel.app/api/news"; let LIVE=null;
+const fmtD=d=>{ try{ return new Date(d).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }catch(e){ return ""; } };
+function liveLoad(manual){ return fetch(FEED,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{
+  for(let i=ITEMS.length-1;i>=0;i--) if(ITEMS[i].live) ITEMS.splice(i,1);
+  const add=(j.items||[]).slice(0,24).map((x,i)=>({id:"L"+i+"-"+(x.url||"").length,live:1,cat:CATS[x.cat]?x.cat:"ocean",imp:x.imp||"Low",d:fmtD(x.d),src:x.src,url:x.url,t:x.t,
+    s:`Live from ${x.src}. Open the source for the full story.`,m:x.m||"",tags:(x.tags||[]).filter(t=>t!=="customs"||true)}));
+  ITEMS.unshift(...add); LIVE={at:j.updated,n:add.length,src:(j.sources||[]).length};
+  if(typeof view!=="undefined"&&view==="intel") render(); if(manual) toast(`Up to date: ${add.length} live items from ${LIVE.src} sources`);
+ }).catch(()=>{ if(manual) toast("Live feed isn't reachable from here. Showing the curated snapshot."); }); }
+liveLoad(false);
+window.inScan=()=>{const r=document.querySelector(".inRadar");if(r)r.classList.add("fast");toast("Scanning trade press…");liveLoad(true).finally(()=>{const r2=document.querySelector(".inRadar");if(r2)r2.classList.remove("fast");});};
+const baseIntel=V.intel; V.intel=function(){ let h=baseIntel();
+  const note=LIVE?`Live: ${LIVE.n} headlines from ${LIVE.src} trade-press feeds, updated ${new Date(LIVE.at).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}, plus curated items below. Matched to customers by product and region; follow the source links for the full story.`:null;
+  if(note) h=h.replace(/Demo snapshot as of Nov 10, 2026\.[^<]*/,note);
+  return h.replace(/<div class="inT">/g,'<div class="inT">'); };
 })();
 
 </script>

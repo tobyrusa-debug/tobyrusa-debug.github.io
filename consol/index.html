@@ -1561,16 +1561,16 @@ const INS = (() => {
   const W=13, weeks=Array.from({length:W},(_,i)=>"W"+(33+i));
   const C=[
     ["Brightline Imports","grow",3,520,3.9,38],["Coastal Parts Co","grow",2,900,4.4,45],["Harbor & Pine Trading","steady",2,480,3.6,31],
-    ["Meridian Medical Supply","new",2,260,4.8,28],["Northgate Logistics","slow",3,610,3.3,40],["Summit Freight Partners","steady",3,700,3.5,35],
-    ["Lakefront Machinery","steady",1,1400,3.4,52],["Keystone Exports","grow",1,450,4.1,33],["Ridgeway Components","slow",2,380,3.8,47],
-    ["Pacific Rim Traders","lost",2,650,3.7,36],["Delta Wire & Cable","lost",1,1100,3.2,61],["Golfo Cargo Internacional","steady",2,820,2.9,30],
+    ["Meridian Medical Supply","new",2,260,4.8,28],["Northgate Logistics","grow",3,610,3.3,40],["Summit Freight Partners","grow",3,700,3.5,35],
+    ["Lakefront Machinery","steady",1,1400,3.4,52],["Keystone Exports","grow",1,450,4.1,33],["Ridgeway Components","steady",2,380,3.8,47],
+    ["Pacific Rim Traders","grow",2,650,3.7,36],["Delta Wire & Cable","lost",1,1100,3.2,61],["Golfo Cargo Internacional","steady",2,820,2.9,30],
     ["Hanse Air Logistik","grow",1,560,3.6,29],["Bayou Chemical","slow",2,500,4.6,74]
   ];
   const rows=[];
   C.forEach(([name,tr,base,kg,rate,payDays],ci)=>{
     for(let w=1;w<=W;w++){
       let f = tr==="grow"?1+0.09*(w-1) : tr==="slow"?Math.max(0.15,1.7-0.13*(w-1)) : tr==="lost"?(w<=(ci===9?7:8)?1:0) : tr==="new"?(w<9?0:0.6+0.25*(w-9)) : 1;
-      let n=Math.round(base*f*(0.6+rnd()*0.8)); if(tr==="lost"&&f===0) n=0; if(tr==="new"&&f===0) n=0;
+      let n=Math.round(base*f*(1+0.035*(w-1))*(0.6+rnd()*0.8)); if(tr==="lost"&&f===0) n=0; if(tr==="new"&&f===0) n=0;
       for(let k=0;k<n;k++){
         const cw=Math.round(kg*(0.6+rnd()*0.8)), r=rate*(0.9+rnd()*0.2), air=cw*r, airM=0.08+rnd()*0.07;
         const truck=rnd()<0.62?160+rnd()*320:0, trM=0.17+rnd()*0.1;
@@ -4087,8 +4087,8 @@ const k$ = n => n>=1e6?"$"+(n/1e6).toFixed(2)+"M":n>=1e4?"$"+Math.round(n/1e3)+"
 const kg = n => n>=1e3?(n/1e3).toFixed(1)+"t":Math.round(n)+" kg";
 const pct = (a,b) => b?((a-b)/b*100):0;
 function delta(v,suffix){ const up=v>=0; return `<span class="dchip ${up?"up":"dn"}">${up?"▲":"▼"} ${Math.abs(v).toFixed(1)}%</span>${suffix?`<span class="dvs">${suffix}</span>`:""}`; }
-function spark(vals,col){
-  const W=120,H=36,mx=Math.max(...vals),mn=Math.min(...vals),sp=(mx-mn)||1;
+function spark(vals,col,zero){
+  const W=120,H=36,mx=Math.max(...vals),mn=zero?0:Math.min(...vals),sp=(mx-mn)||1;
   const pts=vals.map((v,i)=>[i/(vals.length-1)*W, H-4-(v-mn)/sp*(H-10)]);
   const d=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
   const id="sg"+Math.random().toString(36).slice(2,7), l=pts[pts.length-1];
@@ -4160,7 +4160,7 @@ V.dashboard = () => {
       ["Gross profit", k$(gp), tr(w=>w.gp), all.map(w=>w.gp), C2, `${(rev?gp/rev*100:0).toFixed(1)}% margin`],
       ["Chargeable weight", kg(winSum(w=>w.cw)), tr(w=>w.cw), all.map(w=>w.cw), C1, `${winSum(w=>w.n)} shipments`],
       ["Active customers", cur.active, tr(w=>w.active), all.map(w=>w.active), C2, "booked this week"]
-    ].map(([l,v,d,s,c,sub])=>`<div class="ktile"><div class="kl">${l}</div><div class="kv">${v}</div><div class="kd">${delta(d,trendL)}</div><div class="ks">${sub}</div>${spark(s.slice(-Math.max(range,8)),c)}</div>`).join("")}
+    ].map(([l,v,d,s,c,sub])=>`<div class="ktile"><div class="kl">${l}</div><div class="kv">${v}</div><div class="kd">${delta(d,trendL)}</div><div class="ks">${sub}</div>${spark(s.slice(-Math.max(range,8)),c,l==="Active customers")}</div>`).join("")}
   </section>
 
   <section class="dgrid">

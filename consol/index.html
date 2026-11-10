@@ -902,6 +902,16 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .lcp{border-top:3px solid var(--pc);position:sticky;top:76px}
 @media (max-width:1000px){.lcgrid{grid-template-columns:1fr}.lcp{position:static}}
 
+.gate{margin-top:12px}
+.gsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.gsum>div{display:flex;gap:8px;align-items:flex-start;padding:10px;border-radius:12px;font-size:12px} .gsum b{display:block;font-size:12.5px}
+.gsum .y{background:var(--ok-soft);color:#076b4b} .gsum .n{background:#fff4e5;color:#9a4a00}
+.gsum span{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;flex:none;font-weight:700;background:#fff}
+.ggrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.gx{font-size:12px;margin-top:6px;line-height:1.45}
+.gc td,.gc th{padding:7px 8px}
+@media (max-width:900px){.gsum,.ggrid{grid-template-columns:1fr 1fr}}
+
 </style>
 </head>
 <body>
@@ -4193,8 +4203,8 @@ const ST=[
   list:()=>S.deals.filter(d=>d.stage==="Quoted").map(d=>d.acct)},
  {k:"onb",n:"Onboarding",c:"#0e7490",who:"Transition & Implementation Manager (AI)",ap:"Owner",
   what:"Won. Set them up properly before volume arrives so ops and finance don't inherit a mess.",
-  steps:["Credit check, payment terms and billing details approved by finance.","Load addresses, rate card, SOPs and portal users with their logo.","Run the first 3 shipments with the transition team watching."],
-  exit:"Pilot shipments done and signed off by the customer.",kpi:"Days to go-live, pilot issues",
+  steps:["Get the SOP signed by the customer: lanes, cut-offs, documents, special handling, escalation.","Agree the rates: a contract rate card, or mark the account as spot-quoted per shipment.","Get the credit application signed; finance approves the limit and terms.","Swap key contacts on both sides: accounts payable, pickup, delivery, customs and escalation.","Run the first 3 shipments with the transition team watching."],
+  exit:"All four go-live gates done (SOP, rates, credit app, contacts) and the pilot signed off.",kpi:"Days to go-live, pilot issues",
   list:()=>{ try{ tInit(); }catch(e){} return (S.trans||[]).map(t=>t.acct); }},
  {k:"act",n:"Active customer",c:"#1baf7a",who:"Operations + Finance + Customer service (AI)",ap:"Account owner",
   what:"Shipping and being billed. Every job runs, invoices go out on departure, and questions are answered in a minute.",
@@ -5538,6 +5548,43 @@ const baseTw=V.twin; V.twin=()=>{ const h=baseTw(); const m='<h3 class="twh">Tra
     <div class="hn2">${S.hires.map(h=>{ const r=hRole(h); return `<label class="hn2r"><span class="hn2a" style="background:${TRACKS[r.d].col}">${r.t[0]}</span><span class="hn2t"><b>${r.t}</b><span>${r.d}</span></span><input value="${h.custom?h.name:""}" placeholder="Add a name" onchange="hireName('${h.id}',this.value)" aria-label="Name for ${r.t}"></label>`; }).join("")}</div></div>`; };
   norm();
   const b=V.aiteam; V.aiteam=()=>{ const h=b(); const m='<section class="wsec">'; const i=h.indexOf(m); return i<0?h+hireNames():h.slice(0,i)+hireNames()+h.slice(i); };
+})();
+
+</script>
+<script id="gates-js">
+/* ---------- Go-live gates for transition: signed SOP, agreed rates (or spot), signed credit app, key contacts both sides ---------- */
+(function(){
+const CONTACTS=[["acct","Accounts payable / billing"],["pick","Pickup / shipping"],["del","Delivery / receiving"],["cus","Customs and compliance"],["esc","Escalation (manager)"]];
+const SAMPLE={
+ "TR-1":{sop:"sent",rates:"contract",ratesOk:true,credit:"signed",limit:"$60,000 · Net 30",c:{acct:[1,1],pick:[1,1],del:[1,0],cus:[1,0],esc:[1,1]}},
+ "TR-2":{sop:"draft",rates:"spot",ratesOk:true,credit:"sent",limit:"$25,000 requested",c:{acct:[1,0],pick:[1,1],del:[0,0],cus:[0,0],esc:[1,0]}}
+};
+function G(id){ S.gates=S.gates||{}; if(!S.gates[id]) S.gates[id]=JSON.parse(JSON.stringify(SAMPLE[id]||{sop:"draft",rates:"",ratesOk:false,credit:"",limit:"",c:Object.fromEntries(CONTACTS.map(c=>[c[0],[0,0]]))})); return S.gates[id]; }
+function status(g){ const cOk=CONTACTS.every(c=>g.c[c[0]][0]&&g.c[c[0]][1]);
+  return [["SOP signed by the customer",g.sop==="signed",{draft:"Draft",sent:"Sent for signature",signed:"Signed"}[g.sop]||"Not started"],
+    ["Rates agreed",g.rates&&g.ratesOk,g.rates==="contract"?"Contract rate card":g.rates==="spot"?"Spot quotes (per shipment)":"Not set"],
+    ["Credit application signed",g.credit==="signed",(g.credit==="signed"?"Signed":g.credit==="sent"?"Sent":"Not sent")+(g.limit?` · ${g.limit}`:"")],
+    ["Key contacts shared, both sides",cOk,`${CONTACTS.filter(c=>g.c[c[0]][0]&&g.c[c[0]][1]).length} of ${CONTACTS.length} complete`]]; }
+window.gtSet=(id,k,v)=>{ const g=G(id); g[k]=v; if(k==="rates") g.ratesOk=v==="spot"?true:g.ratesOk; save(); render(); };
+window.gtC=(id,c,side)=>{ const g=G(id); g.c[c][side]=g.c[c][side]?0:1; save(); render(); };
+window.gtLive=id=>{ const t=S.trans.find(x=>x.id===id), g=G(id), st=status(g); if(st.some(s=>!s[1])){ toast(`<b>${t.acct} can't go live yet.</b> ${st.filter(s=>!s[1]).map(s=>s[0]).join(", ")} still open.`); return; }
+  t.live=true; log("sys",`${t.acct} passed all go-live gates and moved to operations`); save(); toast(`<b>${t.acct} is live.</b> Handed to operations, customer service and the account manager.`); render(); };
+function card(t){ const g=G(t.id), st=status(g), done=st.filter(s=>s[1]).length;
+  return `<div class="card gate"><div class="ch"><div><h3>${t.acct} · go-live gates</h3><div class="muted" style="font-size:12px">${t.id} · all four must be complete before the first live shipment</div></div><span class="pill ${done===4?"ok":"warn"}">${done} of 4 done</span></div>
+    <div class="gsum">${st.map(s=>`<div class="${s[1]?"y":"n"}"><span>${s[1]?"✓":"!"}</span><div><b>${s[0]}</b><div>${s[2]}</div></div></div>`).join("")}</div>
+    <div class="ggrid">
+      <div><div class="ndh">1. Standard operating procedure</div><div class="seg">${[["draft","Draft"],["sent","Sent"],["signed","Signed"]].map(([k,l])=>`<button class="${g.sop===k?"on":""}" onclick="gtSet('${t.id}','sop','${k}')">${l}</button>`).join("")}</div><div class="muted gx">Lanes, cut-offs, documents, special handling and escalation, signed by both sides.</div></div>
+      <div><div class="ndh">2. Rates</div><div class="seg">${[["contract","Contract rate card"],["spot","Spot quote"]].map(([k,l])=>`<button class="${g.rates===k?"on":""}" onclick="gtSet('${t.id}','rates','${k}')">${l}</button>`).join("")}</div>
+        <div class="muted gx">${g.rates==="spot"?"No rate card: every shipment is quoted at the spot rate and accepted before booking.":g.rates==="contract"?`Rate card agreed and loaded ${g.ratesOk?'<b style="color:var(--ok)">✓ signed off</b>':`<button class="lnk" style="margin:0" onclick="gtSet('${t.id}','ratesOk',true)">Mark agreed</button>`}`:"Choose contract rates or spot quotes."}</div></div>
+      <div><div class="ndh">3. Credit application</div><div class="seg">${[["","Not sent"],["sent","Sent"],["signed","Signed"]].map(([k,l])=>`<button class="${g.credit===k?"on":""}" onclick="gtSet('${t.id}','credit','${k}')">${l}</button>`).join("")}</div><div class="muted gx">Signed credit app, trade references and the approved limit and terms${g.limit?`: <b>${g.limit}</b>`:""}.</div></div>
+    </div>
+    <div class="ndh" style="margin-top:14px">4. Key contacts, both sides <span class="muted" style="text-transform:none;letter-spacing:0;font-weight:500">· click to mark shared</span></div>
+    <div style="overflow-x:auto"><table class="raci gc"><thead><tr><th style="text-align:left">Contact</th><th>Customer's contact</th><th>Our contact</th></tr></thead><tbody>
+      ${CONTACTS.map(([k,l])=>`<tr><td style="text-align:left"><b>${l}</b></td>${[0,1].map(s=>`<td><button class="share ${g.c[k][s]?"on":""}" onclick="gtC('${t.id}','${k}',${s})">${g.c[k][s]?"Shared":"Missing"}</button></td>`).join("")}</tr>`).join("")}
+    </tbody></table></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn ${done===4?"ok":""}" onclick="gtLive('${t.id}')">${done===4?"Go live":"Go live (blocked until all 4 are done)"}</button></div></div>`; }
+const base=V.transition; V.transition=()=>{ const h=base(); try{ tInit(); }catch(e){} const act=(S.trans||[]).filter(t=>!t.live); const html=`<h3 class="twh" style="margin-top:18px">Go-live gates</h3>${act.map(card).join("")}`;
+  const m='<div class="grid k4">'; const i=h.indexOf(m); if(i<0) return h+html; const j=h.indexOf('<div class="card" style="margin-top:12px">',i); return j<0?h+html:h.slice(0,j)+html+h.slice(j); };
 })();
 
 </script>

@@ -964,6 +964,15 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .vfail{font-size:12px;line-height:1.45;padding:8px 10px;border-radius:10px;background:rgba(237,161,0,.12);border:1px solid rgba(237,161,0,.35);margin:6px 0}.vfail a{color:inherit;font-weight:700}</style>
 <style id="hlive-css">.hlive{border:0;border-radius:999px;padding:0 16px;height:44px;font:inherit;font-size:13px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#4a72ff,#00b89c);box-shadow:0 6px 18px rgba(43,89,255,.3);display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
 .hlive.connecting{opacity:.8;cursor:wait}.hlive.live{background:#dc2626;box-shadow:0 6px 18px rgba(220,38,38,.35)}.hlive i{width:9px;height:9px;border-radius:50%;background:#fff;animation:hlp 1s ease-in-out infinite}@keyframes hlp{50%{opacity:.25;transform:scale(.7)}}</style>
+<style id="hud2-css">.hb.hbw,.hlive,.hb.leave{white-space:nowrap;flex:none}.hctl{gap:8px}.hb.hbw{width:auto;padding:0 14px;gap:6px;display:inline-flex;align-items:center;font:inherit;font-size:12.5px;font-weight:650;color:inherit}.hb.on2{background:#2b59ff!important;color:#fff!important}.hb.rec{background:#dc2626!important;color:#fff!important}
+.rdot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#ef4444}.hb.rec .rdot,.hrecb .rdot{background:#fff;animation:hlp 1s ease-in-out infinite}.hrecb{display:inline-flex;align-items:center;gap:5px;background:#dc2626!important;color:#fff!important;font-weight:700;border-radius:999px;padding:2px 8px;font-size:11px}
+.htile.hscr video{width:100%;height:100%;object-fit:contain;background:#000}
+.hdock{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:18px;z-index:60;width:min(560px,92vw);background:#0f172a;color:#e6ebf5;border:1px solid rgba(255,255,255,.12);border-radius:18px;box-shadow:0 18px 50px rgba(2,6,23,.45);padding:10px 12px;opacity:0;pointer-events:none;transition:.2s}
+.hdock.show{opacity:1;pointer-events:auto;transform:translateX(-50%)}.hdk-top{display:flex;align-items:center;gap:8px;font-size:12px}.hdk-top #dClock{opacity:.7}.hpres{background:#f59e0b;color:#111;border-radius:999px;padding:2px 8px;font-weight:700;font-size:11px}.hdk-x{margin-left:auto;background:rgba(255,255,255,.08);border:0;color:inherit;border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:14px}
+.hdk-ppl{display:flex;align-items:center;gap:6px;margin:8px 0}.hdk-av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--pc);color:#fff;flex:none}.hdk-av.talk{box-shadow:0 0 0 3px rgba(0,209,178,.6);animation:vlp 1.2s ease-in-out infinite}.hdk-last{font-size:12px;opacity:.85;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-left:4px}
+.hdk-ctl{display:flex;gap:6px;align-items:center}.hdk-ctl .hb{width:38px;height:38px}.hdk-ctl .hlive{height:38px;margin-left:auto}.hdk-ctl .hb.leave{width:auto;padding:0 12px;font:inherit;font-size:12.5px;font-weight:700}
+.hudtop svg{width:15px;height:15px;flex:none}.hctl{flex-wrap:nowrap!important}.hctl .hadd{flex:0 1 150px;min-width:0}.hctl .hadd select{min-width:0;width:100%}.hudtop{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line,#e3e8ef);background:#fff;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;color:#0b1220;position:relative}.hudtop.on{background:#0f172a;color:#fff;border-color:#0f172a}.hudtop.on .gd{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:hlp 1.2s infinite}.hudtop.rec .gd{background:#ef4444}
+.hudpop{position:absolute;top:42px;right:0;width:280px;background:#fff;border:1px solid #e3e8ef;border-radius:14px;box-shadow:0 18px 40px rgba(15,23,42,.18);padding:8px;z-index:70;display:none;text-align:left}.hudpop.show{display:block}.hudpop button{display:flex;width:100%;gap:10px;align-items:center;border:0;background:none;padding:8px;border-radius:10px;font:inherit;font-size:13px;cursor:pointer;text-align:left;color:#0b1220}.hudpop button:hover{background:#f3f6fb}.hudpop small{display:block;color:#6b7280;font-size:11.5px}.hudpop .hpi{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:11px;flex:none}</style>
 </head>
 <body>
 <div class="app">
@@ -4044,7 +4053,7 @@ let pick=new Set(["ops","priya"]), mode="video", timers=[], stream=null;
 /* Live AI voice in the huddle: the real ElevenLabs agent joins the call */
 const LV_AGENT="agent_2401m72y5nx0etc920bf451y60x0", LV_SDK="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.35.0/+esm", LV_TALK="https://elevenlabs.io/app/talk-to?agent_id="+LV_AGENT;
 const LV={c:null,st:"off",ai:null};
-function lvBtn(){ const b=document.getElementById("hLiveBtn"); if(!b) return; b.className="hlive "+LV.st; b.innerHTML=LV.st==="live"?'<i></i>Live · end':LV.st==="connecting"?"Connecting…":"Talk live to AI"; }
+function lvBtn(){ try{ dockDraw(); }catch(e){} const b=document.getElementById("hLiveBtn"); if(!b) return; b.className="hlive "+LV.st; b.innerHTML=LV.st==="live"?'<i></i>Live · end':LV.st==="connecting"?"Connecting…":"Talk live to AI"; }
 function lvFallback(){ toast("Live voice can't run in this preview. Opening the live agent in a new tab."); try{ const a=document.createElement("a"); a.href=LV_TALK; a.target="_blank"; a.rel="noopener"; document.body.appendChild(a); a.click(); a.remove(); }catch(e){} }
 function lvEnd(){ const c=LV.c; LV.c=null; LV.st="off"; if(c) try{ c.endSession(); }catch(e){} const h=H(); if(h) { h.speaking=null; drawLive(); } lvBtn(); }
 window.hudLive=async()=>{ const h=H(); if(!h) return; if(LV.c||LV.st==="connecting"){ lvEnd(); return; }
@@ -4080,9 +4089,25 @@ window.hudCam=async(on)=>{ const h=H(); if(!h) return; h.cam=on??!h.cam;
   else if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
   render(); };
 window.hudMic=()=>{ const h=H(); h.mic=!h.mic; render(); };
-window.hudShare=async()=>{ try{ const s=await navigator.mediaDevices.getDisplayMedia({video:true}); toast("Sharing your screen."); s.getTracks()[0].onended=()=>toast("Screen share stopped."); }catch(e){ toast("Screen sharing is blocked on this page. It works in the full product."); } };
+const SH={s:null}, REC={r:null,t0:0,sim:false,chunks:[]};
+function shStop(){ if(SH.s){ SH.s.getTracks().forEach(x=>x.stop()); SH.s=null; const h=H(); if(h){ h.tr.push({k:"me",t:"Stopped sharing the screen."}); } toast("Screen share stopped."); render(); } }
+window.hudShare=async()=>{ if(SH.s){ shStop(); return; }
+  try{ SH.s=await navigator.mediaDevices.getDisplayMedia({video:true,audio:false}); SH.s.getTracks()[0].onended=()=>shStop(); const h=H(); if(h) h.tr.push({k:"me",t:"Started sharing the screen."}); toast("You're sharing your screen. Everyone in the huddle can see it."); render(); }
+  catch(e){ if(e&&e.name==="NotAllowedError"&&window.self===window.top) toast("Screen share cancelled."); else toast("Screen sharing is blocked in this preview. It works on the live demo."); } };
+const recT=()=>{ const s=Math.floor((Date.now()-REC.t0)/1000); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; };
+window.hudRec=async()=>{ const h=H(); if(!h) return;
+  if(REC.r||REC.sim){ const dur=recT(), sim=REC.sim; REC.sim=false; h.rec=null;
+    if(REC.r){ const r=REC.r; REC.r=null; r.onstop=()=>{ const blob=new Blob(REC.chunks,{type:r.mimeType||"video/webm"}); h.recs=h.recs||[]; h.recs.push({dur,url:URL.createObjectURL(blob),size:blob.size}); r.stream.getTracks().forEach(x=>{ if(!SH.s||!SH.s.getTracks().includes(x)) x.stop(); }); render(); }; r.stop(); }
+    else { h.recs=h.recs||[]; h.recs.push({dur,url:null}); }
+    h.tr.push({k:"me",t:`Recording stopped (${dur}). Saved with the transcript${sim?"":" and video"} to the huddle notes.`}); log("sys",`Huddle recording saved (${dur})`); toast(`Recording saved (${dur}).`); render(); return; }
+  REC.chunks=[]; REC.t0=Date.now(); h.rec=REC.t0;
+  try{ const mic=await navigator.mediaDevices.getUserMedia({audio:true}); const tracks=[...mic.getAudioTracks(),...(SH.s?SH.s.getVideoTracks():[])];
+    const r=new MediaRecorder(new MediaStream(tracks)); r.ondataavailable=e=>{ if(e.data&&e.data.size) REC.chunks.push(e.data); }; r.start(1000); REC.r=r; }
+  catch(e){ REC.sim=true; }
+  h.tr.push({k:"me",t:"Recording started. Everyone in the huddle sees the red badge."}); log("sys","Huddle recording started"); toast(REC.sim?"Recording the transcript (audio recording is blocked in this preview).":"Recording. Everyone in the huddle sees the red badge."); render(); };
+window.hudQuick=(ppl,live)=>{ const v=(typeof view!=="undefined"&&view!=="huddle")?view:"dashboard", m=mode; mode="voice"; hudStart(ppl); mode=m; go(v); if(live) setTimeout(()=>hudLive(),300); };
 window.hudInvite=k=>{ const h=H(); if(h.ppl.includes(k)) return; h.ppl.push(k); log("sys",`${PPL[k].n} joined the huddle`); toast(`${PPL[k].n} ${PPL[k].ai?"joined":"is joining"}.`); save(); render(); };
-window.hudLeave=()=>{ const h=H(); if(!h) return; lvEnd(); timers.forEach(clearInterval); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+window.hudLeave=()=>{ const h=H(); if(!h) return; lvEnd(); if(REC.r||REC.sim) hudRec(); shStop(); timers.forEach(clearInterval); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
   const mins=Math.max(1,Math.round((Date.now()-h.start)/60000)), notes=h.notes.length?h.notes:NOTES.slice(0,2);
   S.hudLog=S.hudLog||[]; S.hudLog.unshift({ppl:h.ppl,mins,notes,docs:h.chat.filter(m=>m.doc).length,when:"Today"}); S.hud=null;
   log("sys",`Huddle ended (${mins} min): ${notes.length} action items assigned`); save();
@@ -4100,12 +4125,20 @@ window.hudFiles=hudFiles;
 function tile(k){ const h=H(), p=PPL[k], talk=h.speaking===k;
   return `<div class="htile ${talk?"talk":""}" style="--pc:${p.c}"><div class="hav ${p.ai?"ai":""}">${p.ai?`<span class="horb"></span>`:""}<span>${p.i}</span></div>
     <div class="hname">${p.n}${p.ai?' <span class="hai">AI</span>':""}</div>${talk?'<div class="hbars"><i></i><i></i><i></i><i></i></div>':""}</div>`; }
-function drawLive(){ const h=H(); if(!h||view!=="huddle") return; const g=document.getElementById("hGrid"); if(g) g.querySelectorAll(".htile[data-k]").forEach(el=>{ const k=el.dataset.k; el.outerHTML=tile(k).replace('<div class="htile','<div data-k="'+k+'" class="htile'); });
+function drawLive(){ try{ dockDraw(); }catch(e){} const h=H(); if(!h||view!=="huddle") return; const g=document.getElementById("hGrid"); if(g) g.querySelectorAll(".htile[data-k]").forEach(el=>{ const k=el.dataset.k; el.outerHTML=tile(k).replace('<div class="htile','<div data-k="'+k+'" class="htile'); });
   const t=document.getElementById("hTr"); if(t){ t.innerHTML=h.tr.slice(LV.c?-6:-4).map(x=>{ const p=x.k==="me"?{c:"#2b59ff",s:"You"}:PPL[x.k]; return `<div><b style="color:${p.c}">${p.s}</b> ${x.t}</div>`; }).join("")||'<div class="muted">The transcript appears here as people talk.</div>'; }
   const n=document.getElementById("hNotes"); if(n) n.innerHTML=notesHTML(); const c=document.getElementById("hClock"); if(c) c.textContent=elapsed(); }
-function notesHTML(){ const h=H(); return h.notes.length?h.notes.map(x=>`<div class="hn"><span>✓</span><div>${x[0]}<div class="muted" style="font-size:11px">${x[1]}</div></div></div>`).join(""):'<div class="muted" style="font-size:12px">Action items appear here as they are agreed.</div>'; }
+function notesHTML(){ const h=H(); const rc=(h.recs||[]).map((r,i)=>`<div class="hn"><span style="color:#dc2626">●</span><div>Recording ${i+1} · ${r.dur}${r.url?` · <a href="${r.url}" download="huddle-recording-${i+1}.webm">Download</a>`:" · transcript saved"}<div class="muted" style="font-size:11px">Saved to the huddle notes</div></div></div>`).join(""); return rc+(h.notes.length?h.notes.map(x=>`<div class="hn"><span>✓</span><div>${x[0]}<div class="muted" style="font-size:11px">${x[1]}</div></div></div>`).join(""):'<div class="muted" style="font-size:12px">Action items appear here as they are agreed.</div>'); }
 function drawChat(){ const h=H(), b=document.getElementById("hChat"); if(!b) return; b.innerHTML=h.chat.map(m=>m.k==="me"?`<div class="tu">${m.t}</div>`:`<div class="ta"><span class="ivav" style="background:${PPL[m.k].c}">${PPL[m.k].i}</span><div><div class="muted" style="font-size:11px">${PPL[m.k].s}</div>${m.t}</div></div>`).join("")||'<div class="muted" style="font-size:12px">Type a message or drop a document here. Everyone in the huddle sees it.</div>'; b.scrollTop=1e9; }
-setInterval(()=>{ if(H()&&view==="huddle"){ const c=document.getElementById("hClock"); if(c) c.textContent=elapsed(); } },1000);
+setInterval(()=>{ if(!H()) return; if(view==="huddle"){ const c=document.getElementById("hClock"); if(c) c.textContent=elapsed(); } if(REC.r||REC.sim){ ["hRecT","hRecLbl","dRecT"].forEach(id=>{ const e=document.getElementById(id); if(e) e.textContent=(id==="hRecLbl"?"Stop · ":"")+recT(); }); } const dc=document.getElementById("dClock"); if(dc) dc.textContent=elapsed(); },1000);
+/* Floating call dock: keeps the huddle with you on every screen */
+const dock=document.createElement("div"); dock.id="hDock"; dock.className="hdock"; document.body.appendChild(dock);
+function dockDraw(){ const h=H(); if(!h||view==="huddle"){ dock.classList.remove("show"); return; } dock.classList.add("show");
+  const rec=REC.r||REC.sim;
+  dock.innerHTML=`<div class="hdk-top"><b>Huddle</b><span id="dClock">${elapsed()}</span>${rec?`<span class="hrecb"><i class="rdot"></i>REC <span id="dRecT">${recT()}</span></span>`:""}${SH.s?'<span class="hpres">Presenting</span>':""}<button class="hdk-x" onclick="go('huddle')" title="Open the huddle">⤢</button></div>
+   <div class="hdk-ppl">${h.ppl.map(k=>`<span class="hdk-av ${h.speaking===k?"talk":""}" style="--pc:${PPL[k].c}" title="${PPL[k].n}">${PPL[k].i}</span>`).join("")}<span class="hdk-last">${(()=>{ const x=h.tr[h.tr.length-1]; if(!x) return "Connected"; const p=x.k==="me"?{s:"You"}:PPL[x.k]; return `<b>${p.s}</b> ${String(x.t).slice(0,70)}${String(x.t).length>70?"…":""}`; })()}</span></div>
+   <div class="hdk-ctl"><button class="hb ${h.mic?"":"off"}" onclick="hudMic()" title="Microphone">${ic("mic")}</button><button class="hb ${SH.s?"on2":""}" onclick="hudShare()" title="${SH.s?"Stop sharing":"Share screen"}">${ic("external-link")}</button><button class="hb ${rec?"rec":""}" onclick="hudRec()" title="${rec?"Stop recording":"Record"}"><i class="rdot"></i></button><button class="hlive ${LV.st}" onclick="hudLive()">${LV.st==="live"?'<i></i>Live · end':LV.st==="connecting"?"Connecting…":"Talk live to AI"}</button><button class="hb leave" onclick="hudLeave()" title="End huddle">End</button></div>`; }
+window.HUD_STATE=()=>{ const h=H(); return h?{on:true,t:elapsed(),live:LV.st==="live",rec:!!(REC.r||REC.sim)}:{on:false}; };
 
 V.huddle=()=>{ const h=H();
   if(!h){ const recent=S.hudLog||[{ppl:["ops","priya","fin"],mins:7,notes:[["Re-book SHP-0998 on Carrier C","Operations manager"]],docs:1,when:"Yesterday"}];
@@ -4116,13 +4149,13 @@ V.huddle=()=>{ const h=H();
       <button class="btn" style="margin-top:16px" onclick="hudStart()">${ic(mode==="video"?"video":"mic")} Start ${mode==="video"?"video":"voice"} huddle (${pick.size})</button></div>
     <div class="card" style="margin-top:16px"><h3>Recent huddles</h3>${recent.map(r=>`<div class="ndr"><span class="ndn">${r.mins} min</span><div><b>${r.ppl.map(k=>PPL[k].s).join(", ")}</b> · ${r.when}${r.docs?` · ${r.docs} document${r.docs>1?"s":""}`:""}<div class="muted" style="font-size:12px">${r.notes.map(n=>n[0]).join(" · ")}</div></div></div>`).join("")}</div>`; }
   return `<div class="hroom"><div class="hmain">
-      <div class="hbar"><div><b>Huddle</b> <span class="muted">· ${h.ppl.length+1} people · <span id="hClock">${elapsed()}</span></span></div><span class="pill ok">${h.mode==="video"?"Video":"Voice"} · encrypted</span></div>
+      <div class="hbar"><div><b>Huddle</b> <span class="muted">· ${h.ppl.length+1} people · <span id="hClock">${elapsed()}</span></span></div><span style="display:flex;gap:6px">${REC.r||REC.sim?'<span class="pill hrecb"><i class="rdot"></i>REC <span id="hRecT">'+recT()+'</span></span>':""}${SH.s?'<span class="pill warn">Presenting</span>':""}<span class="pill ok">${h.mode==="video"?"Video":"Voice"} · encrypted</span></span></div>
       <div class="hgrid" id="hGrid">
         <div class="htile me"><video id="hudSelf" autoplay muted playsinline ${h.cam?"":'style="display:none"'}></video>${h.cam?"":`<div class="hav" style="--pc:#2b59ff"><span>SM</span></div>`}<div class="hname">You${h.mic?"":" · muted"}</div>${h.camErr?`<div class="herr">${h.camErr}</div>`:""}</div>
-        ${h.ppl.map(k=>tile(k).replace('<div class="htile','<div data-k="'+k+'" class="htile')).join("")}
+        ${SH.s?'<div class="htile hscr"><video id="hudScreen" autoplay muted playsinline></video><div class="hname">Your screen</div></div>':""}${h.ppl.map(k=>tile(k).replace('<div class="htile','<div data-k="'+k+'" class="htile')).join("")}
       </div>
       <div class="htr" id="hTr"></div>
-      <div class="hctl"><button class="hb ${h.mic?"":"off"}" onclick="hudMic()" title="Microphone">${ic("mic")}</button><button class="hb ${h.cam?"":"off"}" onclick="hudCam()" title="Camera">${ic("video")}</button><button class="hb" onclick="hudShare()" title="Share screen">${ic("external-link")}</button>
+      <div class="hctl"><button class="hb ${h.mic?"":"off"}" onclick="hudMic()" title="Microphone">${ic("mic")}</button><button class="hb ${h.cam?"":"off"}" onclick="hudCam()" title="Camera">${ic("video")}</button><button class="hb hbw ${SH.s?"on2":""}" onclick="hudShare()" title="${SH.s?"Stop sharing":"Share screen"}">${ic("external-link")}<span>${SH.s?"Stop sharing":"Share"}</span></button><button class="hb hbw ${REC.r||REC.sim?"rec":""}" onclick="hudRec()" title="${REC.r||REC.sim?"Stop recording":"Record"}"><i class="rdot"></i><span id="hRecLbl">${REC.r||REC.sim?"Stop · "+recT():"Record"}</span></button>
         <div class="hadd">${ic("user-plus")}<select onchange="if(this.value){hudInvite(this.value);this.value=''}"><option value="">Add someone…</option>${Object.entries(PPL).filter(([k])=>!h.ppl.includes(k)).map(([k,p])=>`<option value="${k}">${p.n}</option>`).join("")}</select></div>
         <button id="hLiveBtn" class="hlive ${LV.st}" onclick="hudLive()">${LV.st==="live"?'<i></i>Live · end':LV.st==="connecting"?"Connecting…":"Talk live to AI"}</button><button class="hb leave" onclick="hudLeave()">Leave</button></div>
     </div>
@@ -4135,7 +4168,7 @@ const nav=document.getElementById("nav"), chatB=nav.querySelector('button[data-v
 const b=document.createElement("button"); b.dataset.v="huddle"; b.innerHTML=`<span class="ico">◍</span>Huddles`; nav.insertBefore(b, chatB.nextSibling);
 document.addEventListener("dragover",e=>{ if(!(e.dataTransfer&&[...e.dataTransfer.types].includes("Files"))) return; const t=e.target.closest&&e.target.closest(".drchat2"); if(t){ e.preventDefault(); t.classList.add("drhot"); } });
 document.addEventListener("drop",e=>{ document.querySelectorAll(".drchat2.drhot").forEach(x=>x.classList.remove("drhot")); const t=e.target.closest&&e.target.closest(".drchat2"); if(!t||!e.dataTransfer.files.length) return; e.preventDefault(); e.stopPropagation(); hudFiles([...e.dataTransfer.files]); }, true);
-const pr=render; render=function(){ pr(); if(view==="huddle"&&H()){ drawLive(); drawChat(); if(H().cam&&stream){ const v=document.getElementById("hudSelf"); if(v&&!v.srcObject){ v.srcObject=stream; v.play().catch(()=>{}); } } if(!timers.length&&!LV.c&&LV.st==="off") runScript(); } };
+const pr=render; render=function(){ pr(); try{ dockDraw(); }catch(e){} if(SH.s){ const sv=document.getElementById("hudScreen"); if(sv&&!sv.srcObject){ sv.srcObject=SH.s; sv.play().catch(()=>{}); } } if(view==="huddle"&&H()){ drawLive(); drawChat(); if(H().cam&&stream){ const v=document.getElementById("hudSelf"); if(v&&!v.srcObject){ v.srcObject=stream; v.play().catch(()=>{}); } } if(!timers.length&&!LV.c&&LV.st==="off") runScript(); } };
 })();
 
 </script>
@@ -6111,5 +6144,26 @@ if(pb){ const b=document.createElement("button"); b.dataset.v="accounts"; b.inne
 })();
 </script>
 
+<script id="hudtop-js">
+/* Top-right huddle button: start a huddle from any screen, or jump back into the one you're in */
+(function(){
+const bar=document.querySelector(".topbar"); if(!bar) return;
+const wrap=document.createElement("div"); wrap.style.position="relative";
+wrap.innerHTML=`<button class="hudtop" id="hudTop">${window.icon?icon("video"):""}<span id="hudTopL">Huddle</span></button>
+ <div class="hudpop" id="hudPop">
+  <button onclick="hudPop(0);hudQuick('ops',true)"><span class="hpi" style="background:#1baf7a">O</span><span><b>Talk live to Operations</b><small>Voice huddle with the AI, stay on this screen</small></span></button>
+  <button onclick="hudPop(0);hudQuick('sales',true)"><span class="hpi" style="background:#2a78d6">S</span><span><b>Talk live to Sales</b><small>Accounts, pipeline and campaigns</small></span></button>
+  <button onclick="hudPop(0);hudQuick('ops,priya')"><span class="hpi" style="background:#0b9466">EC</span><span><b>Huddle with Emma and Operations</b><small>Voice, you stay on this screen</small></span></button>
+  <button onclick="hudPop(0);go('huddle')"><span class="hpi" style="background:#64748b">+</span><span><b>Choose who joins…</b><small>Video or voice, AI teammates and colleagues</small></span></button>
+ </div>`;
+const anchor=bar.querySelector(".presence")||bar.querySelector(".cmdbtn"); bar.insertBefore(wrap, anchor?anchor.nextSibling:null);
+window.hudPop=(on)=>{ document.getElementById("hudPop").classList.toggle("show",!!on); };
+document.getElementById("hudTop").onclick=e=>{ e.stopPropagation(); const st=window.HUD_STATE?HUD_STATE():{on:false}; if(st.on){ go("huddle"); return; } hudPop(!document.getElementById("hudPop").classList.contains("show")); };
+document.addEventListener("click",e=>{ if(!wrap.contains(e.target)) hudPop(0); });
+function upd(){ const st=window.HUD_STATE?HUD_STATE():{on:false}, b=document.getElementById("hudTop"), l=document.getElementById("hudTopL"); if(!b) return; if(st.on) hudPop(0);
+  b.classList.toggle("on",st.on); b.classList.toggle("rec",!!st.rec); l.innerHTML=st.on?`<i class="gd"></i>${st.rec?"Recording":st.live?"Live AI":"In huddle"} · ${st.t}`:"Huddle"; if(st.on&&b.firstElementChild&&b.firstElementChild.tagName==="svg") b.firstElementChild.style.display="none"; else if(b.firstElementChild&&b.firstElementChild.tagName==="svg") b.firstElementChild.style.display=""; }
+setInterval(upd,1000); upd();
+})();
+</script>
 </body>
 </html>

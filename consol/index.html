@@ -708,6 +708,14 @@ body.filedrag .drtarget{outline:2px dashed rgba(43,89,255,.45);outline-offset:3p
 .dradd{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);border:1.5px dashed #cdd5e4;border-radius:10px;padding:8px 10px;cursor:pointer;background:#fafbfd}
 .dradd:hover{border-color:var(--brand);color:var(--brand)} .dradd svg{width:15px;height:15px}
 
+.drvoice{position:relative}
+body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.88);border-color:#7aa2ff} #vsheet .drhot .drveil{opacity:1!important}
+#vsheet .drveil div{color:#cfe0ff}
+.vclip{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.14)!important;color:#9fb0cf!important}
+.vclip:hover{color:#fff!important;border-color:#7aa2ff!important}
+#vsheet .drc{color:var(--ink)}
+#vsheet .drc b,#vsheet .drf b,#vsheet .drh b,#vsheet .drv{color:var(--ink)!important}
+
 /* ---------- No double work ---------- */
 .clmw{margin-top:5px}
 .clm{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#7a4b00;background:#fff4e0;border:1px solid #f6dcaa;border-radius:99px;padding:2px 9px 2px 3px;white-space:nowrap}
@@ -4911,6 +4919,26 @@ document.addEventListener("drop",e=>{ depth=0; document.body.classList.remove("f
   if(!isFiles(e)||!e.dataTransfer.files.length) return; const ch=e.target.closest&&e.target.closest(".drchat"), dr=e.target.closest&&e.target.closest(".drtarget");
   if(ch){ e.preventDefault(); e.stopPropagation(); chatFiles([...e.dataTransfer.files]); } else if(dr){ e.preventDefault(); e.stopPropagation(); draftFiles(+dr.dataset.draft,[...e.dataTransfer.files]); } }, true);
 
+
+/* voice panel: drop or attach documents there too */
+async function voiceFiles(files){
+  const conv=document.getElementById("vConv"); if(!conv) return; if(window.openVoice) openVoice();
+  files.forEach(f=>{ const u=document.createElement("div"); u.className="vu"; u.innerHTML=`<span class="drchip">${ic("file-text")}<b>${f.name}</b><span>${fmtSize(f.size)}</span></span>`; conv.appendChild(u); });
+  const row=document.createElement("div"); row.className="va"; row.innerHTML=`<span class="av" style="background:linear-gradient(135deg,#4a72ff,#00b89c)"><span style="color:#fff">AI</span></span><div><div class="who">Your AI team</div><div class="txt"><span class="thinking"><i></i><i></i><i></i></span> Reading ${files.length>1?files.length+" documents":"the document"}…</div></div>`;
+  conv.appendChild(row); conv.scrollTop=1e9;
+  const rs=[]; for(const f of files) rs.push(await review(f)); await new Promise(r=>setTimeout(r,700));
+  row.querySelector(".txt").innerHTML=`Here's my review.${rs.map(r=>card(r)).join("")}`; conv.scrollTop=1e9;
+  log("sys",`Voice panel: reviewed ${rs.map(r=>r.name).join(", ")}`); save();
+}
+function decorateVoice(){ const bar=document.querySelector("#vsheet .vbar"); if(!bar||bar.querySelector(".drclip")) return;
+  const l=document.createElement("label"); l.className="drclip vclip"; l.title="Attach a document for review"; l.innerHTML=`${ic("file-text")}<input type="file" multiple hidden>`; bar.insertBefore(l,bar.firstChild);
+  l.querySelector("input").onchange=e=>{ if(e.target.files.length) voiceFiles([...e.target.files]); e.target.value=""; };
+  const p=document.querySelector("#vsheet .vpanel"); if(p&&!p.querySelector(".drveil")){ p.classList.add("drvoice"); const v=document.createElement("div"); v.className="drveil"; v.innerHTML=`<div>${ic("file-text")}<b>Drop to review</b><span>Your AI team checks it against your jobs and quotes</span></div>`; p.appendChild(v); } }
+decorateVoice();
+document.addEventListener("dragover",e=>{ if(!isFiles(e)) return; const v=e.target.closest&&e.target.closest("#vsheet"); if(v){ e.preventDefault(); v.querySelector(".vpanel").classList.add("drhot"); } });
+document.addEventListener("drop",e=>{ const v=e.target.closest&&e.target.closest("#vsheet"); document.querySelectorAll("#vsheet .drhot").forEach(x=>x.classList.remove("drhot"));
+  if(!v||!isFiles(e)||!e.dataTransfer.files.length) return; e.preventDefault(); e.stopPropagation(); voiceFiles([...e.dataTransfer.files]); }, true);
+window.drTestVoice=voiceFiles;
 seedDrafts();
 const pr=render; render=function(){ pr(); try{ if(view==="chat") decorateChat(); decorateDrafts(); }catch(err){ console.error(err); } };
 window.drTestChat=chatFiles; window.drTestDraft=draftFiles;

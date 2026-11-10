@@ -6564,5 +6564,78 @@ window.phDraft=k=>{
 })();
 </script>
 
+<style id="levels-css">
+.lvChip{display:inline-block;font-size:10px;font-weight:700;border-radius:99px;padding:1px 8px;white-space:nowrap}
+.lvRow{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.lvOpt{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff;text-align:left;font:inherit;cursor:pointer}
+.lvOpt.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.lvOpt b{font-size:13px}.lvOpt div{font-size:11.5px;color:var(--muted)}
+.lvDots{display:inline-flex;gap:3px;vertical-align:middle}.lvDots i{width:7px;height:7px;border-radius:2px;background:#e3e6ec}.lvDots i.on{background:var(--ink)}
+.exGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin-bottom:12px}
+</style>
+<script id="levels-js">
+/* ---------- Levels: the job title sets how capable an AI teammate is and what it costs. No model names are ever shown. ---------- */
+(function(){
+const LV={
+ jr:{n:"Coordinator",c:"#64748b",bg:"#eef0f4",cap:2,task:0.02,d:"High-volume desk work: tracking replies, documents, data entry, inbox sorting. Passes anything unusual up."},
+ mgr:{n:"Manager",c:"#2a78d6",bg:"#e8f0fc",cap:3,task:0.12,d:"Judgement calls: quotes, exceptions, customer problems, supplier bills. Thinks it through before acting."},
+ exec:{n:"Executive",c:"#5a47c9",bg:"#f1eefc",cap:4,task:0.9,d:"Few tasks, big stakes: pricing strategy, cash, which accounts to chase, weekly reviews. Takes its time and shows its reasoning."},
+ pres:{n:"President",c:"#b54708",bg:"#fef0e1",cap:5,task:2.5,d:"The whole company: the owner's weekly review, plans, trade-offs between departments. Deepest thinking, used sparingly."}
+};
+const EXEC=[
+ {id:"coo",n:"Chief Operating Officer",lv:"exec",ico:"◆",col:"#1baf7a",owns:"Runs the Operations and Customer service managers. Capacity, carriers, service levels, where jobs go wrong.",wk:"Weekly ops review, carrier scorecards, plans for peak",tasks:38},
+ {id:"cfo",n:"Chief Financial Officer",lv:"exec",ico:"◆",col:"#eda100",owns:"Runs the Finance manager. Cash forecast, margin by customer and lane, credit limits, what to collect first.",wk:"13-week cash forecast, margin leaks, credit decisions for you",tasks:31},
+ {id:"cro",n:"Chief Revenue Officer",lv:"exec",ico:"◆",col:"#2a78d6",owns:"Runs the Sales manager and Account growth. Pricing strategy, which accounts and lanes to chase, campaign plan.",wk:"Pipeline review, price changes, quarterly targets",tasks:34},
+ {id:"pres",n:"President",lv:"pres",ico:"★",col:"#b54708",owns:"Reports to you. Joins up all departments: the weekly owner review, the plan, and the trade-offs between sales, ops and finance.",wk:"Friday owner review, monthly plan, decisions only you can make",tasks:12}
+];
+const dots=n=>`<span class="lvDots" title="Capability ${n} of 5">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
+const chip=k=>`<span class="lvChip" style="background:${LV[k].bg};color:${LV[k].c}">${LV[k].n} level</span>`;
+function L(){ S.lvl=S.lvl||{}; return S.lvl; }
+function lvOf(id,name){ const l=L(); if(l[id]) return l[id]; if(["sales","ops","fin","cs","twin"].includes(id)) return "mgr"; if(EXEC.find(e=>e.id===id)) return EXEC.find(e=>e.id===id).lv; return /manager|supervisor|lead|head/i.test(name||"")?"mgr":"jr"; }
+window.LV_OF=lvOf; window.LV_DEF=LV;
+const perMo=(k,tasks)=>Math.round(LV[k].task*tasks*22);
+
+/* AI team: executive layer above the managers, and a level chip on every card */
+const bAI=V.aiteam;
+V.aiteam=()=>{
+  let h=bAI().replace(/Four managers run (.+?) day to day and report to you\./,'A President, three executives and four managers run $1 day to day and report to you.');
+  const ex=`<div style="margin:4px 0 6px;font-weight:700;font-size:13px">Executive team <span class="muted" style="font-weight:500;font-size:12px">· few tasks, big decisions · each one reports to you</span></div>
+  <div class="exGrid">${EXEC.map(e=>{const k=lvOf(e.id);return `<div class="card" style="border-top:4px solid ${LV[k].c}">
+    <div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:10px;background:${LV[k].c};color:#fff;display:grid;place-items:center;font-weight:700">${e.ico}</div><div><b>${e.n}</b><div>${chip(k)}</div></div></div>
+    <div class="muted" style="font-size:12px;margin:8px 0">${e.owns}</div>
+    <div style="font-size:12px"><b>This week:</b> ${e.wk}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px"><span>Capability ${dots(LV[k].cap)}</span><span class="muted">${e.tasks} tasks a week · ${money(Math.round(LV[k].task*e.tasks*4.33))}/mo</span></div>
+  </div>`;}).join("")}</div>
+  <div style="margin:10px 0 6px;font-weight:700;font-size:13px">Managers <span class="muted" style="font-weight:500;font-size:12px">· run each department day to day</span></div>`;
+  const m='<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(215px,1fr))">';
+  const i=h.indexOf(m); if(i>=0) h=h.slice(0,i)+ex+h.slice(i);
+  AGENTS.forEach(g=>{ h=h.replace(`<b>${g.name}</b><div class="muted" style="font-size:11px">Reports to you</div>`,`<b>${g.name}</b><div class="muted" style="font-size:11px">${chip(lvOf(g.k))} Reports to the ${g.k==="sales"?"CRO":g.k==="fin"?"CFO":"COO"}</div>`); });
+  h+=`<div class="card" style="margin-top:14px"><h3 style="margin-top:0">How levels work</h3><div class="muted" style="font-size:13px;margin-bottom:10px">The job title sets the level. The more senior the role, the more capable it is and the more each task costs. Most work stays with coordinators; anything above their level is passed up, so you only pay senior rates when the work needs it.</div>
+    <table class="trTbl"><thead><tr><th>Level</th><th>Capability</th><th>Cost per task</th><th>Does</th></tr></thead><tbody>${Object.entries(LV).map(([k,v])=>`<tr style="cursor:default"><td>${chip(k)}</td><td>${dots(v.cap)}</td><td>${v.task<0.1?"$"+v.task.toFixed(2):"$"+v.task.toFixed(2)}</td><td style="font-size:12px">${v.d}</td></tr>`).join("")}</tbody></table>
+    <div class="muted" style="font-size:11px;margin-top:6px">Costs per task are estimates and only shown to owners and managers. Change a role's level in Training & KPIs.</div></div>`;
+  return h;
+};
+
+/* Training & KPIs: level picker for the selected teammate */
+if(V.training){
+  const bT=V.training;
+  V.training=()=>{
+    let h=bT();
+    try{
+      const D=window.TRAIN_DATA, ms=D.mates(), sel=(S.trn&&S.trn.sel)||ms[0].id, m=ms.find(x=>x.id===sel)||ms[0], cur=lvOf(m.id,m.n), tasks=m.kind==="Digital twin"?320:m.kind==="AI manager"?900:1400;
+      const box=`<div style="margin:12px 0 4px;font-weight:600;font-size:13px">Level <span class="muted" style="font-weight:500;font-size:12px">· sets how capable it is and what it costs</span></div>
+      <div class="lvRow">${["jr","mgr","exec"].map(k=>`<button class="lvOpt ${cur===k?"on":""}" onclick="lvSet('${m.id}','${k}')"><b>${LV[k].n}</b> ${dots(LV[k].cap)}<div>about ${money(perMo(k,tasks/22))}/mo at ${tasks.toLocaleString("en-US")} tasks</div></button>`).join("")}</div>`;
+      const mk='<h4 style="margin:14px 0 8px">KPIs</h4>', i=h.indexOf(mk); if(i>=0) h=h.slice(0,i)+box+h.slice(i);
+      ms.forEach(x=>{ const k=lvOf(x.id,x.n); h=h.replace(`<small>${x.kind} · v`,`<small>${LV[k].n} · v`); });
+    }catch(e){}
+    return h;
+  };
+}
+window.lvSet=(id,k)=>{ const was=lvOf(id); if(was===k) return; L()[id]=k; const up=LV[k].cap>LV[was].cap;
+  try{ const t=S.trn; const v=t&&t.ver&&t.ver[id]; if(v&&v.length){ const last=v[v.length-1]; v.push({v:last.v.split(".")[0]+"."+(+last.v.split(".")[1]+1),d:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"}),p:Math.max(0,Math.min(1.05,last.p+(up?.08:-.1))),note:(up?"Moved up":"Moved down")+" to "+LV[k].n+" level"}); } }catch(e){}
+  toast(`${up?"Moved up":"Moved down"} to ${LV[k].n} level. ${up?"More capable, costs more per task.":"Cheaper per task; harder work gets passed up."} Roll back any time.`); render(); };
+})();
+</script>
+
 </body>
 </html>

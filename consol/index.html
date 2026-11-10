@@ -6760,5 +6760,41 @@ V.perf=()=>{ setTimeout(()=>{ view="dashboard"; try{document.querySelectorAll("#
 })();
 </script>
 
+<script id="plans-js">
+/* ---------- Plans & pricing: hire AI teammates by role (lead offer); flat plan, per job, platform fee + per job also offered ---------- */
+(function(){
+const nav=document.getElementById("nav"), ref=nav.querySelector('button[data-v="integrations"]');
+const nb=document.createElement("button"); nb.dataset.v="plans"; nb.innerHTML=`<span class="ico">$</span>Plans & pricing`; nb.onclick=()=>go("plans");
+if(ref) ref.parentNode.insertBefore(nb, ref.nextSibling); else nav.appendChild(nb);
+const ROLE=[["jr","Coordinator",400,4500,"Sorting the inbox, tracking replies, documents, data entry, booking requests"],["mgr","Manager",900,8000,"Runs a department: quotes, exceptions, customers, supplier bills"],["exec","Executive",2000,20000,"COO, CFO or CRO: strategy, cash, pricing, weekly reviews"],["pres","President",3500,30000,"Joins up the whole company and runs your weekly owner review"]];
+const BASE=300;
+function P(){ S.plan=S.plan||{n:{jr:3,mgr:4,exec:0,pres:0},jobs:1500}; return S.plan; }
+const tot=n=>BASE+ROLE.reduce((a,r)=>a+r[2]*(n[r[0]]||0),0), ppl=n=>ROLE.reduce((a,r)=>a+r[3]*(n[r[0]]||0),0);
+V.plans=()=>{
+  const p=P(), n=p.n, t=tot(n), h=ppl(n), jobs=p.jobs;
+  return `<header class="top"><div><h1>Plans & pricing</h1><div class="sub">Build your AI team the way you'd hire people: pick the roles you need, each priced by its level. Every plan includes dashboards, Gamma decks, PandaDoc proposals and e-signature, your connectors, the inbox and voice. Add or remove a role any month. <span class="pill" style="background:#fff4e0;color:#a15c00">Owner view</span></div></div></header>
+  <div class="card" style="border:2px solid var(--ink)"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start"><div><span class="pill" style="background:#e3f6ee;color:#0f7a4f">Recommended</span><h3 style="margin:6px 0 2px">Hire by role</h3><div class="muted" style="font-size:12.5px">Platform fee ${money(BASE)} a month, plus each teammate you hire.</div></div>
+    <div style="text-align:right"><div style="font-size:30px;font-weight:800">${money(t)}<span style="font-size:14px;font-weight:600">/mo</span></div><div class="muted" style="font-size:12px">The same team as people: <b style="color:var(--ink)">${money(h)}/mo</b>${h?` · you save <b style="color:#0f7a4f">${money(h-t)}</b>`:""}</div></div></div>
+    <div style="display:grid;gap:8px;margin-top:12px">${ROLE.map(r=>`<div style="display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:220px"><b>${r[1]}</b> ${window.LV_DEF?`<span class="lvDots">${[1,2,3,4,5].map(i=>`<i class="${i<=window.LV_DEF[r[0]].cap?"on":""}"></i>`).join("")}</span>`:""}<div class="muted" style="font-size:12px">${r[4]}</div></div>
+      <div style="width:150px;font-size:13px"><b>${money(r[2])}</b>/mo each<div class="muted" style="font-size:11px">a person: ~${money(r[3])}</div></div>
+      <div style="display:flex;align-items:center;gap:8px"><button class="btn sm sec" onclick="plN('${r[0]}',-1)">−</button><b style="width:20px;text-align:center">${n[r[0]]||0}</b><button class="btn sm sec" onclick="plN('${r[0]}',1)">+</button></div></div>`).join("")}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><span class="muted" style="font-size:12px;align-self:center">Start from:</span>${[["Small",{jr:1,mgr:1,exec:0,pres:0}],["Mid",{jr:3,mgr:4,exec:0,pres:0}],["Large",{jr:10,mgr:4,exec:3,pres:1}]].map(([l,v])=>`<button class="btn sm sec" onclick='plSet(${JSON.stringify(v)})'>${l} forwarder</button>`).join("")}</div>
+  </div>
+  <h3 style="margin:18px 0 8px">Other ways to buy</h3>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+    <div class="card"><b>Flat plan by size</b><div class="muted" style="font-size:12px;margin:4px 0 8px">One price for a full team, sized to your company.</div><div style="font-size:13px">Small ${money(1500)} · Mid ${money(5000)} · Large ${money(15000)} a month</div></div>
+    <div class="card"><b>Per job</b><div class="muted" style="font-size:12px;margin:4px 0 8px">Pay for each job handled. Good if your volume swings with the season.</div><div style="font-size:13px">${money(3.5)} a job · at ${jobs.toLocaleString("en-US")} jobs: <b>${money(3.5*jobs)}</b>/mo</div></div>
+    <div class="card"><b>Platform fee plus per job</b><div class="muted" style="font-size:12px;margin:4px 0 8px">A small fixed fee, then a lower price per job.</div><div style="font-size:13px">${money(BASE)} + ${money(2)} a job · at ${jobs.toLocaleString("en-US")} jobs: <b>${money(BASE+2*jobs)}</b>/mo</div></div>
+  </div>
+  <label class="muted" style="display:flex;gap:8px;align-items:center;font-size:12px;margin-top:10px">Jobs a month <input type="range" min="100" max="8000" step="100" value="${jobs}" onchange="plJobs(this.value)" style="flex:1;max-width:320px"> <b style="color:var(--ink)">${jobs.toLocaleString("en-US")}</b></label>
+  <div class="muted" style="font-size:11.5px;margin-top:10px">Prices are proposals for the demo. Level and cost per hour are only shown to owners and managers.</div>`;
+};
+window.plN=(k,d)=>{ const n=P().n; n[k]=Math.max(0,(n[k]||0)+d); render(); };
+window.plSet=v=>{ P().n=Object.assign({},v); render(); };
+window.plJobs=v=>{ P().jobs=+v; render(); };
+})();
+</script>
+
 </body>
 </html>

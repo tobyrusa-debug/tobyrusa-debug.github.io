@@ -962,6 +962,8 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .vlive[data-s=speaking]{animation:vlp 1.2s ease-in-out infinite}.vlive[data-s=connecting]{opacity:.8}.vlive[data-s=failed]{opacity:.6}
 @keyframes vlp{50%{box-shadow:0 0 0 6px rgba(0,209,178,.12)}}
 .vfail{font-size:12px;line-height:1.45;padding:8px 10px;border-radius:10px;background:rgba(237,161,0,.12);border:1px solid rgba(237,161,0,.35);margin:6px 0}.vfail a{color:inherit;font-weight:700}</style>
+<style id="hlive-css">.hlive{border:0;border-radius:999px;padding:0 16px;height:44px;font:inherit;font-size:13px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#4a72ff,#00b89c);box-shadow:0 6px 18px rgba(43,89,255,.3);display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.hlive.connecting{opacity:.8;cursor:wait}.hlive.live{background:#dc2626;box-shadow:0 6px 18px rgba(220,38,38,.35)}.hlive i{width:9px;height:9px;border-radius:50%;background:#fff;animation:hlp 1s ease-in-out infinite}@keyframes hlp{50%{opacity:.25;transform:scale(.7)}}</style>
 </head>
 <body>
 <div class="app">
@@ -4039,13 +4041,34 @@ const SCRIPT=[
 ];
 const NOTES=[["Tell Lakefront about the CBP exam on OCI-3109 today","Emma"],["Bill the exam fee at cost plus $45 handling","Finance manager"],["Move the OCI-3109 delivery to Thursday and update the portal","Operations manager"],["Book Q-2041 on Carrier B for Thursday","Sales manager"]];
 let pick=new Set(["ops","priya"]), mode="video", timers=[], stream=null;
+/* Live AI voice in the huddle: the real ElevenLabs agent joins the call */
+const LV_AGENT="agent_2401m72y5nx0etc920bf451y60x0", LV_SDK="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.35.0/+esm", LV_TALK="https://elevenlabs.io/app/talk-to?agent_id="+LV_AGENT;
+const LV={c:null,st:"off",ai:null};
+function lvBtn(){ const b=document.getElementById("hLiveBtn"); if(!b) return; b.className="hlive "+LV.st; b.innerHTML=LV.st==="live"?'<i></i>Live · end':LV.st==="connecting"?"Connecting…":"Talk live to AI"; }
+function lvFallback(){ toast("Live voice can't run in this preview. Opening the live agent in a new tab."); try{ const a=document.createElement("a"); a.href=LV_TALK; a.target="_blank"; a.rel="noopener"; document.body.appendChild(a); a.click(); a.remove(); }catch(e){} }
+function lvEnd(){ const c=LV.c; LV.c=null; LV.st="off"; if(c) try{ c.endSession(); }catch(e){} const h=H(); if(h) { h.speaking=null; drawLive(); } lvBtn(); }
+window.hudLive=async()=>{ const h=H(); if(!h) return; if(LV.c||LV.st==="connecting"){ lvEnd(); return; }
+  let ai=h.ppl.find(k=>PPL[k].ai); if(!ai){ ai="ops"; h.ppl.push("ops"); render(); }
+  LV.ai=ai; LV.st="connecting"; lvBtn();
+  try{ const ms=await navigator.mediaDevices.getUserMedia({audio:true}); ms.getTracks().forEach(x=>x.stop()); }
+  catch(e){ LV.st="off"; lvBtn(); if(e&&e.name==="NotAllowedError"&&window.self===window.top){ toast("Allow the microphone to talk live."); } else lvFallback(); return; }
+  let Conversation; try{ ({Conversation}=await import(LV_SDK)); }catch(e){ LV.st="off"; lvBtn(); lvFallback(); return; }
+  timers.forEach(clearInterval); timers=[]; h.tr=[]; h.speaking=null; drawLive();
+  try{ LV.c=await Conversation.startSession({ agentId:LV_AGENT, connectionType:"websocket",
+      clientTools:{ open_screen:()=>"The caller is in a huddle; stay on the call." },
+      onConnect:()=>{ LV.st="live"; lvBtn(); try{ LV.c&&LV.c.sendContextualUpdate(`You are on a live huddle call in Consol with ${h.ppl.map(k=>PPL[k].n).join(", ")} and Sam. Answer as the ${PPL[LV.ai].n} unless another manager clearly owns the question. Keep it conversational.`); }catch(e){} log("sys",`Huddle: ${PPL[LV.ai].n} joined live (ElevenLabs voice)`); },
+      onDisconnect:()=>{ LV.c=null; LV.st="off"; const hh=H(); if(hh){ hh.speaking=null; drawLive(); } lvBtn(); },
+      onError:(m)=>{ try{ console.warn("ElevenLabs",m); }catch(e){} },
+      onMessage:({message,source})=>{ const hh=H(); if(!hh||!message) return; hh.tr.push({k:source==="ai"?LV.ai:"me",t:String(message).replace(/\[[^\]]{1,30}\]\s*/g,"")}); drawLive(); },
+      onModeChange:({mode})=>{ const hh=H(); if(!hh) return; hh.speaking=mode==="speaking"?LV.ai:null; drawLive(); } });
+  }catch(e){ LV.c=null; LV.st="off"; lvBtn(); lvFallback(); } };
 function H(){ return S.hud||null; }
 window.hudPick=k=>{ pick.has(k)?pick.delete(k):pick.add(k); render(); };
 window.hudMode=m=>{ mode=m; render(); };
 window.hudStart=(preset)=>{ const ppl=preset?preset.split(","):[...pick]; if(!ppl.length){ toast("Pick at least one person or AI teammate."); return; }
   S.hud={ppl,mode,start:Date.now(),chat:[],tr:[],notes:[],mic:true,cam:mode==="video",si:0}; save(); go("huddle");
   log("sys",`Huddle started with ${ppl.map(k=>PPL[k].s).join(", ")}`); runScript(); if(mode==="video") hudCam(true); };
-function runScript(){ timers.forEach(clearInterval); timers=[]; const h=H(); if(!h) return;
+function runScript(){ if(LV.c||LV.st!=="off") return; timers.forEach(clearInterval); timers=[]; const h=H(); if(!h) return;
   const iv=setInterval(()=>{ const h=H(); if(!h||view!=="huddle"){ return; } const line=SCRIPT.find((l,i)=>i>=h.si&&h.ppl.includes(l[0]))||null;
     if(!line){ clearInterval(iv); return; } h.si=SCRIPT.indexOf(line)+1; h.tr.push({k:line[0],t:line[1]}); h.speaking=line[0];
     const n=NOTES[Math.min(NOTES.length-1,Math.floor(h.tr.length/1.5))]; if(n&&!h.notes.some(x=>x[0]===n[0])) h.notes.push(n);
@@ -4059,7 +4082,7 @@ window.hudCam=async(on)=>{ const h=H(); if(!h) return; h.cam=on??!h.cam;
 window.hudMic=()=>{ const h=H(); h.mic=!h.mic; render(); };
 window.hudShare=async()=>{ try{ const s=await navigator.mediaDevices.getDisplayMedia({video:true}); toast("Sharing your screen."); s.getTracks()[0].onended=()=>toast("Screen share stopped."); }catch(e){ toast("Screen sharing is blocked on this page. It works in the full product."); } };
 window.hudInvite=k=>{ const h=H(); if(h.ppl.includes(k)) return; h.ppl.push(k); log("sys",`${PPL[k].n} joined the huddle`); toast(`${PPL[k].n} ${PPL[k].ai?"joined":"is joining"}.`); save(); render(); };
-window.hudLeave=()=>{ const h=H(); if(!h) return; timers.forEach(clearInterval); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+window.hudLeave=()=>{ const h=H(); if(!h) return; lvEnd(); timers.forEach(clearInterval); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
   const mins=Math.max(1,Math.round((Date.now()-h.start)/60000)), notes=h.notes.length?h.notes:NOTES.slice(0,2);
   S.hudLog=S.hudLog||[]; S.hudLog.unshift({ppl:h.ppl,mins,notes,docs:h.chat.filter(m=>m.doc).length,when:"Today"}); S.hud=null;
   log("sys",`Huddle ended (${mins} min): ${notes.length} action items assigned`); save();
@@ -4078,7 +4101,7 @@ function tile(k){ const h=H(), p=PPL[k], talk=h.speaking===k;
   return `<div class="htile ${talk?"talk":""}" style="--pc:${p.c}"><div class="hav ${p.ai?"ai":""}">${p.ai?`<span class="horb"></span>`:""}<span>${p.i}</span></div>
     <div class="hname">${p.n}${p.ai?' <span class="hai">AI</span>':""}</div>${talk?'<div class="hbars"><i></i><i></i><i></i><i></i></div>':""}</div>`; }
 function drawLive(){ const h=H(); if(!h||view!=="huddle") return; const g=document.getElementById("hGrid"); if(g) g.querySelectorAll(".htile[data-k]").forEach(el=>{ const k=el.dataset.k; el.outerHTML=tile(k).replace('<div class="htile','<div data-k="'+k+'" class="htile'); });
-  const t=document.getElementById("hTr"); if(t){ t.innerHTML=h.tr.slice(-4).map(x=>`<div><b style="color:${PPL[x.k].c}">${PPL[x.k].s}</b> ${x.t}</div>`).join("")||'<div class="muted">The transcript appears here as people talk.</div>'; }
+  const t=document.getElementById("hTr"); if(t){ t.innerHTML=h.tr.slice(LV.c?-6:-4).map(x=>{ const p=x.k==="me"?{c:"#2b59ff",s:"You"}:PPL[x.k]; return `<div><b style="color:${p.c}">${p.s}</b> ${x.t}</div>`; }).join("")||'<div class="muted">The transcript appears here as people talk.</div>'; }
   const n=document.getElementById("hNotes"); if(n) n.innerHTML=notesHTML(); const c=document.getElementById("hClock"); if(c) c.textContent=elapsed(); }
 function notesHTML(){ const h=H(); return h.notes.length?h.notes.map(x=>`<div class="hn"><span>✓</span><div>${x[0]}<div class="muted" style="font-size:11px">${x[1]}</div></div></div>`).join(""):'<div class="muted" style="font-size:12px">Action items appear here as they are agreed.</div>'; }
 function drawChat(){ const h=H(), b=document.getElementById("hChat"); if(!b) return; b.innerHTML=h.chat.map(m=>m.k==="me"?`<div class="tu">${m.t}</div>`:`<div class="ta"><span class="ivav" style="background:${PPL[m.k].c}">${PPL[m.k].i}</span><div><div class="muted" style="font-size:11px">${PPL[m.k].s}</div>${m.t}</div></div>`).join("")||'<div class="muted" style="font-size:12px">Type a message or drop a document here. Everyone in the huddle sees it.</div>'; b.scrollTop=1e9; }
@@ -4101,7 +4124,7 @@ V.huddle=()=>{ const h=H();
       <div class="htr" id="hTr"></div>
       <div class="hctl"><button class="hb ${h.mic?"":"off"}" onclick="hudMic()" title="Microphone">${ic("mic")}</button><button class="hb ${h.cam?"":"off"}" onclick="hudCam()" title="Camera">${ic("video")}</button><button class="hb" onclick="hudShare()" title="Share screen">${ic("external-link")}</button>
         <div class="hadd">${ic("user-plus")}<select onchange="if(this.value){hudInvite(this.value);this.value=''}"><option value="">Add someone…</option>${Object.entries(PPL).filter(([k])=>!h.ppl.includes(k)).map(([k,p])=>`<option value="${k}">${p.n}</option>`).join("")}</select></div>
-        <button class="hb leave" onclick="hudLeave()">Leave</button></div>
+        <button id="hLiveBtn" class="hlive ${LV.st}" onclick="hudLive()">${LV.st==="live"?'<i></i>Live · end':LV.st==="connecting"?"Connecting…":"Talk live to AI"}</button><button class="hb leave" onclick="hudLeave()">Leave</button></div>
     </div>
     <div class="hside"><div class="card hnotes"><h3>Notes and actions <span class="hai">AI</span></h3><div id="hNotes">${notesHTML()}</div></div>
       <div class="card hchatc drchat2"><h3>Huddle chat</h3><div class="hchat" id="hChat"></div>
@@ -4112,7 +4135,7 @@ const nav=document.getElementById("nav"), chatB=nav.querySelector('button[data-v
 const b=document.createElement("button"); b.dataset.v="huddle"; b.innerHTML=`<span class="ico">◍</span>Huddles`; nav.insertBefore(b, chatB.nextSibling);
 document.addEventListener("dragover",e=>{ if(!(e.dataTransfer&&[...e.dataTransfer.types].includes("Files"))) return; const t=e.target.closest&&e.target.closest(".drchat2"); if(t){ e.preventDefault(); t.classList.add("drhot"); } });
 document.addEventListener("drop",e=>{ document.querySelectorAll(".drchat2.drhot").forEach(x=>x.classList.remove("drhot")); const t=e.target.closest&&e.target.closest(".drchat2"); if(!t||!e.dataTransfer.files.length) return; e.preventDefault(); e.stopPropagation(); hudFiles([...e.dataTransfer.files]); }, true);
-const pr=render; render=function(){ pr(); if(view==="huddle"&&H()){ drawLive(); drawChat(); if(H().cam&&stream){ const v=document.getElementById("hudSelf"); if(v&&!v.srcObject){ v.srcObject=stream; v.play().catch(()=>{}); } } if(!timers.length) runScript(); } };
+const pr=render; render=function(){ pr(); if(view==="huddle"&&H()){ drawLive(); drawChat(); if(H().cam&&stream){ const v=document.getElementById("hudSelf"); if(v&&!v.srcObject){ v.srcObject=stream; v.play().catch(()=>{}); } } if(!timers.length&&!LV.c&&LV.st==="off") runScript(); } };
 })();
 
 </script>

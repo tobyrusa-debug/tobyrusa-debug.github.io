@@ -957,6 +957,11 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 @media(max-width:760px){.inTop{flex-wrap:wrap}.inTop>div:nth-child(2){flex-basis:calc(100% - 70px)}.inTop .btn{width:100%}.inK{grid-template-columns:1fr 1fr}.inG{grid-template-columns:1fr}.inB{margin-left:0}}
 
 </style>
+<style id="vlive-css">.vlive{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:inherit;border-radius:999px;padding:5px 12px;font:inherit;font-size:12px;font-weight:650;cursor:pointer;white-space:nowrap}
+.vlive[data-s=listening],.vlive[data-s=speaking]{background:rgba(0,209,178,.16);border-color:rgba(0,209,178,.5);color:#5ff0d6}
+.vlive[data-s=speaking]{animation:vlp 1.2s ease-in-out infinite}.vlive[data-s=connecting]{opacity:.8}.vlive[data-s=failed]{opacity:.6}
+@keyframes vlp{50%{box-shadow:0 0 0 6px rgba(0,209,178,.12)}}
+.vfail{font-size:12px;line-height:1.45;padding:8px 10px;border-radius:10px;background:rgba(237,161,0,.12);border:1px solid rgba(237,161,0,.35);margin:6px 0}.vfail a{color:inherit;font-weight:700}</style>
 </head>
 <body>
 <div class="app">
@@ -5040,17 +5045,17 @@ sh.innerHTML=`<div class="vpanel" role="dialog" aria-label="Voice">
   <div class="vconv" id="vConv"></div>
   <div class="vchips" id="vChips"></div>
   <div class="vbar"><input class="vin" id="vIn" placeholder="Say or type an instruction…" autocomplete="off"><button class="vmic" id="vMic" aria-label="Hold to talk">${orb.querySelector("svg").outerHTML}</button></div>
-  <div class="vhint"><span>Hold the mic or press <kbd>V</kbd>. Money and bookings are read back before anything happens.</span><a href="${LIVE}" target="_blank" rel="noopener">Talk live with real voice ↗</a></div>
+  <div class="vhint"><span>Live ElevenLabs voice: just talk, and interrupt any time. Tap the mic or press <kbd>V</kbd> to start or end. Money and bookings are read back first.</span><button class="vlive" id="vLive" data-s="off">● Start live voice</button></div>
 </div>`;
 document.body.appendChild(sh);
 const conv=$v("#vConv");
 
-function openV(){ sh.classList.add("show"); if(!conv.children.length) greet(); drawChips(); startWave(); }
-function closeV(){ sh.classList.remove("show"); stopListen(); try{ speechSynthesis.cancel(); }catch(e){} }
+function openV(){ sh.classList.add("show"); drawChips(); startWave(); if(elStatus!=="failed") elStart(); else if(!conv.children.length) greet(); }
+function closeV(){ sh.classList.remove("show"); elEnd(); }
 orb.onclick=()=> sh.classList.contains("show")?closeV():openV();
 $v("#vClose").onclick=closeV;
-$v("#vMute").onclick=e=>{ muted=!muted; e.currentTarget.textContent=muted?"🔇":"🔊"; if(muted) try{ speechSynthesis.cancel(); }catch(x){} };
-sh.querySelectorAll(".vag").forEach(b=>b.onclick=()=>{ to=b.dataset.k; sh.querySelectorAll(".vag").forEach(x=>x.classList.toggle("on",x===b)); drawChips(); });
+$v("#vMute").onclick=e=>{ muted=!muted; e.currentTarget.textContent=muted?"🔇":"🔊"; try{ EL&&EL.setVolume({volume:muted?0:1}); }catch(x){} };
+sh.querySelectorAll(".vag").forEach(b=>b.onclick=()=>{ to=b.dataset.k; sh.querySelectorAll(".vag").forEach(x=>x.classList.toggle("on",x===b)); drawChips(); try{ if(EL) EL.sendContextualUpdate(to==="auto"?"The caller wants the whole AI team; answer as whichever manager owns each question.":`The caller chose to talk to the ${MG[to].full}. Answer as the ${MG[to].full} unless another manager clearly owns the question.`); }catch(e){} });
 $v("#vIn").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.value.trim()){ const t=e.target.value.trim(); e.target.value=""; handle(t,false); } });
 
 /* data helpers */
@@ -5167,12 +5172,10 @@ function bubbleUser(t,typed){ const d=document.createElement("div"); d.className
   return new Promise(res=>{ if(!typed){ d.textContent=t; res(); return; }
     const w=t.split(" "); let i=0; level=1;
     const st=setInterval(()=>{ d.innerHTML=w.slice(0,++i).join(" ")+'<span class="cur"></span>'; conv.scrollTop=1e9; if(i>=w.length){ clearInterval(st); d.textContent=t; level=0; res(); } },110); }); }
-function speak(text,m){ if(muted) return Promise.resolve(); return new Promise(res=>{ try{
-  const u=new SpeechSynthesisUtterance(say(text)); u.pitch=m.pitch; u.rate=m.rate;
-  const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)); if(vs.length) u.voice=vs[Object.keys(MG).indexOf(Object.keys(MG).find(k=>MG[k]===m))%vs.length];
-  u.onend=res; u.onerror=res; speechSynthesis.cancel(); speechSynthesis.speak(u); setTimeout(res,9000); }catch(e){ res(); } }); }
+function speak(){ return Promise.resolve(); }
 async function handle(t,typed){
   if(busy) return; busy=true; openV();
+  if(elStatus!=="failed"){ const ok=await elStart(); if(ok&&EL){ await bubbleUser(t,typed); lastSent=norm(t); try{ EL.sendUserMessage(t); }catch(e){} try{ log("sys",`Voice → AI team: “${t}”`); save(); }catch(e){} busy=false; return; } }
   if(pendingAct && /^(yes|yeah|confirm|go ahead|do it|ok)/i.test(t)){ await bubbleUser(t,typed); const p=pendingAct; pendingAct=null; busy=false; runAct(p.act,p.box,p.m); return; }
   pendingAct=null;
   await bubbleUser(t,typed);
@@ -5213,18 +5216,49 @@ function stopListen(){ $v("#vMic").classList.remove("live"); level=0;
     n.innerHTML=`The browser blocks the microphone in this preview. Tap a suggestion, type, or <a href="${LIVE}" target="_blank" rel="noopener">talk live ↗</a>.`;
     conv.appendChild(n); conv.scrollTop=1e9; setTimeout(()=>n.remove(),5000); } }
 const mic=$v("#vMic");
-mic.addEventListener("pointerdown",e=>{ e.preventDefault(); startListen(); });
-mic.addEventListener("pointerup",stopListen); mic.addEventListener("pointerleave",()=>{ if(mic.classList.contains("live")) stopListen(); });
-let vHeld=false;
-document.addEventListener("keydown",e=>{ if(e.key.toLowerCase()!=="v"||e.repeat||/input|textarea|select/i.test(document.activeElement.tagName)) return; vHeld=true; openV(); startListen(); });
-document.addEventListener("keyup",e=>{ if(e.key.toLowerCase()==="v"&&vHeld){ vHeld=false; stopListen(); } });
+mic.addEventListener("click",e=>{ e.preventDefault(); if(EL) elEnd(); else { openV(); } });
+$v("#vLive").onclick=()=>{ if(EL) elEnd(); else { if(elStatus==="failed") elStatus="off"; elStart(); } };
+document.addEventListener("keydown",e=>{ if(e.key.toLowerCase()!=="v"||e.repeat||/input|textarea|select/i.test(document.activeElement.tagName)) return; if(!sh.classList.contains("show")) openV(); else if(EL) elEnd(); else elStart(); });
+
+/* ---------- ElevenLabs live voice: the panel runs the real agent conversation ---------- */
+const AGENT="agent_2401m72y5nx0etc920bf451y60x0", SDK="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.35.0/+esm", DEMO="https://northline-studio.fit/consol/";
+let EL=null, elP=null, elStatus="off", elMode="listening", lastSent="", agRow=null;
+const norm=x=>String(x||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+const SCREENS=["dashboard","jobs","ops","pipeline","insights","billing","aiteam","exceptions","support","growth","calendar","intel","process","transition","claims","integrations","value"];
+function setStatus(st){ elStatus=st; const b=$v("#vLive"); if(b){ b.dataset.s=st; b.textContent={off:"● Start live voice",connecting:"Connecting to your AI team…",listening:"● Live · listening",speaking:"● Live · speaking",failed:"Live voice unavailable here"}[st]||st; }
+  mic.classList.toggle("live",st==="listening"||st==="speaking"); }
+function whoOf(txt){ const m=txt.match(/^\s*(sales|operations|ops|finance|customer service|service)\b/i); if(!m) return MG.auto; const k=m[1].toLowerCase(); return MG[{sales:"sales",operations:"ops",ops:"ops",finance:"fin","customer service":"cs",service:"cs"}[k]]||MG.auto; }
+function addAgent(txt){ const m=whoOf(txt); if(agRow) agRow.querySelector(".av").classList.remove("talk");
+  const r=document.createElement("div"); r.className="va"; r.innerHTML=`<span class="av talk" style="background:${m.c}"><span style="color:#fff">${m.s}</span></span><div><div class="who">${m.full}</div><div class="txt"></div></div>`;
+  r.querySelector(".txt").textContent=txt; conv.appendChild(r); conv.scrollTop=1e9; agRow=r; }
+function onElMsg(p){ const txt=String(p.message||"").replace(/\[[^\]]{1,30}\]\s*/g,"").trim(); if(!txt) return;
+  if(p.source==="user"||p.role==="user"){ if(norm(txt)===lastSent){ lastSent=""; return; } const d=document.createElement("div"); d.className="vu"; d.textContent=txt; conv.appendChild(d); conv.scrollTop=1e9; try{ log("sys",`Voice → AI team: “${txt}”`); }catch(e){} return; }
+  addAgent(txt); }
+function failNote(){ const n=document.createElement("div"); n.className="vfail";
+  n.innerHTML=`Live voice needs the microphone and a direct connection, which this preview blocks. Open the live demo to talk to your AI team: <a href="${DEMO}" target="_blank" rel="noopener">${DEMO.replace("https://","")}</a>. Answers below are shown as text.`;
+  conv.appendChild(n); conv.scrollTop=1e9; }
+function elStart(){ if(EL) return Promise.resolve(true); if(elP) return elP; setStatus("connecting");
+  elP=(async()=>{ try{ const {Conversation}=await import(SDK);
+      EL=await Conversation.startSession({ agentId:AGENT, connectionType:"websocket",
+        clientTools:{ open_screen:(a)=>{ const v=a&&a.screen; if(SCREENS.includes(v)){ try{ view=v; render(); window.scrollTo(0,0); }catch(e){} } return "opened"; } },
+        onConnect:()=>setStatus("listening"),
+        onDisconnect:()=>{ EL=null; elP=null; if(agRow) agRow.querySelector(".av").classList.remove("talk"); if(elStatus!=="failed") setStatus("off"); },
+        onError:(m)=>{ try{ console.warn("ElevenLabs",m); }catch(e){} },
+        onModeChange:({mode})=>{ elMode=mode; if(EL) setStatus(mode==="speaking"?"speaking":"listening"); if(mode!=="speaking"&&agRow) agRow.querySelector(".av").classList.remove("talk"); },
+        onMessage:onElMsg });
+      if(muted) try{ EL.setVolume({volume:0}); }catch(e){}
+      try{ log("sys","Live voice session started (ElevenLabs)"); }catch(e){}
+      return true;
+    }catch(e){ EL=null; elP=null; setStatus("failed"); failNote(); if(!conv.querySelector(".va")) greet(); return false; } })();
+  return elP; }
+function elEnd(){ const c=EL; EL=null; elP=null; if(c) try{ c.endSession(); }catch(e){} if(elStatus!=="failed") setStatus("off"); }
 
 /* waveform */
 let level=0, cur=0, wr=null;
 function startWave(){ if(wr) return; const c=$v("#vWave"), x=c.getContext("2d"), dpr=Math.min(2,devicePixelRatio||1); let t=0;
   const f=()=>{ if(!sh.classList.contains("show")){ wr=null; return; }
     const W=c.clientWidth,H=c.clientHeight; if(c.width!==W*dpr){ c.width=W*dpr; c.height=H*dpr; } x.setTransform(dpr,0,0,dpr,0,0); x.clearRect(0,0,W,H);
-    cur+= (level-cur)*.08; t+=.06;
+    if(EL){ try{ level=elMode==="speaking"?Math.min(1,EL.getOutputVolume()*2.4):Math.min(.9,EL.getInputVolume()*2.6); }catch(e){} } cur+= (level-cur)*.12; t+=.06;
     [["rgba(43,89,255,.9)",1,0],["rgba(0,209,178,.75)",.7,1.7],["rgba(122,162,255,.45)",.45,3.1]].forEach(([col,amp,ph])=>{
       x.beginPath(); for(let i=0;i<=W;i+=3){ const k=i/W, env=Math.sin(Math.PI*k);
         const y=H/2+Math.sin(k*12+t*2+ph)*env*(4+cur*28)*amp*(1+.3*Math.sin(t*3+k*20)); i?x.lineTo(i,y):x.moveTo(i,y); }

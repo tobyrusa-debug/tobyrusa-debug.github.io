@@ -456,6 +456,11 @@ main.enter>*:nth-child(4){animation-delay:.15s} main.enter>*:nth-child(n+5){anim
   .toast{bottom:150px!important}
 }
 
+.trace{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;align-items:center}
+.trace .tl{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#7f8db0;margin-right:2px}
+.tc2{font-size:11.5px;padding:3px 9px;border-radius:99px;background:rgba(124,242,220,.1);border:1px solid rgba(124,242,220,.25);color:#bff5ea} .tc2 i{font-style:normal;color:#8fa3cc}
+.hand{margin-top:8px;font-size:12px;color:#ffd38a}
+
 /* ---------- Command centre ---------- */
 .dhead{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:20px}
 .eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7489;margin-bottom:6px}
@@ -749,6 +754,22 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .eup{display:flex;gap:3px} .eup i{flex:1;height:22px;border-radius:3px;background:#2fd19a} .eup i.amb{background:#ffb020}
 @media (max-width:900px){.edge{grid-template-columns:1fr}.edgebox{padding-top:0}.egrid{grid-template-columns:1fr 1fr}.elist{grid-template-columns:1fr}}
 
+.layer{margin-bottom:16px}
+.lyr{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:center;margin-top:6px}
+.lsys{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lsys div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fbfcfe;font-size:12px} .lsys b{display:block;font-size:12.5px} .lsys span{color:var(--muted);font-size:11.5px}
+.lcore{position:relative;border-radius:18px;padding:22px 16px;text-align:center;color:#fff;background:radial-gradient(120% 120% at 50% 0%,#1d2f63,#0a1124);box-shadow:var(--sh-3);display:flex;flex-direction:column;align-items:center;gap:6px}
+.lcore::before,.lcore::after{content:"";position:absolute;top:50%;width:18px;height:2px;background:repeating-linear-gradient(90deg,#7aa2ff 0 4px,transparent 4px 7px)}
+.lcore::before{left:-18px} .lcore::after{right:-18px}
+.lcore b{font-size:18px} .lcore span{font-size:12px;color:#aab6d3}
+.lmark{width:40px;height:40px;border-radius:12px;background:conic-gradient(from 210deg,#2b59ff,#00b89c,#7aa2ff,#2b59ff);box-shadow:0 0 24px rgba(0,209,178,.4);animation:spin 8s linear infinite}
+.lag{display:flex;flex-direction:column;gap:8px}
+.lag div{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:12.5px;font-weight:600;background:#fff}
+.lag i{width:10px;height:10px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 20%,transparent)}
+.lqs{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:16px;padding-top:12px;border-top:1px dashed var(--line)}
+.tl2{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a93a8;font-weight:600;margin-right:4px}
+@media (max-width:1000px){.lyr{grid-template-columns:1fr}.lcore::before,.lcore::after{display:none}}
+
 /* ---------- Products ---------- */
 .psel{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 4px 0 10px;border-radius:11px;border:1px solid var(--line);background:#fff;box-shadow:var(--sh-1);color:var(--muted)}
 .psel svg{width:15px;height:15px} .psel select{border:0!important;background:transparent;font-weight:600;font-size:12.5px;color:var(--ink);padding:6px 4px;box-shadow:none!important}
@@ -774,6 +795,72 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .pmv{font-family:var(--f-mono);font-size:12px;text-align:right} .pmg{font-size:11px;color:var(--muted);text-align:right}
 .qtabs{margin-top:-4px}
 @media (max-width:900px){.pmrows{grid-template-columns:1fr}.jgrid{grid-template-columns:1fr}.pmr{grid-template-columns:110px minmax(0,1fr) 58px}.pmg{display:none}}
+
+/* ---------- Huddles ---------- */
+.hpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.hp{display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;transition:.15s}
+.hp:hover:not(:disabled){border-color:var(--pc)} .hp.on{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 8%,#fff);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 15%,transparent)}
+.hp:disabled{opacity:.5;cursor:not-allowed}
+.hpa{width:34px;height:34px;border-radius:50%;background:var(--pc);color:#fff;display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.hp b{display:block;font-size:13px} .hp span span{font-size:11.5px;color:var(--muted)}
+.hlobby .seg{margin-left:auto}
+.hroom{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.hmain{border-radius:20px;background:radial-gradient(120% 120% at 50% 0%,#141f3d 0%,#0a1020 60%,#060a14 100%);padding:14px;color:#dfe6f5;box-shadow:var(--sh-3)}
+.hbar{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 12px;font-size:13px} .hbar b{color:#fff} .hbar .muted{color:#8f9bb8}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.htile{position:relative;aspect-ratio:16/10;border-radius:16px;background:linear-gradient(160deg,#1a2544,#0e1529);display:grid;place-items:center;overflow:hidden;border:2px solid transparent;transition:border-color .2s,box-shadow .2s}
+.htile.talk{border-color:var(--pc);box-shadow:0 0 0 4px color-mix(in srgb,var(--pc) 30%,transparent)}
+.htile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.hav{position:relative;width:72px;height:72px;border-radius:50%;background:var(--pc);color:#fff;display:grid;place-items:center;font-weight:700;font-size:20px}
+.hav span{position:relative;z-index:1}
+.hav.ai{background:transparent}
+.horb{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,var(--pc),#7aa2ff,#00d1b2,var(--pc));animation:spin 6s linear infinite;filter:blur(.5px);box-shadow:0 0 30px color-mix(in srgb,var(--pc) 60%,transparent)}
+.talk .horb{animation-duration:1.6s;transform:scale(1.08)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hname{position:absolute;left:10px;bottom:9px;font-size:12px;font-weight:600;color:#fff;background:rgba(6,10,20,.55);padding:3px 9px;border-radius:99px;backdrop-filter:blur(6px)}
+.hai{font-size:9.5px;font-weight:700;letter-spacing:.06em;color:#06231e;background:linear-gradient(90deg,#00d1b2,#7cf2dc);padding:1px 6px;border-radius:99px;vertical-align:1px}
+.hbars{position:absolute;right:12px;bottom:12px;display:flex;gap:2px;align-items:flex-end;height:16px}
+.hbars i{width:3px;background:#7cf2dc;border-radius:2px;animation:eq .8s ease-in-out infinite}.hbars i:nth-child(2){animation-delay:.15s}.hbars i:nth-child(3){animation-delay:.3s}.hbars i:nth-child(4){animation-delay:.45s}
+.herr{position:absolute;left:10px;right:10px;top:10px;font-size:11px;color:#ffd9a8;background:rgba(80,40,0,.55);border-radius:9px;padding:6px 8px;line-height:1.35}
+.htr{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:12.5px;line-height:1.5;min-height:70px;display:flex;flex-direction:column;gap:3px;color:#c9d3e8}
+.htr .muted{color:#7f8db0}
+.hctl{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:12px;flex-wrap:wrap}
+.hb{width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;display:grid;place-items:center}
+.hb svg{width:19px;height:19px} .hb:hover{background:rgba(255,255,255,.18)} .hb.off{background:#e5372a}
+.hb.leave{width:auto;border-radius:99px;padding:0 20px;background:#e5372a;font-weight:600}
+.hadd{display:flex;align-items:center;gap:6px;height:46px;padding:0 6px 0 14px;border-radius:99px;background:rgba(255,255,255,.1);color:#fff} .hadd svg{width:17px;height:17px}
+.hadd select{background:transparent;border:0!important;color:#fff;font-size:13px;box-shadow:none!important} .hadd option{color:#000}
+.hside{display:flex;flex-direction:column;gap:16px}
+.hn{display:flex;gap:8px;font-size:12.5px;padding:6px 0;border-bottom:1px solid #f0f2f6;animation:pop .3s} .hn>span{color:var(--ok);font-weight:700}
+.hchatc{position:relative;display:flex;flex-direction:column}
+.hchat{display:flex;flex-direction:column;gap:8px;max-height:300px;min-height:120px;overflow:auto;margin-bottom:10px}
+.drchat2 .drveil{display:none} body.filedrag .drchat2 .drveil{display:flex;opacity:.7} .drchat2.drhot .drveil{opacity:1}
+@media (max-width:1100px){.hroom{grid-template-columns:1fr}}
+.hav .horb{position:absolute;z-index:0}
+.hn{animation:none}
+.hchatc .tform input{min-width:0}
+
+/* ---------- Work log ---------- */
+.wsec{margin-bottom:22px}
+.ownb{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7a4b00;background:#fff4e0;border:1px solid #f6dcaa;border-radius:99px;padding:2px 8px;vertical-align:2px;margin-left:6px}
+.wtot{display:flex;gap:18px;text-align:right} .wtot b{display:block;font-size:20px;letter-spacing:-.03em;font-variant-numeric:tabular-nums} .wtot span{font-size:11px;color:var(--muted)}
+.wlegend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin:2px 0 12px} .wlegend i,.wsplit i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.wcard{border-top:3px solid var(--pc)}
+.wh{display:flex;align-items:center;gap:8px;flex-wrap:wrap} .wdot{width:10px;height:10px;border-radius:50%;background:var(--pc)}
+.wnow{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);max-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wkpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0;padding:10px;background:#f7f9fc;border-radius:12px}
+.wkpi span{display:block;font-size:10px;color:#8a93a8;line-height:1.25} .wkpi b{font-size:15px;font-variant-numeric:tabular-nums}
+.wkpi .own b{color:#7a4b00}
+.wsplit{display:flex;flex-direction:column;gap:3px;font-size:12px} .wsplit div{display:flex;align-items:center} .wsplit b{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+.wbars{display:flex;gap:10px;align-items:flex-end;height:110px;margin:14px 0 6px}
+.wb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;font-size:10.5px;color:var(--muted)} .wb b{font-size:10.5px;color:var(--ink);font-weight:600}
+.wst{width:100%;max-width:34px;border-radius:6px;overflow:hidden;display:flex;flex-direction:column-reverse;animation:rise .6s both}
+.wst i{display:block;min-height:2px}
+.wlog{display:flex;flex-direction:column;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid #f0f2f6}
+.wlog div{display:grid;grid-template-columns:86px minmax(0,1fr) 8px;gap:8px;align-items:center;font-size:12px} .wlog .mono{font-size:11px;color:var(--muted)} .wlog i{width:8px;height:8px;border-radius:50%}
+.wsave{margin-top:10px;font-size:12px;color:var(--muted);padding:8px 10px;border-radius:9px;background:var(--ok-soft)} .wsave b{color:#076b4b}
+@media (max-width:900px){.wtot{text-align:left;flex-wrap:wrap}.wsec .ch{flex-direction:column}.wkpi{grid-template-columns:1fr 1fr}}
 
 </style>
 </head>
@@ -1251,10 +1338,10 @@ const HUMAN = /rate|price|discount|hold|claim|damage|refund|cancel|complain/i;
 function seed(){
   return {
     deals:[
-      {id:1,acct:"Brightline Imports",contact:"Dana Ruiz",origin:"Elk Grove Village, IL",dest:"LHR",stage:"Qualified",value:42000,owner:"Sam"},
-      {id:2,acct:"Northgate Logistics",contact:"Omar Haddad",origin:"Irving, TX",dest:"MEX",stage:"Lead",value:18000,owner:"Sam"},
-      {id:3,acct:"Coastal Parts Co",contact:"Mei Chen",origin:"Carson, CA",dest:"HKG",stage:"Quoted",value:65000,owner:"Priya",quoteId:"Q-2041"},
-      {id:4,acct:"Meridian Medical Supply",contact:"Luis Ortega",origin:"Doral, FL",dest:"GRU",stage:"Lead",value:30000,owner:"Priya"},
+      {id:1,acct:"Brightline Imports",contact:"Dana Ellis",origin:"Elk Grove Village, IL",dest:"LHR",stage:"Qualified",value:42000,owner:"Sam"},
+      {id:2,acct:"Northgate Logistics",contact:"Oliver Hart",origin:"Irving, TX",dest:"MEX",stage:"Lead",value:18000,owner:"Sam"},
+      {id:3,acct:"Coastal Parts Co",contact:"Megan Hughes",origin:"Carson, CA",dest:"HKG",stage:"Quoted",value:65000,owner:"Emma",quoteId:"Q-2041"},
+      {id:4,acct:"Meridian Medical Supply",contact:"Lewis Turner",origin:"Doral, FL",dest:"GRU",stage:"Lead",value:30000,owner:"Emma"},
       {id:5,acct:"Harbor & Pine Trading",contact:"Jess Moore",origin:"Newark, NJ",dest:"DXB",stage:"Booked",value:24000,owner:"Sam"}
     ],
     quotes:[
@@ -1277,8 +1364,8 @@ function seed(){
     tickets:[
       {id:"T-301",acct:"Harbor & Pine Trading",ship:"SHP-1007",from:"Jess Moore",subj:"When does SHP-1007 fly?",msg:"Hi, our consignee is asking for the flight details on the Dubai shipment. Can you confirm?",status:"Auto-resolved",resp:"38 sec",
        reply:"Hi Jess, SHP-1007 (MAWB 176-48201937) has been tendered to Carrier B at JFK and is booked to depart for DXB. Next update: departure confirmation. Live tracking: track.consol.example/SHP-1007"},
-      {id:"T-302",acct:"Coastal Parts Co",ship:null,from:"Mei Chen",subj:"Hold Q-2041 until Friday?",msg:"We're waiting on the PO. Can you hold the Hong Kong rate until Friday?",status:"Needs a person",resp:"—",why:"Rate hold: commercial decision",
-       reply:"Hi Mei, thanks for the heads-up. I can hold Q-2041 ($4,310 all-in, Carson → LAX → HKG) until Friday 5pm, subject to space on the day. Send the PO over when you have it and we'll book straight away."}
+      {id:"T-302",acct:"Coastal Parts Co",ship:null,from:"Megan Hughes",subj:"Hold Q-2041 until Friday?",msg:"We're waiting on the PO. Can you hold the Hong Kong rate until Friday?",status:"Needs a person",resp:"—",why:"Rate hold: commercial decision",
+       reply:"Hi Megan, thanks for the heads-up. I can hold Q-2041 ($4,310 all-in, Carson → LAX → HKG) until Friday 5pm, subject to space on the day. Send the PO over when you have it and we'll book straight away."}
     ],
     auto:true, simIdx:0, rateMin:0.75,
     value:[
@@ -1306,14 +1393,14 @@ function seed(){
     ],
     rfqs:[],
     dir:[
-      {co:"Coromandel Cargo",city:"Chennai, IN",who:"Priya Raman",st:"Booked"},
-      {co:"Gulf Horizon Shipping",city:"Dubai, AE",who:"Faisal Al Mansoori",st:"Registered",dest:"DXB"},
-      {co:"Indus Freight Systems",city:"Mumbai, IN",who:"Rohan Mehta",st:"Registered"},
+      {co:"Coromandel Cargo",city:"Chennai, IN",who:"Rachel Hammond",st:"Booked"},
+      {co:"Gulf Horizon Shipping",city:"Dubai, AE",who:"Freddie Mason",st:"Registered",dest:"DXB"},
+      {co:"Indus Freight Systems",city:"Mumbai, IN",who:"Ryan Mitchell",st:"Registered"},
       {co:"Kingsway Cargo",city:"London, UK",who:"Claire Hughes",st:"Opened",dest:"LHR"},
-      {co:"Najd Logistics",city:"Riyadh, SA",who:"Omar Al Harbi",st:"Opened",dest:"DXB"},
-      {co:"Atlantic Bridge Freight",city:"Lagos, NG",who:"Tunde Okafor",st:"Not contacted"},
-      {co:"Andes Carga",city:"Bogotá, CO",who:"Camila Rojas",st:"Not contacted"},
-      {co:"Hanbit Global",city:"Seoul, KR",who:"Min-jun Park",st:"Not contacted"}
+      {co:"Najd Logistics",city:"Riyadh, SA",who:"Owen Harris",st:"Opened",dest:"DXB"},
+      {co:"Atlantic Bridge Freight",city:"Lagos, NG",who:"Tom Oakley",st:"Not contacted"},
+      {co:"Andes Carga",city:"Bogotá, CO",who:"Charlotte Reed",st:"Not contacted"},
+      {co:"Hanbit Global",city:"Seoul, KR",who:"Matthew Parker",st:"Not contacted"}
     ],
     drafts:[], nextD:1, auto2:{sales:"limits",ops:"limits",fin:"limits",cs:"auto"}, nextC:3, rfq:[],
     claims:[
@@ -1938,8 +2025,8 @@ function chInit(){ if(S.chat) return; hireInit();
   const A=["Coastal Parts Co","Brightline Imports","Harbor & Pine Trading","Meridian Medical Supply","Northgate Logistics","Riverbend Foods","Summit Aerospace Parts","Ridgeway Components","Lakeview Apparel","Pioneer Tools"], lanes=["ORD → FRA","LAX → HKG","JFK → DXB","MIA → GRU","DFW → MEX","ORD → NRT","EWR → LHR","ATL → AMS"];
   const st=["Booked · docs complete","Booked · waiting for docs","Viewed · no reply","Delivered · not opened","Viewed · no reply","Booked · waiting for docs","Accepted","Lost · price","Delivered · not opened","Booked · docs complete","Viewed · no reply","Sent · opened today","Booked · waiting for docs","Lost · transit time"];
   const miss=[["Commercial invoice","Packing list"],["Shipper's letter of instruction"],["Commercial invoice"],["SDS (dangerous goods)","Shipper's declaration"]];
-  S.qh=st.map((s,i)=>{ const sell=1800+((i*7919)%5400), m=0.08+((i*37)%11)/100, d=i<5?0:i<10?1:2; return {id:"Q-"+(2060-i),acct:A[i%A.length],lane:lanes[i%lanes.length],sell,cost:Math.round(sell*(1-m)),st:s,d,when:["Today","Yesterday","2 days ago"][d]+" "+["9:12","10:40","11:05","13:22","15:48","16:30"][i%6],rep:["Ava","Sam","Priya","Noah","Isla"][i%5],miss:s.includes("waiting for docs")?miss[i%miss.length]:[],contact:["Mei Chen","Dana Ruiz","Jess Moore","Luis Ortega","Omar Haddad"][i%5]}; });
-  S.inbox=[["Mei Chen","Coastal Parts Co","PO for Hong Kong: can you hold Q-2041?","12:14","reply",true],["Carrier B","Carrier B","Re: CL-2 delay claim, revised offer","12:40","reply",false],["Dana Ruiz","Brightline Imports","Heathrow rate for next week?","13:05","reply",true],["Metro Drayage","Metro Drayage","Invoice 88213","13:30","fyi",false],["Luis Ortega","Meridian Medical Supply","Temperature logger for GRU shipment","14:02","reply",true],["Jess Moore","Harbor & Pine Trading","Thanks, all received","14:20","done",false],["Riverbend Foods","Riverbend Foods","Cold chain SOP comments","15:10","reply",false],["LinkedIn","LinkedIn","3 people viewed your profile","15:45","fyi",false],["Omar Haddad","Northgate Logistics","Can we get a call tomorrow?","16:05","reply",true]].map(([from,co,subj,t,need,cust])=>({from,co,subj,t,need,cust,answered:need==="done"||need==="fyi"||/Carrier B/.test(from)}));
+  S.qh=st.map((s,i)=>{ const sell=1800+((i*7919)%5400), m=0.08+((i*37)%11)/100, d=i<5?0:i<10?1:2; return {id:"Q-"+(2060-i),acct:A[i%A.length],lane:lanes[i%lanes.length],sell,cost:Math.round(sell*(1-m)),st:s,d,when:["Today","Yesterday","2 days ago"][d]+" "+["9:12","10:40","11:05","13:22","15:48","16:30"][i%6],rep:["Ava","Sam","Emma","Noah","Isla"][i%5],miss:s.includes("waiting for docs")?miss[i%miss.length]:[],contact:["Megan Hughes","Dana Ellis","Jess Moore","Lewis Turner","Oliver Hart"][i%5]}; });
+  S.inbox=[["Megan Hughes","Coastal Parts Co","PO for Hong Kong: can you hold Q-2041?","12:14","reply",true],["Carrier B","Carrier B","Re: CL-2 delay claim, revised offer","12:40","reply",false],["Dana Ellis","Brightline Imports","Heathrow rate for next week?","13:05","reply",true],["Metro Drayage","Metro Drayage","Invoice 88213","13:30","fyi",false],["Lewis Turner","Meridian Medical Supply","Temperature logger for GRU shipment","14:02","reply",true],["Jess Moore","Harbor & Pine Trading","Thanks, all received","14:20","done",false],["Riverbend Foods","Riverbend Foods","Cold chain SOP comments","15:10","reply",false],["LinkedIn","LinkedIn","3 people viewed your profile","15:45","fyi",false],["Oliver Hart","Northgate Logistics","Can we get a call tomorrow?","16:05","reply",true]].map(([from,co,subj,t,need,cust])=>({from,co,subj,t,need,cust,answered:need==="done"||need==="fyi"||/Carrier B/.test(from)}));
   S.chat={open:"assistant",th:{assistant:[{who:"ai",t:`Hi Sam. Ask me anything about the business, or tell me to check something. I can read your email, quotes, shipments, claims and billing, and pull in any teammate.`}]}}; }
 function chPeople(){ hireInit(); const core=AGENTS.map(g=>({k:"ag-"+g.k,n:g.name,sub:"AI manager",col:g.col,ico:g.ico}));
   return [{k:"assistant",n:"Your assistant",sub:"Email, calendar, everything",col:"#1d2433",ico:"✦"},...core,...S.hires.map(h=>({k:"h-"+h.id,n:h.name,sub:hRole(h).t,col:TRACKS[hRole(h).d].col,ico:h.name[0]})),...TEAM.map(t=>({k:"p-"+t.n,n:t.n,sub:t.role+" · person",col:"#9aa1ab",ico:t.n[0],human:true})),{k:"c-sales",n:"#sales",sub:"Channel",col:"#2a78d6",ico:"#"},{k:"c-ops",n:"#ops",sub:"Channel",col:"#1baf7a",ico:"#"}]; }
@@ -1947,7 +2034,7 @@ function chWho(k){ return chPeople().find(p=>p.k===k)||chPeople()[0]; }
 const chTbl=(rows,cols)=>`<div style="overflow-x:auto"><table style="font-size:12px;margin-top:6px"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
 function chAnswer(q,k){ const ql=q.toLowerCase(), Q=S.qh, mg=x=>((x.sell-x.cost)/x.sell*100);
   if(/email|inbox|missed|mail/.test(ql)){ const pm=S.inbox.filter(e=>e.t>="12:00"), open=pm.filter(e=>e.need==="reply"&&!e.answered), cust=open.filter(e=>e.cust);
-    return {by:"Your assistant",t:`Since 12:00 you've had ${pm.length} emails. ${pm.length-open.length} are handled or just FYI. <b>${open.length} still need a reply</b>${cust.length?`, and ${cust.length} are customers who've been waiting over an hour`:""}:`+chTbl(open.map(e=>`<tr><td>${e.t}</td><td><b>${e.co}</b></td><td>${e.subj}</td><td>${e.cust?'<span class="pill warn" style="font-size:10px">customer</span>':""}</td></tr>`),["Time","From","Subject",""])+`<div style="margin-top:6px">Nothing else looks missed. The Carrier B reply is with Morgan, and the Metro Drayage invoice is with finance.</div>`,acts:[["Draft replies to all "+open.length,"inbox"],["Book Omar's call tomorrow","cal"]]}; }
+    return {by:"Your assistant",t:`Since 12:00 you've had ${pm.length} emails. ${pm.length-open.length} are handled or just FYI. <b>${open.length} still need a reply</b>${cust.length?`, and ${cust.length} are customers who've been waiting over an hour`:""}:`+chTbl(open.map(e=>`<tr><td>${e.t}</td><td><b>${e.co}</b></td><td>${e.subj}</td><td>${e.cust?'<span class="pill warn" style="font-size:10px">customer</span>':""}</td></tr>`),["Time","From","Subject",""])+`<div style="margin-top:6px">Nothing else looks missed. The Carrier B reply is with Morgan, and the Metro Drayage invoice is with finance.</div>`,acts:[["Draft replies to all "+open.length,"inbox"],["Book Oliver's call tomorrow","cal"]]}; }
   if(/recap|margin|summary of (the )?quot/.test(ql)) return chRecap(ql);
   if(/no response|no reply|not replied|haven.t (heard|replied)|chase/.test(ql)&&!/doc/.test(ql)){ const L=Q.filter(x=>x.st==="Viewed · no reply");
     return {by:"Sales manager",t:`${L.length} quotes were opened but the customer hasn't replied:`+chTbl(L.map(x=>`<tr><td>${x.id}</td><td><b>${x.acct}</b></td><td>${x.lane}</td><td>${money(x.sell)}</td><td>${x.when}</td><td>${x.rep}</td></tr>`),["Quote","Customer","Lane","Value","Sent","Rep"])+`<div style="margin-top:6px">Worth ${money(L.reduce((a,x)=>a+x.sell,0))}. I'd follow up today: the oldest was opened ${L[L.length-1].when.toLowerCase()}.</div>`,acts:[["Draft follow-ups","chase"],["Ask the reps to call","reps"]]}; }
@@ -1962,7 +2049,7 @@ function chRecap(ql){ const Q=S.qh, mg=x=>((x.sell-x.cost)/x.sell*100); { const 
   return null; }
 function chSend(q){ chInit(); q=(q||"").trim(); if(!q) return; const C=S.chat, k=C.open, w=chWho(k); (C.th[k]=C.th[k]||[]).push({who:"me",t:q});
   render(); setTimeout(()=>{ let r;
-    if(w.human||k.startsWith("c-")){ const by=w.human?w.n:["Sam","Priya","Lena"][q.length%3]; r={by,t:/quote|chase|call|customer/i.test(q)?"On it. I'll call them this afternoon and update the deal.":/doc|ship|book/i.test(q)?"Got it, I'll chase the shipper now and confirm before cut-off.":"👍 Will do."}; }
+    if(w.human||k.startsWith("c-")){ const by=w.human?w.n:["Sam","Emma","Lucy"][q.length%3]; r={by,t:/quote|chase|call|customer/i.test(q)?"On it. I'll call them this afternoon and update the deal.":/doc|ship|book/i.test(q)?"Got it, I'll chase the shipper now and confirm before cut-off.":"👍 Will do."}; }
     else { r=chAnswer(q,k); if(!r){ teamAsk(q); const tmp=document.createElement("div"); tmp.innerHTML=S.lastAns||""; r={by:(tmp.querySelector(".muted")||{}).textContent||w.n,t:(tmp.textContent||"").replace(/^[^A-Z]*?(Finance manager|Operations manager|Sales manager|Customer service manager)/,"")||"I'll find that out and come back to you."}; }
       if(k!=="assistant") r.by=w.n+(r.by&&r.by!==w.n&&k.startsWith("ag-")?"":""); }
     C.th[k].push({who:"ai",by:r.by,t:r.t,acts:r.acts}); save(); if(view==="chat") render(); setTimeout(()=>{ const b=document.getElementById("chBody"); if(b) b.scrollTop=b.scrollHeight; },30); },700); }
@@ -1972,9 +2059,9 @@ function chAct(a){ const Q=S.qh;
     a==="text"?Q.filter(x=>x.st==="Delivered · not opened").map(x=>({to:`${x.contact} (text)`,subj:"SMS",body:`Hi ${x.contact.split(" ")[0]}, it's ${FWD}. We emailed you quote ${x.id} for ${x.lane} (${money(x.sell)}). Did it come through?`})):
     a==="inbox"?S.inbox.filter(e=>e.need==="reply"&&!e.answered).map(e=>({to:`${e.from}, ${e.co}`,subj:"Re: "+e.subj,body:`Hi ${e.from.split(" ")[0]},\n\n${/hold/i.test(e.subj)?"Yes, I can hold Q-2041 until Friday 5pm, subject to space on the day.":/rate/i.test(e.subj)?"I'll have the Heathrow rate to you within the hour.":/call/i.test(e.subj)?"Tomorrow works. Does 10:00 or 14:00 suit you?":/logger/i.test(e.subj)?"Yes, we'll add a temperature logger and share the readings on arrival.":"Thanks, we'll come back to you shortly."}\n\n${FWD}`})):null;
   if(drafts){ S._chd=drafts; $("#modalBox").innerHTML=`<h3 style="margin-top:0">${drafts.length} drafts to check</h3><div style="max-height:55vh;overflow:auto">${drafts.map((d,i)=>`<div style="border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:8px"><div class="muted" style="font-size:11.5px">To ${d.to}${d.subj!=="SMS"?" · "+d.subj:""}</div><textarea id="chd${i}" style="width:100%;min-height:90px;font:inherit;font-size:12.5px;border:0;margin-top:4px">${d.body}</textarea></div>`).join("")}</div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn sec" onclick="closeM()">Cancel</button><button class="btn" onclick="S._chd.forEach(d=>log('mail','Sent to '+d.to));toast(S._chd.length+' sent');closeM();chSys('Sent '+S._chd.length+' messages. I\\'ll tell you when anyone replies.')">Send all ${drafts.length}</button></div>`; $("#modal").classList.add("show"); return; }
-  if(a==="reps"){ chSys("Asked Ava, Sam and Priya to call their no-reply quotes today. I'll report back at 5pm."); log("slack","#sales: call your no-reply quotes today (list in Chat)"); return; }
+  if(a==="reps"){ chSys("Asked Ava, Sam and Emma to call their no-reply quotes today. I'll report back at 5pm."); log("slack","#sales: call your no-reply quotes today (list in Chat)"); return; }
   if(a==="post"){ log("slack","#sales: quote recap posted"); chSys("Posted the recap to #sales."); return; }
-  if(a==="cal"){ log("cal","Calendar: call with Omar Haddad, Northgate Logistics, tomorrow 10:00 (invite drafted)"); chSys("I've drafted an invite for tomorrow at 10:00 with Omar. It goes when you send the reply."); return; }
+  if(a==="cal"){ log("cal","Calendar: call with Oliver Hart, Northgate Logistics, tomorrow 10:00 (invite drafted)"); chSys("I've drafted an invite for tomorrow at 10:00 with Oliver. It goes when you send the reply."); return; }
   if(a==="byrep"){ const by={}; S.qh.filter(x=>x.d<=1).forEach(x=>{ by[x.rep]=by[x.rep]||{n:0,s:0,g:0,b:0}; by[x.rep].n++; by[x.rep].s+=x.sell; by[x.rep].g+=x.sell-x.cost; if(x.st.startsWith("Booked")) by[x.rep].b++; });
     S.chat.th[S.chat.open].push({who:"ai",by:"Sales manager",t:"By rep, last 2 days:"+chTbl(Object.entries(by).map(([r,v])=>`<tr><td><b>${r}</b></td><td>${v.n}</td><td>${money(v.s)}</td><td>${(v.g/v.s*100).toFixed(1)}%</td><td>${v.b}</td></tr>`),["Rep","Quotes","Value","Margin","Booked"])}); render(); return; }
   if(a==="resend"||a==="cutoff"){ chSys(a==="resend"?"Resent to a second contact at each company.":"Cut-offs: Carrier B 18:00 today, Carrier C 14:00 tomorrow. Two bookings are at risk if documents don't arrive by 16:00."); return; } }
@@ -2616,7 +2703,7 @@ function brandSave(){
 
 /* ---------- Team productivity (from workflow events, not screen tracking) ---------- */
 const TEAM=(()=>{ let seed=777; const r=()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
-  const ppl=[["Sam","Sales + air export",1.0],["Priya","Air export",1.25],["Jordan","Air export",0.85],["Lena","Docs & AES",1.1],["Marco","Trucking dispatch",0.95]];
+  const ppl=[["Sam","Sales + air export",1.0],["Emma","Air export",1.25],["Jordan","Air export",0.85],["Lucy","Docs & AES",1.1],["Mark","Trucking dispatch",0.95]];
   const stages=[["Quote",14],["Booking",16],["Docs",12],["AES",9],["Dispatch",11],["Tender",7],["Customer emails",6]];
   const reasons=["Wrong weight on HAWB","Missing ITN at tender","Consignee address mismatch","SLI not signed","Wrong UN number on DGD","Pieces count ≠ packing list"];
   return ppl.map(([n,role,f])=>{ const opened=Math.round((40+r()*25)*f), closed=Math.round(opened*(0.8+r()*0.15)), reopened=Math.max(0,Math.round(closed*(0.02+r()*0.07))), docs=Math.round(closed*(5.5+r()*2)), transit=Math.round(4+r()*9);
@@ -3016,39 +3103,39 @@ const TRACKS={
 const RDEF=[
  ["sx","Sales Executive","Sales",1,"Starter",350,85000,"Ava","Relentless on follow-up, warm on the phone, never lets a quote go cold.","Looks after up to 60 accounts","Quotes sent, follow-ups, new accounts",[4,5,2,2,1,1]],
  ["sm","Sales Manager","Sales",2,"Growth",800,130000,"Marcus","Coach first. Reviews every lost quote and fixes the pitch, not the price.","Manages up to 6 sales executives","Quote-to-booking rate, rep targets, discount control",[3,4,4,3,4,2]],
- ["tlm","Trade Lane Manager","Sales",3,"Growth",1000,140000,"Farah","Owns a lane end to end: buy rates, capacity, partners and the price that wins.","Owns 2 to 4 trade lanes","Lane volume, lane margin, carrier capacity, partner agents",[3,3,5,5,3,4]],
- ["sd","Sales Director","Sales",4,"Scale",1500,210000,"Elena","Sees the market a quarter ahead. Picks the lanes and accounts worth winning.","Leads sales managers and trade lane managers","Revenue plan, lane strategy, pricing to win, big deals",[2,3,5,5,4,5]],
+ ["tlm","Trade Lane Manager","Sales",3,"Growth",1000,140000,"Fiona","Owns a lane end to end: buy rates, capacity, partners and the price that wins.","Owns 2 to 4 trade lanes","Lane volume, lane margin, carrier capacity, partner agents",[3,3,5,5,3,4]],
+ ["sd","Sales Director","Sales",4,"Scale",1500,210000,"Eleanor","Sees the market a quarter ahead. Picks the lanes and accounts worth winning.","Leads sales managers and trade lane managers","Revenue plan, lane strategy, pricing to win, big deals",[2,3,5,5,4,5]],
  ["vps","VP Sales","Sales",5,"Scale",2000,250000,"Nathan","Builds the sales machine: territories, quotas, comp plans and the forecast.","Leads sales directors","Bookings forecast, territory plan, sales hiring",[2,2,5,5,5,5]],
- ["pres","President of Sales","Sales",6,"Enterprise",2400,290000,"Celeste","The face of the company to the biggest customers and partners.","Leads all sales regions","Enterprise deals, strategic partnerships, market share",[2,2,5,5,5,5]],
+ ["pres","President of Sales","Sales",6,"Enterprise",2400,290000,"Chloe","The face of the company to the biggest customers and partners.","Leads all sales regions","Enterprise deals, strategic partnerships, market share",[2,2,5,5,5,5]],
  ["cro","Chief Revenue Officer","Sales",7,"Enterprise",2800,320000,"Victor","Runs sales, accounts, retention and pricing as one engine. Talks to the board in revenue and margin.","Leads sales, accounts, retention and pricing","Total revenue, margin mix, forecast accuracy",[2,2,5,5,5,5]],
- ["rdm","Customer Retention & Development Manager","Retention & development",1,"Growth",700,95000,"Bianca","Watches every account's volume weekly and calls before a customer drifts.","Looks after up to 50 live accounts","Retention, slowing-account win-backs, new lanes from existing customers",[5,4,4,5,4,2]],
- ["rrdm","Regional Customer Retention & Development Manager","Retention & development",2,"Scale",1200,140000,"Mateo","Runs retention across a region and turns small accounts into big ones.","Leads retention managers in a region","Net revenue retention, account growth, churn by region",[4,5,5,5,5,4]],
+ ["rdm","Customer Retention & Development Manager","Retention & development",1,"Growth",700,95000,"Bella","Watches every account's volume weekly and calls before a customer drifts.","Looks after up to 50 live accounts","Retention, slowing-account win-backs, new lanes from existing customers",[5,4,4,5,4,2]],
+ ["rrdm","Regional Customer Retention & Development Manager","Retention & development",2,"Scale",1200,140000,"Max","Runs retention across a region and turns small accounts into big ones.","Leads retention managers in a region","Net revenue retention, account growth, churn by region",[4,5,5,5,5,4]],
  ["ic","Implementation Coordinator","Transition & implementation",1,"Growth",450,70000,"Wren","Ticks every box. Nothing goes live with a missing address or rate.","Runs up to 4 onboardings at once","Set-up accuracy, tasks on time, pilot issues logged",[4,4,2,3,4,3]],
  ["tim","Transition & Implementation Manager","Transition & implementation",2,"Growth",800,110000,"Felix","Moves a customer off their old supplier without one missed shipment.","Runs complex onboardings and coordinators","Days to go-live, smooth handover, integration working, first-90-day retention",[5,4,4,5,5,5]],
- ["htim","Head of Transition & Implementation","Transition & implementation",3,"Scale",1300,150000,"Asha","Turns onboarding into a repeatable playbook the whole company trusts.","Leads the transition team","Go-live on time, onboarding cost, customer satisfaction at handover",[5,4,5,5,5,5]],
+ ["htim","Head of Transition & Implementation","Transition & implementation",3,"Scale",1300,150000,"Abigail","Turns onboarding into a repeatable playbook the whole company trusts.","Leads the transition team","Go-live on time, onboarding cost, customer satisfaction at handover",[5,4,5,5,5,5]],
  ["aes","Air Export Supervisor","Air export",1,"Starter",400,70000,"Atlas","Calm under cut-offs. Checks every document twice before tender.","Runs up to 25 shipments a day","On-time tender, document accuracy, AES filed",[5,5,2,3,2,1]],
- ["aem","Air Export Manager","Air export",2,"Growth",900,105000,"Priyanka","Knows every airline's quirks. Re-books before the customer notices.","Manages up to 6 supervisors","Airline cost, re-book speed, offload recovery",[4,4,4,5,4,2]],
+ ["aem","Air Export Manager","Air export",2,"Growth",900,105000,"Hannah","Knows every airline's quirks. Re-books before the customer notices.","Manages up to 6 supervisors","Airline cost, re-book speed, offload recovery",[4,4,4,5,4,2]],
  ["om","Operations Manager","Air export",3,"Scale",1300,130000,"Hugo","Builds the process so the team doesn't need heroics. Measures everything.","Leads air, ocean and trucking teams","Cost per shipment, productivity, error rate",[3,4,4,4,5,4]],
- ["od","Operations Director","Air export",4,"Scale",1800,190000,"Ingrid","Designs the network: which airlines, which gateways, which partners.","Leads operations managers","Network cost, carrier deals, service levels",[2,3,5,4,5,5]],
- ["coo","Chief Operating Officer","Leadership",5,"Enterprise",2500,300000,"Rafael","Turns the plan into a machine that runs without the founder.","Leads operations, customer service and IT","Operating margin, scalability, service quality",[4,3,4,2,5,4]],
- ["oc","Ocean Coordinator","Ocean",1,"Growth",400,65000,"Nils","Watches every free-time clock. Hates demurrage more than you do.","Runs up to 40 containers","Bookings, ISF and AES on time, free-time alerts",[5,5,2,4,1,1]],
- ["ocm","Ocean Manager","Ocean",2,"Scale",900,115000,"Mei","Negotiates contracts with carriers and knows when spot beats contract.","Manages ocean coordinators","Ocean cost, contract use, demurrage and detention",[4,4,5,5,4,3]],
+ ["od","Operations Director","Air export",4,"Scale",1800,190000,"Imogen","Designs the network: which airlines, which gateways, which partners.","Leads operations managers","Network cost, carrier deals, service levels",[2,3,5,4,5,5]],
+ ["coo","Chief Operating Officer","Leadership",5,"Enterprise",2500,300000,"Richard","Turns the plan into a machine that runs without the founder.","Leads operations, customer service and IT","Operating margin, scalability, service quality",[4,3,4,2,5,4]],
+ ["oc","Ocean Coordinator","Ocean",1,"Growth",400,65000,"Nick","Watches every free-time clock. Hates demurrage more than you do.","Runs up to 40 containers","Bookings, ISF and AES on time, free-time alerts",[5,5,2,4,1,1]],
+ ["ocm","Ocean Manager","Ocean",2,"Scale",900,115000,"Megan","Negotiates contracts with carriers and knows when spot beats contract.","Manages ocean coordinators","Ocean cost, contract use, demurrage and detention",[4,4,5,5,4,3]],
  ["fl","Finance Lead","Finance",1,"Starter",450,90000,"Quinn","Precise and polite. Invoices on departure, chases on day 31.","Runs AR and AP for up to 400 jobs a month","DSO, bills matched, invoices out on time",[5,5,3,2,2,1]],
- ["fm","Finance Manager","Finance",2,"Growth",900,125000,"Dara","Spots the margin leak in the trucking line before month-end.","Manages finance leads","Cash forecast, credit limits, collections",[4,5,4,4,3,2]],
+ ["fm","Finance Manager","Finance",2,"Growth",900,125000,"Daisy","Spots the margin leak in the trucking line before month-end.","Manages finance leads","Cash forecast, credit limits, collections",[4,5,4,4,3,2]],
  ["fc","Financial Controller","Finance",3,"Scale",1300,160000,"Theo","Closes the month in 3 days. Every job's profit, every accrual, audit-ready.","Leads finance managers","Monthly close, job profit, controls, audit trail",[3,3,5,5,4,3]],
- ["cfo","Chief Financial Officer","Leadership",5,"Enterprise",2500,320000,"Simone","Thinks in cash, capital and valuation. Ready for the bank and the board.","Leads finance, pricing and legal","Cash runway, funding, profitability, board reporting",[5,5,3,2,3,5]],
- ["csr","Customer Service Rep","Customer & accounts",1,"Starter",300,55000,"Lila","Answers in under a minute and sends the update before anyone asks.","Covers up to 80 accounts","Response time, auto-answered, customer satisfaction",[5,4,1,3,1,1]],
- ["lam","Local Account Manager","Customer & accounts",2,"Growth",600,80000,"Omar","Knows every shipper in the metro by name. Visits, quotes and fixes problems in person.","Owns up to 40 local accounts","Local account revenue, retention, cross-selling trucking",[4,5,3,4,1,2]],
- ["nam","National Account Manager","Customer & accounts",3,"Growth",900,110000,"Darius","Runs multi-site US accounts with one rate card across every branch.","Owns up to 20 national accounts","National contracts, branch rollout, volume growth",[3,5,4,5,2,3]],
+ ["cfo","Chief Financial Officer","Leadership",5,"Enterprise",2500,320000,"Sophie","Thinks in cash, capital and valuation. Ready for the bank and the board.","Leads finance, pricing and legal","Cash runway, funding, profitability, board reporting",[5,5,3,2,3,5]],
+ ["csr","Customer Service Rep","Customer & accounts",1,"Starter",300,55000,"Lily","Answers in under a minute and sends the update before anyone asks.","Covers up to 80 accounts","Response time, auto-answered, customer satisfaction",[5,4,1,3,1,1]],
+ ["lam","Local Account Manager","Customer & accounts",2,"Growth",600,80000,"Oliver","Knows every shipper in the metro by name. Visits, quotes and fixes problems in person.","Owns up to 40 local accounts","Local account revenue, retention, cross-selling trucking",[4,5,3,4,1,2]],
+ ["nam","National Account Manager","Customer & accounts",3,"Growth",900,110000,"Daniel","Runs multi-site US accounts with one rate card across every branch.","Owns up to 20 national accounts","National contracts, branch rollout, volume growth",[3,5,4,5,2,3]],
  ["kam","Key Account Manager","Customer & accounts",4,"Scale",1100,130000,"Grace","Knows each big account's lanes, people and budget cycle.","Owns your top 15 accounts","Account growth, renewals, share of wallet",[3,5,5,5,3,4]],
  ["ram","Regional Account Manager","Customer & accounts",5,"Scale",1500,160000,"Lucía","Joins up an account across a whole region: the Americas, Europe or Asia, with partner offices.","Owns accounts across one region","Regional tenders, partner coordination, regional revenue",[3,4,5,5,4,4]],
- ["gam","Global Account Manager","Customer & accounts",6,"Enterprise",1900,190000,"Kenji","Runs multinational accounts across offices and partner networks worldwide.","Owns global accounts across all regions","Global account revenue, multi-country tenders",[3,5,5,5,5,5]],
+ ["gam","Global Account Manager","Customer & accounts",6,"Enterprise",1900,190000,"Kevin","Runs multinational accounts across offices and partner networks worldwide.","Owns global accounts across all regions","Global account revenue, multi-country tenders",[3,5,5,5,5,5]],
  ["ceo","Chief Executive Officer","Leadership",6,"Enterprise",3500,400000,"Alexandra","Sets the vision, picks the bets, holds every leader to their number.","Leads the whole AI and human team","Growth, profit, valuation, culture",[5,4,5,5,4,5]],
  ["tc","Trucking Coordinator","Specialists",1,"Starter",350,60000,"Rex","Knows every driver by name. Gets the proof of delivery in an hour.","Dispatches up to 30 pickups a day","Pickup on time, POD collected, waiting time billed",[4,5,3,2,3,3]],
  ["clm","Claims Manager","Claims",2,"Growth",700,95000,"Morgan","Fights for every dollar, never misses a deadline, and knows when a claim is worth more than the fight.","Runs every claim and dispute, and leads the claims specialists","Money recovered, cost avoided, win rate, deadlines met",[5,4,5,5,5,5]],
  ["cl","Claims Associate","Claims",1,"Starter",400,60000,"Jules","Never misses a deadline. Gathers the evidence and turns it into credit notes.","Handles up to 40 open claims","Claims filed on time, evidence complete, overcharges disputed before payment",[5,4,3,3,3,3]],
  ["hclaims","Head of Claims & Insurance","Claims",3,"Scale",1300,150000,"Beatrix","Runs claims, cargo insurance and liability as one risk book. Knows when to settle, when to fight and when to call a lawyer.","Leads the claims team and the insurance programme","Total recovered, insurance cost, liability exposure, claims ratio",[5,5,5,5,5,5]],
- ["pa","Pricing Analyst","Specialists",2,"Growth",600,100000,"Sana","Lives in the rate data. Knows where you're 9% too high.","Prices every lane and customer","Win rate by lane, margin, quote expiry",[5,5,4,3,5,4]],
+ ["pa","Pricing Analyst","Specialists",2,"Growth",600,100000,"Sarah","Lives in the rate data. Knows where you're 9% too high.","Prices every lane and customer","Win rate by lane, margin, quote expiry",[5,5,4,3,5,4]],
  ["co","Compliance Officer","Specialists",2,"Growth",600,95000,"Ruth","AES, DG and sanctions checks before anything moves.","Checks every export before tender","AES filed, DG accuracy, screening hits",[5,4,5,1,4,5]]
 ];
 const SC_BY={Sales:[["A quote to Northgate has been open 3 days with 2 views.","Send a short follow-up asking if the rate works and offering to hold it 48 hours. Call on day 5 if there's still no reply."],["Coastal Parts asked for 8% off Hong Kong. Margin is 14%.","Offer 4% for a 3-month commitment of 2 shipments a month. Below 4% the lane drops under your 10% floor."],["Q4 pipeline is 30% behind target.","Put the reps on the 22 accounts that quoted but didn't book in 90 days, and run a 7-day offer on the top 3 lanes. That covers about half; the rest needs 4 new accounts from the WCA list."]],
@@ -3472,7 +3559,7 @@ function shareRates(){
 }
 
 /* ---------- Customer portal (shipper-facing) ---------- */
-const PACCT="Brightline Imports", PCONTACT="Dana Ruiz", CONTRACT_MARKUP=15; let FWD="Northstar Freight";
+const PACCT="Brightline Imports", PCONTACT="Dana Ellis", CONTRACT_MARKUP=15; let FWD="Northstar Freight";
 V.portal = () => {
   const tabs=[["quote","Get a quote"],["ships","My shipments"],["inv","Invoices"],["stats","Analytics"],["help","Messages"]];
   const body = {quote:pQuote,ships:pShips,inv:pInv,stats:pStats,help:pHelp}[S.ptab]();
@@ -3779,7 +3866,7 @@ function tog(k){ S.ints[k]=!S.ints[k]; log("sys",`${intName(k)} ${S.ints[k]?"con
 function newDeal(){
   $("#modalBox").innerHTML=`<h3 style="margin-top:0">New deal</h3><form id="nd" class="form" style="grid-template-columns:1fr 1fr">
   <label class="span2">Company<input name="acct" required value="Summit Freight Partners"></label>
-  <label>Contact<input name="contact" value="Alex Kim"></label><label>Est. annual value ($)<input name="value" type="number" value="25000"></label>
+  <label>Contact<input name="contact" value="Alex Morgan"></label><label>Est. annual value ($)<input name="value" type="number" value="25000"></label>
   <label>Pickup city<select name="origin">${Object.keys(ORIGINS).map(k=>`<option>${k}</option>`).join("")}</select></label>
   <label>Destination<select name="dest">${Object.keys(DESTS).map(k=>`<option>${k}</option>`).join("")}</select></label>
   <div class="span2" style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px"><button type="button" class="btn sec" onclick="closeM()">Cancel</button><button class="btn">Add deal</button></div></form>`;
@@ -3801,6 +3888,103 @@ document.addEventListener("drop",e=>{ e.preventDefault(); document.querySelector
   docShip=c.dataset.ship; onFiles(e.dataTransfer.files,c.dataset.who); });
 applyBrand();
 render();
+</script>
+<script id="huddle-js">
+/* ---------- Huddles: voice or video with an AI teammate or a colleague, with documents ---------- */
+(function(){
+const PPL={
+  sales:{n:"Sales manager",s:"Sales",c:"#2a78d6",i:"S",ai:true}, ops:{n:"Operations manager",s:"Ops",c:"#1baf7a",i:"O",ai:true},
+  fin:{n:"Finance manager",s:"Finance",c:"#eda100",i:"F",ai:true}, cs:{n:"Customer service manager",s:"Service",c:"#e87ba4",i:"C",ai:true},
+  twin:{n:"Emma's twin",s:"Twin",c:"#00b89c",i:"◐",ai:true},
+  priya:{n:"Emma Clarke",s:"Emma",c:"#0b9466",i:"EC",on:true}, lena:{n:"Lucy Walker",s:"Lucy",c:"#a855f7",i:"LW",on:true}, marco:{n:"Mark Bennett",s:"Mark",c:"#d97706",i:"MB",on:false}
+};
+const ic=n=>window.icon?icon(n):"";
+const SCRIPT=[
+  ["ops","OCI-3109 from Hamburg has a customs exam ordered. That's two extra days and about $650 in exam fees."],
+  ["priya","Lakefront will want to know today. Can we pass the exam fee through at cost?"],
+  ["fin","Yes. Their contract says exam fees are billed at cost plus our $45 handling. I'll add it to the invoice."],
+  ["ops","I'll tell the trucker the delivery moves to Thursday and update the customer portal."],
+  ["sales","While we're here, Coastal's PO for Q-2041 came in. Shall I book Carrier B for Thursday?"],
+  ["priya","Yes, book it. Megan wants the Monday roll-up to show it."]
+];
+const NOTES=[["Tell Lakefront about the CBP exam on OCI-3109 today","Emma"],["Bill the exam fee at cost plus $45 handling","Finance manager"],["Move the OCI-3109 delivery to Thursday and update the portal","Operations manager"],["Book Q-2041 on Carrier B for Thursday","Sales manager"]];
+let pick=new Set(["ops","priya"]), mode="video", timers=[], stream=null;
+function H(){ return S.hud||null; }
+window.hudPick=k=>{ pick.has(k)?pick.delete(k):pick.add(k); render(); };
+window.hudMode=m=>{ mode=m; render(); };
+window.hudStart=(preset)=>{ const ppl=preset?preset.split(","):[...pick]; if(!ppl.length){ toast("Pick at least one person or AI teammate."); return; }
+  S.hud={ppl,mode,start:Date.now(),chat:[],tr:[],notes:[],mic:true,cam:mode==="video",si:0}; save(); go("huddle");
+  log("sys",`Huddle started with ${ppl.map(k=>PPL[k].s).join(", ")}`); runScript(); if(mode==="video") hudCam(true); };
+function runScript(){ timers.forEach(clearInterval); timers=[]; const h=H(); if(!h) return;
+  const iv=setInterval(()=>{ const h=H(); if(!h||view!=="huddle"){ return; } const line=SCRIPT.find((l,i)=>i>=h.si&&h.ppl.includes(l[0]))||null;
+    if(!line){ clearInterval(iv); return; } h.si=SCRIPT.indexOf(line)+1; h.tr.push({k:line[0],t:line[1]}); h.speaking=line[0];
+    const n=NOTES[Math.min(NOTES.length-1,Math.floor(h.tr.length/1.5))]; if(n&&!h.notes.some(x=>x[0]===n[0])) h.notes.push(n);
+    drawLive(); setTimeout(()=>{ if(H()) { H().speaking=null; drawLive(); } },2600); },4200); timers.push(iv); }
+function elapsed(){ const s=Math.floor((Date.now()-H().start)/1000); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; }
+window.hudCam=async(on)=>{ const h=H(); if(!h) return; h.cam=on??!h.cam;
+  if(h.cam){ try{ stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false}); const v=document.getElementById("hudSelf"); if(v){ v.srcObject=stream; v.play().catch(()=>{}); } h.camErr=null; }
+    catch(e){ h.camErr="Your browser blocked the camera on this page. Open the demo at northline-studio.fit/consol to use it."; h.cam=false; } }
+  else if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  render(); };
+window.hudMic=()=>{ const h=H(); h.mic=!h.mic; render(); };
+window.hudShare=async()=>{ try{ const s=await navigator.mediaDevices.getDisplayMedia({video:true}); toast("Sharing your screen."); s.getTracks()[0].onended=()=>toast("Screen share stopped."); }catch(e){ toast("Screen sharing is blocked on this page. It works in the full product."); } };
+window.hudInvite=k=>{ const h=H(); if(h.ppl.includes(k)) return; h.ppl.push(k); log("sys",`${PPL[k].n} joined the huddle`); toast(`${PPL[k].n} ${PPL[k].ai?"joined":"is joining"}.`); save(); render(); };
+window.hudLeave=()=>{ const h=H(); if(!h) return; timers.forEach(clearInterval); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  const mins=Math.max(1,Math.round((Date.now()-h.start)/60000)), notes=h.notes.length?h.notes:NOTES.slice(0,2);
+  S.hudLog=S.hudLog||[]; S.hudLog.unshift({ppl:h.ppl,mins,notes,docs:h.chat.filter(m=>m.doc).length,when:"Today"}); S.hud=null;
+  log("sys",`Huddle ended (${mins} min): ${notes.length} action items assigned`); save();
+  $("#modalBox").innerHTML=`<h3 style="margin-top:0">Huddle summary</h3><div class="muted" style="font-size:12.5px;margin-bottom:10px">${mins} min with ${S.hudLog[0].ppl.map(k=>PPL[k].s).join(", ")}. Written by your AI team.</div>
+    <div class="ndh">Action items</div>${notes.map(n=>`<div class="ndr"><span class="edot" style="margin-top:6px"></span><div>${n[0]}<div class="muted" style="font-size:11.5px">Owner: ${n[1]}</div></div></div>`).join("")}
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn sec" onclick="closeM()">Close</button><button class="btn" onclick="closeM();toast('Summary posted to #ops and tasks added to each owner.')">Post to #ops and assign</button></div>`;
+  $("#modal").classList.add("show"); go("huddle"); };
+window.hudSend=e=>{ e.preventDefault(); const v=e.target.q.value.trim(); if(!v) return; const h=H(); h.chat.push({k:"me",t:v}); e.target.q.value="";
+  const ai=h.ppl.find(k=>PPL[k].ai); if(ai) setTimeout(()=>{ h.chat.push({k:ai,t:/book|q-2041/i.test(v)?"Booked on Carrier B for Thursday. Megan gets the confirmation and it's on the ops calendar.":/oci|exam|customs/i.test(v)?"The exam is set for Wednesday at the CES in New York. I'll send Lakefront the update now.":"Got it. I've added that to the huddle notes."}); drawChat(); },900);
+  drawChat(); };
+async function hudFiles(files){ const h=H(); if(!h) return; for(const f of files){ h.chat.push({k:"me",doc:1,t:`<span class="drchip">${ic("file-text")}<b>${f.name}</b></span>`}); drawChat();
+    const ai=h.ppl.find(k=>PPL[k].ai)||"ops"; if(window.drReview){ const R=await drReview(f); h.chat.push({k:ai,t:`Here's what I see in ${f.name}.`+drCard(R,false)}); } drawChat(); } save(); }
+window.hudFiles=hudFiles;
+
+function tile(k){ const h=H(), p=PPL[k], talk=h.speaking===k;
+  return `<div class="htile ${talk?"talk":""}" style="--pc:${p.c}"><div class="hav ${p.ai?"ai":""}">${p.ai?`<span class="horb"></span>`:""}<span>${p.i}</span></div>
+    <div class="hname">${p.n}${p.ai?' <span class="hai">AI</span>':""}</div>${talk?'<div class="hbars"><i></i><i></i><i></i><i></i></div>':""}</div>`; }
+function drawLive(){ const h=H(); if(!h||view!=="huddle") return; const g=document.getElementById("hGrid"); if(g) g.querySelectorAll(".htile[data-k]").forEach(el=>{ const k=el.dataset.k; el.outerHTML=tile(k).replace('<div class="htile','<div data-k="'+k+'" class="htile'); });
+  const t=document.getElementById("hTr"); if(t){ t.innerHTML=h.tr.slice(-4).map(x=>`<div><b style="color:${PPL[x.k].c}">${PPL[x.k].s}</b> ${x.t}</div>`).join("")||'<div class="muted">The transcript appears here as people talk.</div>'; }
+  const n=document.getElementById("hNotes"); if(n) n.innerHTML=notesHTML(); const c=document.getElementById("hClock"); if(c) c.textContent=elapsed(); }
+function notesHTML(){ const h=H(); return h.notes.length?h.notes.map(x=>`<div class="hn"><span>✓</span><div>${x[0]}<div class="muted" style="font-size:11px">${x[1]}</div></div></div>`).join(""):'<div class="muted" style="font-size:12px">Action items appear here as they are agreed.</div>'; }
+function drawChat(){ const h=H(), b=document.getElementById("hChat"); if(!b) return; b.innerHTML=h.chat.map(m=>m.k==="me"?`<div class="tu">${m.t}</div>`:`<div class="ta"><span class="ivav" style="background:${PPL[m.k].c}">${PPL[m.k].i}</span><div><div class="muted" style="font-size:11px">${PPL[m.k].s}</div>${m.t}</div></div>`).join("")||'<div class="muted" style="font-size:12px">Type a message or drop a document here. Everyone in the huddle sees it.</div>'; b.scrollTop=1e9; }
+setInterval(()=>{ if(H()&&view==="huddle"){ const c=document.getElementById("hClock"); if(c) c.textContent=elapsed(); } },1000);
+
+V.huddle=()=>{ const h=H();
+  if(!h){ const recent=S.hudLog||[{ppl:["ops","priya","fin"],mins:7,notes:[["Re-book SHP-0998 on Carrier C","Operations manager"]],docs:1,when:"Yesterday"}];
+    return `<header class="top"><div><h1>Huddles</h1><div class="sub">Jump on a quick voice or video call with an AI teammate, a colleague or both. Drop documents in, and the AI writes the notes and assigns the actions when you leave.</div></div></header>
+    <div class="card hlobby"><div class="ch"><h3>Who's joining?</h3><div class="seg">${[["video","Video"],["voice","Voice only"]].map(([m,l])=>`<button class="${mode===m?"on":""}" onclick="hudMode('${m}')">${l}</button>`).join("")}</div></div>
+      <div class="ndh">AI teammates</div><div class="hpick">${Object.entries(PPL).filter(([,p])=>p.ai).map(([k,p])=>`<button class="hp ${pick.has(k)?"on":""}" style="--pc:${p.c}" onclick="hudPick('${k}')"><span class="hpa">${p.i}</span><span><b>${p.n}</b><span>Always available</span></span></button>`).join("")}</div>
+      <div class="ndh" style="margin-top:14px">Colleagues</div><div class="hpick">${Object.entries(PPL).filter(([,p])=>!p.ai).map(([k,p])=>`<button class="hp ${pick.has(k)?"on":""}" style="--pc:${p.c}" onclick="hudPick('${k}')" ${p.on?"":"disabled"}><span class="hpa">${p.i}</span><span><b>${p.n}</b><span>${p.on?"Online":"Away · back at 2pm"}</span></span></button>`).join("")}</div>
+      <button class="btn" style="margin-top:16px" onclick="hudStart()">${ic(mode==="video"?"video":"mic")} Start ${mode==="video"?"video":"voice"} huddle (${pick.size})</button></div>
+    <div class="card" style="margin-top:16px"><h3>Recent huddles</h3>${recent.map(r=>`<div class="ndr"><span class="ndn">${r.mins} min</span><div><b>${r.ppl.map(k=>PPL[k].s).join(", ")}</b> · ${r.when}${r.docs?` · ${r.docs} document${r.docs>1?"s":""}`:""}<div class="muted" style="font-size:12px">${r.notes.map(n=>n[0]).join(" · ")}</div></div></div>`).join("")}</div>`; }
+  return `<div class="hroom"><div class="hmain">
+      <div class="hbar"><div><b>Huddle</b> <span class="muted">· ${h.ppl.length+1} people · <span id="hClock">${elapsed()}</span></span></div><span class="pill ok">${h.mode==="video"?"Video":"Voice"} · encrypted</span></div>
+      <div class="hgrid" id="hGrid">
+        <div class="htile me"><video id="hudSelf" autoplay muted playsinline ${h.cam?"":'style="display:none"'}></video>${h.cam?"":`<div class="hav" style="--pc:#2b59ff"><span>SM</span></div>`}<div class="hname">You${h.mic?"":" · muted"}</div>${h.camErr?`<div class="herr">${h.camErr}</div>`:""}</div>
+        ${h.ppl.map(k=>tile(k).replace('<div class="htile','<div data-k="'+k+'" class="htile')).join("")}
+      </div>
+      <div class="htr" id="hTr"></div>
+      <div class="hctl"><button class="hb ${h.mic?"":"off"}" onclick="hudMic()" title="Microphone">${ic("mic")}</button><button class="hb ${h.cam?"":"off"}" onclick="hudCam()" title="Camera">${ic("video")}</button><button class="hb" onclick="hudShare()" title="Share screen">${ic("external-link")}</button>
+        <div class="hadd">${ic("user-plus")}<select onchange="if(this.value){hudInvite(this.value);this.value=''}"><option value="">Add someone…</option>${Object.entries(PPL).filter(([k])=>!h.ppl.includes(k)).map(([k,p])=>`<option value="${k}">${p.n}</option>`).join("")}</select></div>
+        <button class="hb leave" onclick="hudLeave()">Leave</button></div>
+    </div>
+    <div class="hside"><div class="card hnotes"><h3>Notes and actions <span class="hai">AI</span></h3><div id="hNotes">${notesHTML()}</div></div>
+      <div class="card hchatc drchat2"><h3>Huddle chat</h3><div class="hchat" id="hChat"></div>
+        <form class="tform" onsubmit="hudSend(event)"><label class="drclip" title="Attach a document">${ic("file-text")}<input type="file" multiple hidden onchange="hudFiles([...this.files]);this.value=''"></label><input name="q" placeholder="Message the huddle…" autocomplete="off"><button class="btn sm">Send</button></form>
+        <div class="drveil"><div>${ic("file-text")}<b>Drop into the huddle</b><span>Everyone sees it and the AI checks it</span></div></div></div></div></div>`; };
+
+const nav=document.getElementById("nav"), chatB=nav.querySelector('button[data-v="chat"]');
+const b=document.createElement("button"); b.dataset.v="huddle"; b.innerHTML=`<span class="ico">◍</span>Huddles`; nav.insertBefore(b, chatB.nextSibling);
+document.addEventListener("dragover",e=>{ if(!(e.dataTransfer&&[...e.dataTransfer.types].includes("Files"))) return; const t=e.target.closest&&e.target.closest(".drchat2"); if(t){ e.preventDefault(); t.classList.add("drhot"); } });
+document.addEventListener("drop",e=>{ document.querySelectorAll(".drchat2.drhot").forEach(x=>x.classList.remove("drhot")); const t=e.target.closest&&e.target.closest(".drchat2"); if(!t||!e.dataTransfer.files.length) return; e.preventDefault(); e.stopPropagation(); hudFiles([...e.dataTransfer.files]); }, true);
+const pr=render; render=function(){ pr(); if(view==="huddle"&&H()){ drawLive(); drawChat(); if(H().cam&&stream){ const v=document.getElementById("hudSelf"); if(v&&!v.srcObject){ v.srcObject=stream; v.play().catch(()=>{}); } } if(!timers.length) runScript(); } };
+})();
+
 </script>
 <script id="products-js">
 /* ---------- All forwarder products: ocean, air, trucking, warehousing, distribution, customs ---------- */
@@ -3918,7 +4102,7 @@ const nav=document.getElementById("nav"), after=nav.querySelector('button[data-v
 const b=document.createElement("button"); b.dataset.v="twin"; b.innerHTML=`<span class="ico">◐</span>Digital twin`; nav.insertBefore(b, after.nextSibling);
 
 const SRC=[
-  {k:"voice",n:"Voice",ic:"mic",d:"Interviews and a voice sample so the twin explains things the way Priya does",unit:"minutes",total:42},
+  {k:"voice",n:"Voice",ic:"mic",d:"Interviews and a voice sample so the twin explains things the way Emma does",unit:"minutes",total:42},
   {k:"email",n:"Email",ic:"mail",d:"Sent mail and threads with customers, carriers and the team",unit:"threads",total:3812},
   {k:"cal",n:"Calendar",ic:"calendar",d:"Who she meets, how often, and what each meeting is for",unit:"events",total:614},
   {k:"slack",n:"Slack",ic:"hash",d:"Channels she's in and her DMs on work topics",unit:"messages",total:9240},
@@ -3926,11 +4110,11 @@ const SRC=[
   {k:"video",n:"Call recordings",ic:"video",d:"Recorded customer and carrier calls, with transcripts",unit:"calls",total:96}
 ];
 const RULES=[
-  {s:"email",t:"Mei Chen at Coastal Parts Co wants one weekly roll-up email on Mondays, not an update per shipment.",c:94},
+  {s:"email",t:"Megan Hughes at Coastal Parts Co wants one weekly roll-up email on Mondays, not an update per shipment.",c:94},
   {s:"slack",t:"Holds a rate up to 3 working days for repeat customers. Never over a weekend without the airline confirming space.",c:88},
   {s:"video",t:"On LAX → HKG she offers Carrier B first, and Carrier C when the shipment is over 1,000 kg.",c:91},
   {s:"cal",t:"Has a monthly account review with every customer over $50,000 a year, booked for the first Tuesday.",c:86},
-  {s:"email",t:"Signs off “Cheers, Priya” to existing customers and “Kind regards” to new leads.",c:97},
+  {s:"email",t:"Signs off “Cheers, Emma” to existing customers and “Kind regards” to new leads.",c:97},
   {s:"files",t:"Meridian Medical ships temperature-controlled goods: always quotes with a cold-chain handling line and +12% buffer on transit time.",c:82},
   {s:"voice",t:"Sends anything with dangerous goods to Operations before giving a customer a price.",c:93},
   {s:"slack",t:"Escalates to Sam when a discount would take margin below 10%.",c:90}
@@ -3938,12 +4122,12 @@ const RULES=[
 const Q=[
   {q:"When a customer asks you to hold a rate, how do you decide?",a:"If they're a repeat customer I'll hold it for up to three working days. Never over a weekend unless the airline has confirmed space, because rates can move on a Monday."},
   {q:"What do you check before quoting dangerous goods?",a:"I don't quote it myself. I send the SDS to Ops first, they confirm the class and whether it needs a freighter, then I price it."},
-  {q:"How do you like to update a busy customer like Coastal Parts?",a:"Mei hates lots of emails. One roll-up on Monday morning with every open shipment, the ETA and anything she needs to do."}
+  {q:"How do you like to update a busy customer like Coastal Parts?",a:"Megan hates lots of emails. One roll-up on Monday morning with every open shipment, the ETA and anything she needs to do."}
 ];
 const ASK=[
-  {q:"Mei wants to hold Q-2041 until Friday. What would you do?",a:"I'd hold it until Friday 5pm, subject to space. Coastal is a repeat customer and that's inside my three-day rule, but I'd ask Carrier B to confirm space first because Friday is close to the weekend. I've drafted the reply to Mei for you to send.",src:["Slack · #sales, 2 Oct","Email · Mei Chen, Q-2041","Rule · rate holds"]},
-  {q:"Who's my contact at Meridian and what do they care about?",a:"Luis Ortega, logistics manager. He cares about transit time to São Paulo and the cold chain more than price. On the last call he asked twice whether we can guarantee 2–8°C storage at GRU.",src:["Call · Meridian intro, 28 Oct","File · Meridian account plan"]},
-  {q:"Draft my Monday update to Coastal Parts",a:"Hi Mei, here's your Monday round-up. Q-2041 Carson → LAX → HKG: held at $4,310 until Friday 5pm, waiting on your PO. Nothing else open this week. Send the PO over and we'll book the same day. Cheers, Priya",src:["Rule · weekly roll-up","Email style · 212 sent messages"]},
+  {q:"Megan wants to hold Q-2041 until Friday. What would you do?",a:"I'd hold it until Friday 5pm, subject to space. Coastal is a repeat customer and that's inside my three-day rule, but I'd ask Carrier B to confirm space first because Friday is close to the weekend. I've drafted the reply to Megan for you to send.",src:["Slack · #sales, 2 Oct","Email · Megan Hughes, Q-2041","Rule · rate holds"]},
+  {q:"Who's my contact at Meridian and what do they care about?",a:"Lewis Turner, logistics manager. He cares about transit time to São Paulo and the cold chain more than price. On the last call he asked twice whether we can guarantee 2–8°C storage at GRU.",src:["Call · Meridian intro, 28 Oct","File · Meridian account plan"]},
+  {q:"Draft my Monday update to Coastal Parts",a:"Hi Megan, here's your Monday round-up. Q-2041 Carson → LAX → HKG: held at $4,310 until Friday 5pm, waiting on your PO. Nothing else open this week. Send the PO over and we'll book the same day. Cheers, Emma",src:["Rule · weekly roll-up","Email style · 212 sent messages"]},
   {q:"What have you handled for me this week?",a:"I answered 14 routine rate questions, drafted 9 follow-ups you approved, prepared the briefing for your Meridian call and flagged one discount that would have taken margin under 10%. About 6.5 hours back for you.",src:["Twin activity log"]}
 ];
 function T(){ S.twin=S.twin||{on:{email:1,cal:1,slack:1,voice:0,files:0,video:0},prog:{email:100,cal:100,slack:100,voice:0,files:0,video:0},mode:"copilot",ok:{},gone:{},qi:0,chat:[],paused:false}; return S.twin; }
@@ -3958,29 +4142,29 @@ window.twConnect=k=>{ const t=T(); if(t.on[k]) return; t.on[k]=1; t.prog[k]=1; r
     if(t.prog[k]>=100){ clearInterval(iv); t.prog[k]=100; save(); log("sys",`Digital twin: finished learning from ${SRCN(k)}`); toast(`<b>${SRCN(k)} connected.</b> The twin found new things to learn. Check “What your twin learned”.`); render(); } },450); };
 window.twMode=m=>{ T().mode=m; save(); log("sys",`Digital twin mode set to ${m}`); render(); };
 window.twRule=(i,a)=>{ const t=T(); if(a==="ok"){ t.ok[i]=1; } else { t.gone[i]=1; } save(); render(); };
-window.twPause=()=>{ const t=T(); t.paused=!t.paused; save(); toast(t.paused?"Twin paused. It won't draft or act until Priya resumes it.":"Twin resumed."); render(); };
+window.twPause=()=>{ const t=T(); t.paused=!t.paused; save(); toast(t.paused?"Twin paused. It won't draft or act until Emma resumes it.":"Twin resumed."); render(); };
 window.twAsk=i=>{ const t=T(); const x=ASK[i]; t.chat.push({u:x.q}); render(); setTimeout(()=>{ t.chat.push({a:x.a,src:x.src}); save(); render(); const c=document.getElementById("twChat"); if(c) c.scrollTop=1e9; },900); };
 window.twFree=e=>{ e.preventDefault(); const v=e.target.q.value.trim(); if(!v) return; const t=T(); t.chat.push({u:v}); e.target.q.value=""; render();
-  setTimeout(()=>{ t.chat.push({a:"I haven't learned enough about that yet to answer the way Priya would. I've added it to my next training interview so she can teach me.",src:["Training queue"]}); render(); },800); };
+  setTimeout(()=>{ t.chat.push({a:"I haven't learned enough about that yet to answer the way Emma would. I've added it to my next training interview so she can teach me.",src:["Training queue"]}); render(); },800); };
 window.twInterview=()=>{ const t=T(); const q=Q[t.qi%Q.length]; const box=document.getElementById("twIv"); if(!box) return;
-  box.innerHTML=`<div class="ivq"><span class="ivav">◐</span>${q.q}</div><div class="ivrec"><span class="vdot"></span><span class="ivwave">${"<i></i>".repeat(24)}</span><span class="muted" style="font-size:12px">Listening to Priya…</span></div><div class="iva" id="twIvA"></div>`;
+  box.innerHTML=`<div class="ivq"><span class="ivav">◐</span>${q.q}</div><div class="ivrec"><span class="vdot"></span><span class="ivwave">${"<i></i>".repeat(24)}</span><span class="muted" style="font-size:12px">Listening to Emma…</span></div><div class="iva" id="twIvA"></div>`;
   const words=q.a.split(" "); let n=0; const iv=setInterval(()=>{ n++; const a=document.getElementById("twIvA"); if(!a){ clearInterval(iv); return; } a.textContent="“"+words.slice(0,n).join(" ")+(n<words.length?"":"”");
-    if(n>=words.length){ clearInterval(iv); t.qi++; t.prog.voice=Math.min(100,(t.prog.voice||0)+34); t.on.voice=1; save(); setTimeout(()=>{ toast("<b>Learned.</b> Added to the twin's playbook for Priya to confirm."); render(); },700); } },90); };
+    if(n>=words.length){ clearInterval(iv); t.qi++; t.prog.voice=Math.min(100,(t.prog.voice||0)+34); t.on.voice=1; save(); setTimeout(()=>{ toast("<b>Learned.</b> Added to the twin's playbook for Emma to confirm."); render(); },700); } },90); };
 
 V.twin = () => {
   const t=T(), r=ready(), learned=RULES.map((x,i)=>[x,i]).filter(([x,i])=>!t.gone[i]&&(t.prog[x.s]||0)>=100);
   const pending=RULES.filter((x,i)=>!t.gone[i]&&(t.prog[x.s]||0)<100).length;
-  const modes=[["shadow","Shadow","Watches and learns. Drafts nothing."],["copilot","Co-pilot","Drafts replies and prep for Priya to approve."],["delegate","Delegate","Handles routine work on its own inside her limits, and covers when she's away."]];
+  const modes=[["shadow","Shadow","Watches and learns. Drafts nothing."],["copilot","Co-pilot","Drafts replies and prep for Emma to approve."],["delegate","Delegate","Handles routine work on its own inside her limits, and covers when she's away."]];
   const cc=2*Math.PI*44;
-  return `<header class="top"><div><h1>Priya's digital twin</h1><div class="sub">An AI copy of how Priya Kapoor, senior account manager, works: her accounts, her rules and her voice. It supports her and covers for her. Priya trains it, owns it and decides what it can do.</div></div>
+  return `<header class="top"><div><h1>Emma's digital twin</h1><div class="sub">An AI copy of how Emma Clarke, senior account manager, works: her accounts, her rules and her voice. It supports her and covers for her. Emma trains it, owns it and decides what it can do.</div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sec" onclick="twPause()">${t.paused?"Resume twin":"Pause twin"}</button><button class="btn" onclick="document.getElementById('twTest').scrollIntoView({behavior:'smooth'})">Talk to the twin</button></div></header>
 
   <div class="twhero">
     <div class="twid">
       <div class="twav"><svg viewBox="0 0 100 100" class="twring"><circle cx="50" cy="50" r="44" class="rb"/><circle cx="50" cy="50" r="44" class="rf" stroke-dasharray="${cc*r/100} ${cc}"/></svg>
-        <span class="twp">PK</span><span class="twt">◐</span></div>
-      <div><div class="twname">Priya Kapoor <span class="twx">+ twin</span></div><div class="twrole">Senior account manager · Coastal Parts Co, Meridian Medical + 11 accounts</div>
-        <div class="twst"><span class="pulse"></span>${t.paused?"Paused by Priya":t.mode==="delegate"?"Delegate mode · acting within limits":t.mode==="copilot"?"Co-pilot mode · drafting for approval":"Shadow mode · learning only"}</div></div>
+        <span class="twp">EC</span><span class="twt">◐</span></div>
+      <div><div class="twname">Emma Clarke <span class="twx">+ twin</span></div><div class="twrole">Senior account manager · Coastal Parts Co, Meridian Medical + 11 accounts</div>
+        <div class="twst"><span class="pulse"></span>${t.paused?"Paused by Emma":t.mode==="delegate"?"Delegate mode · acting within limits":t.mode==="copilot"?"Co-pilot mode · drafting for approval":"Shadow mode · learning only"}</div></div>
     </div>
     <div class="twstats">
       <div><div class="tsv" id="twReady">${r}%</div><div class="tsl">Trained</div></div>
@@ -4000,33 +4184,33 @@ V.twin = () => {
 
   <div class="twgrid">
     <div class="card"><div class="ch"><h3>Voice interview</h3><span class="muted" style="font-size:12px">5 minutes a day</span></div>
-      <div class="muted" style="font-size:12.5px;margin-bottom:10px">The twin asks Priya about the judgement calls that never get written down. She answers out loud and it learns the rule behind the answer.</div>
+      <div class="muted" style="font-size:12.5px;margin-bottom:10px">The twin asks Emma about the judgement calls that never get written down. She answers out loud and it learns the rule behind the answer.</div>
       <div id="twIv" class="ivbox"><div class="ivq"><span class="ivav">◐</span>${Q[t.qi%Q.length].q}</div></div>
       <button class="btn" style="margin-top:12px" onclick="twInterview()">${ic("mic")} Answer by voice</button>
-      <div class="vclone"><div><b>Voice sample</b><div class="muted" style="font-size:12px">${Math.min(10,Math.round((t.prog.voice||0)/10))} of 10 minutes recorded. Used only to read Priya's own drafts back to her, never to call anyone as her.</div></div><div class="tb" style="width:120px"><b style="width:${t.prog.voice||0}%"></b></div></div>
+      <div class="vclone"><div><b>Voice sample</b><div class="muted" style="font-size:12px">${Math.min(10,Math.round((t.prog.voice||0)/10))} of 10 minutes recorded. Used only to read Emma's own drafts back to her, never to call anyone as her.</div></div><div class="tb" style="width:120px"><b style="width:${t.prog.voice||0}%"></b></div></div>
     </div>
     <div class="card"><div class="ch"><h3>Learning from call recordings</h3><span class="muted" style="font-size:12px">${t.on.video?"96 calls":"Connect recordings"}</span></div>
-      ${[["Meridian Medical · intro call","28 Oct · 34 min","Cold chain at GRU is Luis's main worry"],["Carrier B · Q4 capacity review","24 Oct · 51 min","Carrier B has space LAX → HKG Tue and Thu"],["Coastal Parts · monthly review","21 Oct · 27 min","Mei expects the PO for Q-2041 this week"]].map(([n,d,l])=>`<div class="vrow"><span class="vth">${ic("play")}</span><div><b>${n}</b><div class="muted" style="font-size:11.5px">${d}</div><div class="vl">${t.on.video?`Learned: ${l}`:"Not read yet"}</div></div></div>`).join("")}
+      ${[["Meridian Medical · intro call","28 Oct · 34 min","Cold chain at GRU is Lewis's main worry"],["Carrier B · Q4 capacity review","24 Oct · 51 min","Carrier B has space LAX → HKG Tue and Thu"],["Coastal Parts · monthly review","21 Oct · 27 min","Megan expects the PO for Q-2041 this week"]].map(([n,d,l])=>`<div class="vrow"><span class="vth">${ic("play")}</span><div><b>${n}</b><div class="muted" style="font-size:11.5px">${d}</div><div class="vl">${t.on.video?`Learned: ${l}`:"Not read yet"}</div></div></div>`).join("")}
     </div>
   </div>
 
-  <div class="card" style="margin-top:16px"><div class="ch"><div><h3>What your twin learned</h3><div class="muted" style="font-size:12px">Priya confirms each rule before the twin uses it. Nothing is used until she says yes.${pending?` ${pending} more will appear as you connect sources.`:""}</div></div></div>
+  <div class="card" style="margin-top:16px"><div class="ch"><div><h3>What your twin learned</h3><div class="muted" style="font-size:12px">Emma confirms each rule before the twin uses it. Nothing is used until she says yes.${pending?` ${pending} more will appear as you connect sources.`:""}</div></div></div>
     <div class="rules2">${learned.length?learned.map(([x,i])=>`<div class="rl2 ${t.ok[i]?"ok":""}"><span class="rsrc">${ic(SRC.find(s=>s.k===x.s).ic)}${SRCN(x.s)}</span><div class="rt">${x.t}<div class="rconf"><span style="width:${x.c}%"></span></div><span class="muted" style="font-size:11px">${x.c}% sure</span></div>
       ${t.ok[i]?'<span class="pill ok">In use</span>':`<div class="ract"><button class="btn sm ok" onclick="twRule(${i},'ok')">Confirm</button><button class="btn sm sec" onclick="twRule(${i},'no')">Forget</button></div>`}</div>`).join(""):'<div class="empty">Connect a source and the twin will show you what it picked up.</div>'}</div></div>
 
   <div class="twgrid" id="twTest" style="margin-top:16px">
-    <div class="card twchat"><div class="ch"><h3>Talk to the twin</h3><span class="muted" style="font-size:12px">Answers in Priya's style, with sources</span></div>
-      <div class="tcl" id="twChat">${t.chat.length?t.chat.map(m=>m.u?`<div class="tu">${m.u}</div>`:`<div class="ta"><span class="ivav">◐</span><div><div>${m.a}</div><div class="tsrc">${m.src.map(s=>`<span>${s}</span>`).join("")}</div></div></div>`).join(""):`<div class="muted" style="font-size:12.5px">Try a question below. In the live product Priya and her team can also talk to it by voice.</div>`}</div>
+    <div class="card twchat"><div class="ch"><h3>Talk to the twin</h3><span class="muted" style="font-size:12px">Answers in Emma's style, with sources</span></div>
+      <div class="tcl" id="twChat">${t.chat.length?t.chat.map(m=>m.u?`<div class="tu">${m.u}</div>`:`<div class="ta"><span class="ivav">◐</span><div><div>${m.a}</div><div class="tsrc">${m.src.map(s=>`<span>${s}</span>`).join("")}</div></div></div>`).join(""):`<div class="muted" style="font-size:12.5px">Try a question below. In the live product Emma and her team can also talk to it by voice.</div>`}</div>
       <div class="tchips">${ASK.map((x,i)=>`<button class="vchip2" onclick="twAsk(${i})">${x.q}</button>`).join("")}</div>
-      <form class="tform" onsubmit="twFree(event)"><input name="q" placeholder="Ask Priya's twin…" autocomplete="off"><button class="btn sm">Ask</button></form>
+      <form class="tform" onsubmit="twFree(event)"><input name="q" placeholder="Ask Emma's twin…" autocomplete="off"><button class="btn sm">Ask</button></form>
     </div>
-    <div class="card"><div class="ch"><h3>Priya's rules for her twin</h3>${ic("lock")}</div>
+    <div class="card"><div class="ch"><h3>Emma's rules for her twin</h3>${ic("lock")}</div>
       <ul class="guard">
-        <li><b>Priya owns it.</b> She can pause it, see everything it has read and delete it with all its data.</li>
+        <li><b>Emma owns it.</b> She can pause it, see everything it has read and delete it with all its data.</li>
         <li><b>Private stays private.</b> Personal email, HR, health and anything labelled private is never read.</li>
-        <li><b>Always says it's AI.</b> Every message it sends to a customer is marked as sent by Priya's assistant.</li>
+        <li><b>Always says it's AI.</b> Every message it sends to a customer is marked as sent by Emma's assistant.</li>
         <li><b>Limits match hers.</b> Discounts up to 5%, nothing below 10% margin, no new-customer pricing.</li>
-        <li><b>Leaves with consent.</b> If Priya moves on, the company keeps the account knowledge, not her voice or style.</li>
+        <li><b>Leaves with consent.</b> If Emma moves on, the company keeps the account knowledge, not her voice or style.</li>
       </ul>
       <div class="muted" style="font-size:11.5px;margin-top:10px">Every read, draft and action is in the audit log.</div>
     </div>
@@ -4044,7 +4228,7 @@ window.icon = svg;
 
 /* --- rail: icons, groups, new Exchange entry --- */
 const NAV = {
-  aiteam:["bot","Autopilot"], twin:["scan-face"], value:["circle-dollar-sign"], chat:["messages-square"], assistant:["sparkles"], exceptions:["triangle-alert"], live:["radio"], app:["smartphone"],
+  aiteam:["bot","Autopilot"], twin:["scan-face"], value:["circle-dollar-sign"], chat:["messages-square"], huddle:["video"], assistant:["sparkles"], exceptions:["triangle-alert"], live:["radio"], app:["smartphone"],
   dashboard:["layout-dashboard","Home"], insights:["chart-column","Insight"],
   pipeline:["target","Commercial"], transition:["arrow-left-right"], quote:["calculator"],
   jobs:["layers","Operations"], ops:["plane"], team:["users"], docs:["file-text"],
@@ -4081,7 +4265,7 @@ const bar = document.createElement("div"); bar.className="topbar";
 bar.innerHTML = `<div class="crumb"><span class="g" id="cbG"></span><span class="sep">/</span><span class="v" id="cbV"></span></div>
   <div class="ticker" id="ticker" title="Open Data exchange"><span class="lbl"><span class="pulse"></span>Live</span><div class="win"><div class="rail" id="tkRail"></div></div></div>
   <button class="cmdbtn" id="cmdOpen" aria-label="Search and commands">${svg("search")}<span class="lbl2">Search or jump to</span><kbd>⌘K</kbd></button>
-  <div class="presence" title="Online now"><i class="on" style="background:#2b59ff">SM</i><i class="on" style="background:#0b9466">PK</i><i style="background:linear-gradient(135deg,#7a5cff,#00b89c)">${svg("bot").replace('class=""','style="width:14px;height:14px"')}</i></div>
+  <div class="presence" title="Online now"><i class="on" style="background:#2b59ff">SM</i><i class="on" style="background:#0b9466">EC</i><i style="background:linear-gradient(135deg,#7a5cff,#00b89c)">${svg("bot").replace('class=""','style="width:14px;height:14px"')}</i></div>
   <button class="iconbtn" aria-label="Notifications" onclick="go('exceptions')">${svg("bell")}<span class="dot"></span></button>`;
 stage.appendChild(bar); stage.appendChild(main);
 document.getElementById("ticker").onclick = () => go("network");
@@ -4151,7 +4335,8 @@ pal.innerHTML = `<div class="pal" role="dialog" aria-label="Command menu"><div c
 document.body.appendChild(pal);
 const ACTIONS = [
   {t:"Talk to your AI team", g:"Actions", i:"radio", h:"Voice · hold V", run:()=>{ if(window.openVoice) openVoice(); }},
-  {t:"Talk to Priya's digital twin", g:"Actions", i:"scan-face", h:"Digital twin", run:()=>go("twin")},
+  {t:"Talk to Emma's digital twin", g:"Actions", i:"scan-face", h:"Digital twin", run:()=>go("twin")},
+  {t:"Start a huddle", g:"Actions", i:"video", h:"Huddles", run:()=>go("huddle")},
   {t:"New deal", g:"Actions", i:"user-plus", h:"Sales", run:()=>{ go("pipeline"); setTimeout(()=>newDeal(),60); }},
   {t:"Build a quote", g:"Actions", i:"calculator", h:"Quote", run:()=>go("quote")},
   {t:"See what partners shared today", g:"Actions", i:"share-2", h:"Exchange", run:()=>go("network")},
@@ -4364,15 +4549,15 @@ $v("#vIn").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.value.tr
 /* data helpers */
 const ship=()=>S.shipments.find(x=>x.step<MILESTONES.length-1)||S.shipments[0];
 const openQuote=()=>S.quotes.find(q=>q.status==="Sent");
-function say(t){ return t.replace(/<[^>]+>/g,"").replace(/SHP-(\d+)/g,"S H P $1").replace(/Q-(\d+)/g,"Q $1").replace(/→/g,"to"); }
+function say(t){ return t.replace(/<div class="(trace|hand)">[\s\S]*?<\/div>/g,"").replace(/<[^>]+>/g,"").replace(/SHP-(\d+)/g,"S H P $1").replace(/Q-(\d+)/g,"Q $1").replace(/→/g,"to"); }
 function chipsFor(){
   const s=ship(), q=openQuote();
   const all={
-    ops:[s&&`Where's ${s.id}?`, s&&`Move ${s.id} to the next milestone`, "Anything blocked?"],
-    sales:["How's the pipeline?", q&&`Book ${q.id}`, "Who should I call today?"],
-    fin:["What needs my approval?", "Any duplicate bills?", "How much did we save this month?"],
+    ops:["Any delayed shipments?", s&&`Where's ${s.id}?`, s&&`Move ${s.id} to the next milestone`],
+    sales:["Do we have any sales meetings today?","How's the pipeline?", q&&`Book ${q.id}`, "Who should I call today?"],
+    fin:["How much did we make yesterday?","What's our forecast for the month?","What needs my approval?", "Any duplicate bills?"],
     cs:["Any tickets for me?", "What did customers ask today?"],
-    auto:["Give me today's report", s&&`Where's ${s.id}?`, q&&`Book ${q.id}`, "What needs my approval?", "How's the pipeline?"]
+    auto:["How much did we make yesterday?","Any delayed shipments?","Do we have sales meetings today?","Who's my top salesperson?","Have we lost any customers?","What's our forecast for the month?","Give me today's report", q&&`Book ${q.id}`, "What needs my approval?"]
   };
   return (all[to]||all.auto).filter(Boolean);
 }
@@ -4396,10 +4581,19 @@ function route(t){
   if(/duplicate|double/.test(l)) intent="dupes";
   if(/save|saved|value|made/.test(l)) intent="value";
   if(/ticket|customer.*ask|complain|inbox/.test(l)) intent="tickets";
-  const ownerOf={where:"ops",advance:"ops",blocked:"ops",pipeline:"sales",call:"sales",book:"ops",approve:"auto",dupes:"fin",value:"fin",tickets:"cs",report:"auto",help:"auto"};
+  if(/meeting|appointment|calendar|calls? (today|this week)|on my diary/.test(l)) intent="meetings";
+  if(/delay|late|behind|stuck|running over/.test(l)) intent="delayed";
+  if(/which systems|what systems|connected to|where do you get/.test(l)) intent="systems";
+  if(/yesterday/.test(l)&&/money|revenue|make|made|sales|profit|earn|bill/.test(l)) intent="yday";
+  if(/forecast|month.?end|this month|projection|on track for/.test(l)) intent="forecast";
+  if(/top sales|best sales|salesperson|sales ?rep|who sold|top seller|leaderboard/.test(l)) intent="toprep";
+  if(/lost|churn|stopped shipping|lose any|losing/.test(l)&&/customer|client|account|any/.test(l)) intent="lost";
+  const ownerOf={where:"ops",advance:"ops",blocked:"ops",pipeline:"sales",call:"sales",book:"ops",approve:"auto",dupes:"fin",value:"fin",tickets:"cs",report:"auto",help:"auto",meetings:"sales",delayed:"ops",systems:"auto",yday:"fin",forecast:"fin",toprep:"sales",lost:"sales"};
   if(!named) who = ownerOf[intent]==="auto" ? to : ownerOf[intent];
   return {who,intent,l};
 }
+const k$v=n=>n>=1e6?"$"+(n/1e6).toFixed(2)+"M":"$"+Math.round(n/1e3)+"k";
+function trc(a){ return `<div class=\"trace\"><span class=\"tl\">Checked</span>${a.map(x=>`<span class=\"tc2\">${x[0]}${x[1]?` <i>${x[1]}</i>`:""}</span>`).join("")}</div>`; }
 function answer(r){
   const s=ship(), q=openQuote(), A={txt:"",act:null};
   const idIn=r.l.match(/shp-?\s?(\d+)/i), sx=idIn?S.shipments.find(x=>x.id.replace(/\D/g,"")===idIn[1])||s:s;
@@ -4433,6 +4627,26 @@ function answer(r){
     case "tickets": { const n=S.tickets.filter(t=>t.status==="Needs a person"), a=S.tickets.filter(t=>t.status!=="Needs a person");
       A.txt=n.length?`${a.length} answered automatically. <b>${n.length}</b> needs you: ${n[0].from} at ${n[0].acct}, "${n[0].subj}". A reply is drafted.`:`All ${a.length} tickets were answered automatically.`;
       A.act={label:"Review in Support", run:()=>go("support")}; break; }
+    case "meetings": { const ev=(S.events||[]).filter(e=>e.day===2), deals=S.deals.filter(d=>["Lead","Qualified"].includes(d.stage));
+      A.txt=`You have <b>${ev.length+1} sales meeting${ev.length?"s":""} today</b>. ${ev.map(e=>`<b>${e.time}</b> ${e.title}`).join(". ")}${ev.length?". ":""}HubSpot also has a call booked at <b>16:30</b> with Lewis Turner at Meridian Medical, and ${deals.length} open leads with no next meeting set.${trc([["Google Calendar",`${ev.length} meeting${ev.length===1?"":"s"}`],["HubSpot",`1 call, ${deals.length} leads`],["Merged","1 duplicate invite"]])}`;
+      A.act={label:"Open calendar", run:()=>go("calendar")}; break; }
+    case "delayed": { const js=(window.prodJobs?prodJobs():[]), late=js.filter(j=>j.flag||/queue|exam/i.test(j.eta||""));
+      A.txt=late.length?`<b>${late.length} shipment${late.length>1?"s are":" is"} behind.</b> ${late.map(j=>`<b>${j.id}</b> ${j.lane}: ${j.flag||j.eta}`).join(". ")}. Everything else is on time, including SHP-1007. I've asked Finance to bill the exam fee and Customer service to tell Lakefront.${trc([["CargoWise TMS",`${js.length-1} open jobs`],["Pelicargo","1 air booking"],["Carrier and port tracking","11 updates"],["ACE customs","1 exam"]])}<div class="hand">Ops → Finance: bill the exam fee · Ops → Service: update the customer</div>`:"No shipments are delayed right now.";
+      A.act={label:"Open all jobs", run:()=>go("jobs")}; break; }
+    case "systems": A.txt=`I work across everything you've connected: your TMS, Pelicargo for air bookings, HubSpot and Salesforce for customers, Google Calendar and Outlook, Gmail, Slack, carrier and port tracking, and ACE for customs. Ask me anything and I'll check whichever systems hold the answer.${trc([["TMS",""],["Pelicargo",""],["HubSpot",""],["Salesforce",""],["Calendar",""],["Gmail",""],["Slack",""],["ACE",""]])}`;
+      A.act={label:"See connections", run:()=>go("integrations")}; break;
+    case "yday": { const w=INS.wk[INS.wk.length-1], rev=w.rev/5*1.06, gp=w.gp/5*1.06;
+      A.txt=`Yesterday we billed <b>${money(Math.round(rev))}</b> with <b>${money(Math.round(gp))}</b> gross profit (${w.m.toFixed(1)}%), across ${Math.round(w.n/5)} jobs. That's 6% above an average Monday. Biggest job: OCX-2207 for Brightline Imports.${trc([["Accounting","invoices"],["TMS","jobs closed"],["Pelicargo","air bookings"]])}`;
+      A.act={label:"Open Insights", run:()=>go("insights")}; break; }
+    case "forecast": { const L=INS.wk.slice(-4), avg=L.reduce((a,w)=>a+w.rev,0)/4, mtd=INS.wk[INS.wk.length-1].rev*(10/7)*0.92, fc=avg*4.33, gpF=fc*(L.reduce((a,w)=>a+w.gp,0)/L.reduce((a,w)=>a+w.rev,0)), last=fc/1.11;
+      A.txt=`November is forecast at <b>${money(Math.round(fc/1000)*1000)}</b> revenue and <b>${money(Math.round(gpF/1000)*1000)}</b> gross profit, about 11% up on October. So far this month: ${money(Math.round(mtd/1000)*1000)}. The forecast uses the last 4 weeks' run rate, open quotes likely to book, and the ocean jobs already sailing.${trc([["Accounting","month to date"],["TMS","booked jobs"],["HubSpot","open quotes"]])}`;
+      A.act={label:"Open Insights", run:()=>go("insights")}; break; }
+    case "toprep": { const reps=[["Emma Clarke",0.31],["Ava Brooks",0.24],["Sam (you)",0.19],["Noah Fletcher",0.15],["Isla Grant",0.11]], tot=INS.wk.slice(-13).reduce((a,w)=>a+w.rev,0);
+      A.txt=`<b>Emma Clarke</b> is top this quarter with <b>${k$v(tot*0.31)}</b> booked and the best win rate (38%). Then ${reps.slice(1,3).map(r=>`${r[0]} ${k$v(tot*r[1])}`).join(", ")}. Ava has the most new customers this month (4).${trc([["HubSpot","deals won"],["TMS","revenue by owner"]])}`;
+      A.act={label:"Open Sales", run:()=>go("pipeline")}; break; }
+    case "lost": { const lost=(INS.cust||[]).filter(c=>c.st==="Lost"), slow=(INS.cust||[]).filter(c=>c.st==="Slowing");
+      A.txt=lost.length?`<b>${lost.length} lost:</b> ${lost.map(c=>`<b>${c.name}</b>, nothing booked for ${c.daysSince} days (was ${k$v(c.prev/4*4.3)} a month)`).join("; ")}. ${slow.length?`<b>${slow.length} slowing:</b> ${slow.map(c=>`${c.name} (${Math.round(c.chg)}%)`).join(", ")}. `:""}I've drafted a win-back email for each and put a call on Emma's calendar.${trc([["TMS","booking history"],["HubSpot","last contact"],["Gmail","last replies"]])}`:"No lost customers this quarter.";
+      A.act={label:"See win-back list", run:()=>go("growth")}; break; }
     case "report": { const open=S.deals.filter(d=>["Lead","Qualified","Quoted"].includes(d.stage)).reduce((a,d)=>a+d.value,0), m=S.shipments.filter(x=>x.step<MILESTONES.length-1).length; let w=0; try{ AGENTS.forEach(g=>w+=g.waiting().length); }catch(e){}
       A.txt=`Morning. Pipeline is <b>${money(open)}</b>, ${m} shipment${m===1?"":"s"} moving, and <b>${w}</b> decision${w===1?"":"s"} waiting for you. Want me to go through them?`;
       A.act={label:"Read full report", run:()=>{ go("aiteam"); try{ teamReport(); }catch(e){} }}; break; }
@@ -4810,7 +5024,7 @@ const extOf=n=>(n.split(".").pop()||"").toUpperCase().slice(0,4);
 function seedDrafts(){
   S.drafts=S.drafts||[]; if(S.draftsSeeded) return; S.draftsSeeded=1;
   S.drafts.unshift(
-    {id:S.nextD++,status:"Waiting",co:"Coastal Parts Co",to:"Mei Chen",kind:"Rate hold reply (Q-2041)",subj:"Re: Hold Q-2041 until Friday?",body:"Hi Mei,\n\nNo problem. I can hold Q-2041 at $4,310 all-in (Carson → LAX → HKG, 820 kg) until Friday 5pm, subject to space on the day. The quote is attached.\n\nSend the PO over when you have it and we'll book straight away.\n\nCheers, Priya"},
+    {id:S.nextD++,status:"Waiting",co:"Coastal Parts Co",to:"Megan Hughes",kind:"Rate hold reply (Q-2041)",subj:"Re: Hold Q-2041 until Friday?",body:"Hi Megan,\n\nNo problem. I can hold Q-2041 at $4,310 all-in (Carson → LAX → HKG, 820 kg) until Friday 5pm, subject to space on the day. The quote is attached.\n\nSend the PO over when you have it and we'll book straight away.\n\nCheers, Emma"},
     {id:S.nextD++,status:"Waiting",co:"Harbor & Pine Trading",to:"Jess Moore",kind:"Invoice (SHP-1007)",subj:"Invoice INV-5007 for SHP-1007",body:"Hi Jess,\n\nPlease find attached invoice INV-5007 for SHP-1007 (Newark → JFK → DXB, 3 pieces, 540 kg): $2,290, due in 30 days.\n\nThanks for the business,\nSam"});
   save();
 }
@@ -4941,21 +5155,21 @@ document.addEventListener("drop",e=>{ const v=e.target.closest&&e.target.closest
 window.drTestVoice=voiceFiles;
 seedDrafts();
 const pr=render; render=function(){ pr(); try{ if(view==="chat") decorateChat(); decorateDrafts(); }catch(err){ console.error(err); } };
-window.drTestChat=chatFiles; window.drTestDraft=draftFiles;
+window.drTestChat=chatFiles; window.drReview=review; window.drCard=card; window.drTestDraft=draftFiles;
 })();
 
 </script>
 <script id="collision-js">
 /* ---------- No double work: claims, presence and duplicate merging ---------- */
 (function(){
-const PEOPLE={Priya:{c:"#0b9466",i:"PK",me:false},Sam:{c:"#2b59ff",i:"SM",me:true},Lena:{c:"#a855f7",i:"LN"},Atlas:{c:"#1baf7a",i:"✈",ai:true},"Finance AI":{c:"#eda100",i:"$",ai:true}};
+const PEOPLE={Emma:{c:"#0b9466",i:"EC",me:false},Sam:{c:"#2b59ff",i:"SM",me:true},Lucy:{c:"#a855f7",i:"LN"},Atlas:{c:"#1baf7a",i:"✈",ai:true},"Finance AI":{c:"#eda100",i:"$",ai:true}};
 const ago=t=>{ const m=Math.max(1,Math.round((Date.now()-t)/60000)); return m<60?m+" min ago":Math.round(m/60)+" h ago"; };
 function claims(){ if(!S.clm){ const n=Date.now(); S.clm={
-  "Q-2041":{by:"Priya",what:"Drafting the rate-hold reply to Mei Chen",at:n-3*60000},
-  "T-302":{by:"Priya",what:"Replying to Mei about holding Q-2041",at:n-3*60000},
+  "Q-2041":{by:"Emma",what:"Drafting the rate-hold reply to Megan Hughes",at:n-3*60000},
+  "T-302":{by:"Emma",what:"Replying to Megan about holding Q-2041",at:n-3*60000},
   "SHP-1007":{by:"Atlas",what:"Watching for the departure message from Carrier B",at:n-22*60000,scope:".srow,.bcard,.deal"},
   "Metro Drayage":{by:"Finance AI",what:"Disputing the $45 waiting-time charge",at:n-41*60000,scope:".irow"}};
-  S.merged=[{who:"Mei Chen · Coastal Parts Co",what:"“Can you hold Q-2041 until Friday?” sent to Sam, Priya and sales@",n:3,to:"Priya"},
+  S.merged=[{who:"Megan Hughes · Coastal Parts Co",what:"“Can you hold Q-2041 until Friday?” sent to Sam, Emma and sales@",n:3,to:"Emma"},
     {who:"Jess Moore · Harbor & Pine",what:"“When does SHP-1007 fly?” by email and in the portal chat",n:2,to:"Customer service AI"},
     {who:"Metro Drayage",what:"Same waiting-time invoice emailed twice to accounts@",n:2,to:"Finance AI"}];
   S.saved2={dupes:17,hrs:5.5}; } return S.clm; }
@@ -5010,7 +5224,7 @@ function card(){ const e=E(), days=[...Array(30)].map((_,i)=>i===17?"amb":"ok");
       <div class="egrid">
         <div><span>Connection</span><b>${e.net==="4g"?"4G backup (fibre down)":"Fibre · 4G on standby"}</b></div>
         <div><span>Battery backup</span><b>100% · about 3 hours</b></div>
-        <div><span>Agents served</span><b>4 AI managers + Priya's twin</b></div>
+        <div><span>Agents served</span><b>4 AI managers + Emma's twin</b></div>
         <div><span>Last check-in</span><b>12 seconds ago</b></div>
       </div>
       <div class="ndh" style="margin-top:14px">Connected on site</div>
@@ -5020,7 +5234,52 @@ function card(){ const e=E(), days=[...Array(30)].map((_,i)=>i===17?"amb":"ok");
       <div class="muted" style="font-size:11.5px;margin-top:4px">100% agent uptime. One fibre cut, covered by 4G.</div>
       <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn sm" onclick="edgeFailover()">${e.net==="4g"?"Restore fibre":"Test failover"}</button><button class="btn sm sec" onclick="edgeRestart()">Restart remotely</button><span class="muted" style="font-size:11.5px;align-self:center">Leased monthly. Shipped set up, monitored and replaced by Consol.</span></div>
     </div></section>`; }
-const base=V.integrations; V.integrations=()=>{ const h=base(); const i=h.indexOf("</header>"); return i<0?card()+h:h.slice(0,i+9)+card()+h.slice(i+9); };
+function layer(){ const sys=[["TMS","CargoWise, Magaya"],["Air bookings","Pelicargo"],["CRM","HubSpot, Salesforce"],["Calendar","Google, Outlook"],["Email and chat","Gmail, Slack"],["Accounting","QuickBooks, Xero"],["Tracking","Carriers and ports"],["Customs","ACE"]];
+  return `<section class="card layer"><div class="ch"><div><h3>One layer over every system</h3><div class="muted" style="font-size:12.5px">Consol sits on top of the systems you already use. Your AI team reads and acts across all of them, so one question gets one answer: "Any delayed shipments?" checks the TMS, Pelicargo, tracking and customs together.</div></div></div>
+    <div class="lyr"><div class="lsys">${sys.map(s=>`<div><b>${s[0]}</b><span>${s[1]}</span></div>`).join("")}</div>
+      <div class="lcore"><span class="lmark"></span><b>Consol</b><span>One live record of customers, jobs, money and people</span></div>
+      <div class="lag">${[["Sales","#2a78d6"],["Operations","#1baf7a"],["Finance","#eda100"],["Customer service","#e87ba4"]].map(a=>`<div style="--pc:${a[1]}"><i></i>${a[0]} manager</div>`).join("")}<div style="--pc:#00b89c"><i></i>Emma's twin</div></div></div>
+    <div class="lqs"><span class="tl2">Try asking</span>${["How much did we make yesterday?","Any delayed shipments?","Do we have sales meetings today?","Have we lost any customers?"].map(q=>`<button class="vchip2" onclick="openVoice&&openVoice();setTimeout(()=>{const i=document.getElementById('vIn');i.value='${q.replace(/'/g,"\\'")}';i.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}))},250)">${q}</button>`).join("")}</div></section>`; }
+const base=V.integrations; V.integrations=()=>{ const h=base(); const i=h.indexOf("</header>"); return i<0?layer()+card()+h:h.slice(0,i+9)+layer()+card()+h.slice(i+9); };
+})();
+
+</script>
+<script id="worklog-js">
+/* ---------- Work log: hours and cost per hour for AI teammates and the twin (owner view) ---------- */
+(function(){
+const ACT=[["read","Reading","#2b59ff"],["write","Writing and sending","#00a389"],["sort","Receiving and sorting","#a855f7"],["talk","Calls and chats","#e08a00"],["task","Task work","#64748b"]];
+const W={
+  sales:{n:"Sales manager",c:"#2a78d6",h:{read:9.4,write:12.8,sort:5.1,talk:6.3,task:12.6},tasks:186,mo:1200,human:48,role:"sales executive",now:"Drafting the Monday roll-up for Megan Hughes"},
+  ops:{n:"Operations manager",c:"#1baf7a",h:{read:11.2,write:8.9,sort:9.6,talk:4.1,task:27.7},tasks:342,mo:1500,human:36,role:"ops coordinator",now:"Checking documents on OCX-2207"},
+  fin:{n:"Finance manager",c:"#eda100",h:{read:7.8,write:5.2,sort:6.4,talk:1.9,task:12.5},tasks:154,mo:900,human:34,role:"accounts clerk",now:"Matching Carrier B's bill to SHP-1007"},
+  cs:{n:"Customer service manager",c:"#e87ba4",h:{read:14.1,write:16.7,sort:10.2,talk:7.9,task:3.5},tasks:418,mo:800,human:28,role:"customer service rep",now:"Answering a tracking question from Jess Moore"},
+  twin:{n:"Emma's twin",c:"#00b89c",h:{read:4.6,write:5.9,sort:2.2,talk:1.8,task:4.1},tasks:64,mo:600,human:55,role:"account manager",now:"Preparing the Meridian call briefing"}
+};
+const hrs=w=>Object.values(w.h).reduce((a,b)=>a+b,0);
+const cph=w=>w.mo/(hrs(w)*4.33);
+const LOG={
+  sales:[["09:12","09:31","Read and answered 14 rate requests","write"],["09:31","09:58","Built 3 ocean quotes for Brightline Imports","task"],["10:05","10:20","Discovery call notes for Northgate Logistics","talk"]],
+  ops:[["08:02","08:40","Read 61 carrier and port updates","read"],["08:40","09:25","Filed AES for OCX-2207","task"],["09:25","09:40","Sorted 22 inbound emails into jobs","sort"]],
+  fin:[["08:30","09:10","Matched 38 supplier bills to contracts","task"],["09:10","09:22","Flagged a duplicate screening bill","read"],["09:22","09:35","Sent 6 payment reminders","write"]],
+  cs:[["07:45","08:30","Answered 31 tracking questions","write"],["08:30","08:52","Sorted the support inbox","sort"],["08:52","09:15","Portal chat with Harbor & Pine","talk"]],
+  twin:[["08:15","08:40","Drafted 9 follow-ups for Emma","write"],["08:40","09:05","Read Meridian's last 3 emails","read"],["09:05","09:20","Prepared the Meridian call briefing","task"]]
+};
+const days=["Mon","Tue","Wed","Thu","Fri"], dayF=[.22,.21,.2,.19,.18];
+function bars(w){ const t=hrs(w); return `<div class="wbars">${days.map((d,i)=>{ const h=t*dayF[i]; return `<div class="wb"><div class="wst" style="height:${h/ (t*.24)*100}%">${ACT.map(([k,,c])=>`<i style="flex:${w.h[k]};background:${c}"></i>`).join("")}</div><span>${d}</span><b>${h.toFixed(1)}h</b></div>`; }).join("")}</div>`; }
+function card(k){ const w=W[k], t=hrs(w), c=cph(w);
+  return `<div class="card wcard" style="--pc:${w.c}"><div class="wh"><span class="wdot"></span><b>${w.n}</b><span class="wnow"><span class="pulse"></span>${w.now}</span></div>
+    <div class="wkpi"><div><span>Hours this week</span><b>${t.toFixed(1)}h</b></div><div><span>Tasks done</span><b>${w.tasks}</b></div><div class="own"><span>Cost per hour</span><b>${money(Math.round(c*100)/100)}</b></div><div class="own"><span>A ${w.role}</span><b>${money(w.human)}/h</b></div></div>
+    <div class="wsplit">${ACT.map(([kk,l,col])=>`<div title="${l}"><i style="background:${col}"></i>${l}<b>${w.h[kk].toFixed(1)}h</b></div>`).join("")}</div>
+    ${bars(w)}
+    <div class="wlog">${LOG[k].map(e=>`<div><span class="mono">${e[0]}–${e[1]}</span><span>${e[2]}</span><i style="background:${ACT.find(a=>a[0]===e[3])[2]}"></i></div>`).join("")}</div>
+    <div class="wsave">Same work by a ${w.role}: <b>${money(Math.round(t*w.human))}</b> this week. Your AI cost: <b>${money(Math.round(t*c))}</b>.</div></div>`; }
+function section(keys,title){ const tot=keys.reduce((a,k)=>a+hrs(W[k]),0), cost=keys.reduce((a,k)=>a+hrs(W[k])*cph(W[k]),0), human=keys.reduce((a,k)=>a+hrs(W[k])*W[k].human,0);
+  return `<section class="wsec"><div class="ch"><div><h3>${title} <span class="ownb">Owner view</span></h3><div class="muted" style="font-size:12px">Every minute is logged: reading, writing and sending, receiving and sorting, calls and chats, and task work. Costs are visible to owners and managers only.</div></div>
+    <div class="wtot"><div><b>${tot.toFixed(1)}h</b><span>worked this week</span></div><div><b>${money(Math.round(cost/tot*100)/100)}</b><span>average cost per hour</span></div><div><b>${money(Math.round(human-cost))}</b><span>saved vs staff this week</span></div></div></div>
+    <div class="wlegend">${ACT.map(([,l,c])=>`<span><i style="background:${c}"></i>${l}</span>`).join("")}</div>
+    <div class="wgrid">${keys.map(card).join("")}</div></section>`; }
+const baseAI=V.aiteam; V.aiteam=()=>{ const h=baseAI(); const i=h.indexOf("</header>"); const s=section(["sales","ops","fin","cs"],"Hours worked"); return i<0?h+s:h.slice(0,i+9)+s+h.slice(i+9); };
+const baseTw=V.twin; V.twin=()=>{ const h=baseTw(); const m='<h3 class="twh">Train the twin</h3>'; const i=h.indexOf(m); const s=section(["twin"],"Twin's hours worked"); return i<0?h+s:h.slice(0,i)+s+h.slice(i); };
 })();
 
 </script>

@@ -570,6 +570,54 @@ main.enter>*:nth-child(4){animation-delay:.15s} main.enter>*:nth-child(n+5){anim
 .agd{display:flex;flex-direction:column;font-size:11px;color:var(--muted);line-height:1.2} .agd b{color:var(--ink);font-family:var(--f-mono);font-weight:500;font-size:12px}
 .mr .btn.sm{padding:5px 9px;font-size:12px}
 @media (max-width:900px){.hstats{grid-template-columns:1fr 1fr}}
+/* ---------- Board ---------- */
+.board{margin-bottom:16px;border:1.5px dashed #cdd5e4;border-radius:18px;padding:16px;background:rgba(255,255,255,.55);transition:border-color .2s,background .2s,box-shadow .2s}
+body.dragging .board{border-color:var(--brand);background:rgba(235,240,255,.7);box-shadow:0 0 0 6px rgba(43,89,255,.08)}
+.board.over{border-style:solid;background:#eaf0ff;box-shadow:0 0 0 8px rgba(43,89,255,.14)}
+.boardh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.boardh h3{margin:0 0 2px;font-size:14px}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.bcard{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--sh-1);cursor:grab;display:flex;flex-direction:column;animation:pop .25s ease-out}
+.bcard:active{cursor:grabbing}.bcard.ghost{opacity:.4}.bcard.tgt{outline:2px solid var(--brand);outline-offset:2px}
+.bh{display:flex;justify-content:space-between;align-items:center}
+.bk{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8a93a8}
+.bx{border:0;background:#f1f3f8;color:#5a6377;width:22px;height:22px;border-radius:7px;font-size:15px;line-height:1}
+.bx:hover{background:#fde8e8;color:#c03131}
+.bt{font-weight:600;font-size:14px;margin-top:4px;letter-spacing:-.01em}
+.bs{font-size:12px;color:var(--muted);margin-top:2px}
+.bbig{font-size:26px;font-weight:600;letter-spacing:-.03em;margin-top:6px;font-variant-numeric:tabular-nums}
+.bspark{width:100%;height:44px;display:block;margin-top:6px}
+.bm{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:10px}
+.bm span{display:block;font-size:10.5px;color:#8a93a8} .bm b{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.bcard .lnk{margin-top:10px}
+.bdrop{display:none;border:1.5px dashed var(--brand);border-radius:14px;align-items:center;justify-content:center;color:var(--brand);font-weight:600;min-height:120px}
+body.dragging .bdrop{display:flex}
+.bempty{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px;color:var(--muted);font-size:13px;text-align:center}
+.bempty b{color:var(--ink)} .bei{width:40px;height:40px;border-radius:12px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-size:20px;margin-bottom:4px}
+.cmp{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;overflow-x:auto}
+.cmph{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:10px;flex-wrap:wrap} .cmph .muted{font-size:11.5px}
+.cmpt{display:grid;gap:6px 12px;align-items:center;min-width:420px}
+.cmpc{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding-bottom:6px;border-bottom:1px solid var(--line)} .cmpc b{font-size:13px}
+.cmpl{font-size:12px;color:var(--muted)}
+.cmpv{position:relative;font-size:12.5px;font-variant-numeric:tabular-nums;padding:5px 8px;border-radius:8px;overflow:hidden;background:#f6f8fc}
+.cmpv span{position:relative;z-index:1;font-weight:500}
+.cmpv b{position:absolute;left:0;top:0;bottom:0;background:rgba(43,89,255,.13);border-radius:8px;max-width:100%}
+.cmpv.best b{background:rgba(11,148,102,.18)} .cmpv.best span{font-weight:700}
+.star{font-style:normal;color:#0b9466}
+.dragable{position:relative}
+[draggable="true"].dragable{cursor:grab}
+.pinb{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:7px;border:1px solid var(--line);background:#fff;color:var(--brand);font-size:13px;line-height:1;opacity:0;transition:opacity .15s;z-index:3}
+.dragable:hover>.pinb,.dragable:focus-within>.pinb{opacity:1}
+@media (hover:none){.pinb{opacity:1}}
+.mr.dragable .pinb,.irow.dragable .pinb{top:50%;transform:translateY(-50%);right:-4px}
+.mr.dragable,.irow.dragable{padding-right:24px}
+.ddock{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;pointer-events:none;z-index:90;display:flex;gap:12px;align-items:center;padding:14px 20px;border-radius:16px;
+  background:rgba(10,16,32,.92);color:#dfe6f5;border:1.5px dashed rgba(122,162,255,.6);box-shadow:0 20px 50px -12px rgba(6,10,20,.6);transition:.2s;font-size:12px}
+.ddock span{font-size:22px;color:#7aa2ff} .ddock b{color:#fff;font-size:13px}
+.ddock.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.ddock.over{border-style:solid;border-color:#00d1b2;background:rgba(8,40,40,.94)}
+.dghost{position:fixed;top:-100px;left:-100px;padding:6px 12px;border-radius:99px;background:#2b59ff;color:#fff;font:600 12px var(--f-body);box-shadow:0 8px 20px -6px rgba(43,89,255,.7)}
+.bpo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid #f0f2f6}
 
 </style>
 </head>
@@ -4240,6 +4288,120 @@ function bindHero(){
 const prevRender = render;
 render = function(){ prevRender(); if(view==="dashboard") bindHero(); };
 if(!location.hash || location.hash==="#dashboard"){ view="dashboard"; }
+render();
+})();
+
+/* ---------- Board: drag anything in for quick view and comparison ---------- */
+(function(){
+const CUST = () => (INS.cust||[]);
+const findC = n => CUST().find(c=>c.name===n);
+const K$ = n => n>=1e6?"$"+(n/1e6).toFixed(2)+"M":n>=1e4?"$"+Math.round(n/1e3)+"k":money(Math.round(n));
+function board(){ S.board = S.board || [{t:"cust",id:"Coastal Parts Co"},{t:"cust",id:"Brightline Imports"}]; return S.board; }
+function has(it){ return board().some(b=>b.t===it.t&&b.id===it.id); }
+function add(it,quiet){ if(!it||has(it)) { if(!quiet) toast("Already on your board"); return; } if(board().length>=8){ toast("Your board holds 8 items. Remove one first."); return; }
+  board().push(it); save(); if(view==="dashboard") render(); toast(`<b>${label(it)}</b> added to your board.${board().filter(b=>b.t===it.t).length>1?" Comparing side by side.":""}`); }
+window.boardAdd = (t,id) => add({t,id});
+window.boardRemove = i => { board().splice(i,1); save(); render(); };
+window.boardClear = () => { S.board=[]; save(); render(); };
+function label(it){ return it.t==="kpi"?it.id:it.id; }
+function parse(v){ const i=v.indexOf(":"); return i<0?null:{t:v.slice(0,i),id:v.slice(i+1)}; }
+
+/* item models */
+function model(it){
+  if(it.t==="cust"){ const c=findC(it.id); if(!c) return null;
+    return {kind:"Customer",title:c.name,pill:c.st,metrics:[["Revenue · 13 wks",c.rev,K$(c.rev)],["Gross profit",c.gp,K$(c.gp)],["Margin",c.m,c.m.toFixed(1)+"%"],["Last 4 wks vs prior",c.chg==null?0:c.chg,c.chg==null?"New":(c.chg>=0?"+":"")+Math.round(c.chg)+"%"],["Shipments",c.n,String(c.n)],["Overdue",-c.overdue,K$(c.overdue)],["Pays in",-c.payDays,c.payDays+" days"]],go:"insights"}; }
+  if(it.t==="ship"){ const s=S.shipments.find(x=>x.id===it.id); if(!s) return null;
+    return {kind:"Shipment",title:s.id,sub:`${s.acct} · ${s.lane}`,pill:MILESTONES[s.step],prog:(s.step+1)/MILESTONES.length,metrics:[["Carrier",0,s.carrier],["Chargeable",s.cw,s.cw+" kg"],["Sell",s.sell,money(s.sell)],["Gross profit",s.sell-s.cost,money(s.sell-s.cost)],["Next",0,MILESTONES[s.step+1]||"Done"]],go:"ops"}; }
+  if(it.t==="quote"){ const q=S.quotes.find(x=>x.id===it.id); if(!q) return null;
+    return {kind:"Quote",title:q.id,sub:`${q.acct} · ${q.lane}`,pill:q.status,metrics:[["Carrier",0,q.carrier],["Chargeable",q.cw,q.cw+" kg"],["Sell",q.sell,money(q.sell)],["Gross profit",q.sell-q.cost,money(q.sell-q.cost)],["Margin",(q.sell-q.cost)/q.sell*100,((q.sell-q.cost)/q.sell*100).toFixed(1)+"%"]],go:"quote"}; }
+  if(it.t==="deal"){ const d=S.deals.find(x=>x.acct===it.id); if(!d) return null;
+    return {kind:"Deal",title:d.acct,sub:`${d.origin} → ${d.dest}`,pill:d.stage,metrics:[["Annual value",d.value,money(d.value)],["Contact",0,d.contact],["Owner",0,d.owner]],go:"pipeline"}; }
+  if(it.t==="kpi"){ const f={"Revenue":w=>w.rev,"Gross profit":w=>w.gp,"Chargeable weight":w=>w.cw,"Active customers":w=>w.active}[it.id]; if(!f) return null;
+    const v=INS.wk.map(f), last=v[v.length-1], prev=v[v.length-2];
+    return {kind:"Metric",title:it.id,spark:v,big:it.id==="Chargeable weight"?(last/1e3).toFixed(1)+"t":it.id==="Active customers"?String(last):K$(last),sub:`This week · ${(prev?(last-prev)/prev*100:0)>=0?"▲":"▼"} ${Math.abs(prev?(last-prev)/prev*100:0).toFixed(1)}% on last week`,metrics:[],go:"insights"}; }
+  return null;
+}
+function miniSpark(v){ const W=200,H=44,mx=Math.max(...v),mn=Math.min(...v),sp=(mx-mn)||1; const d=v.map((x,i)=>(i?"L":"M")+(i/(v.length-1)*W).toFixed(1)+" "+(H-4-(x-mn)/sp*(H-8)).toFixed(1)).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="bspark"><path d="${d} L${W} ${H} L0 ${H}Z" fill="rgba(43,89,255,.12)"/><path d="${d}" fill="none" stroke="#2b59ff" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`; }
+
+/* comparison of 2+ customers */
+function compare(items){
+  const ms=items.map(model), rows=ms[0].metrics.map((m,i)=>i);
+  const hi = ["Revenue · 13 wks","Gross profit","Margin","Last 4 wks vs prior","Shipments"], lo=["Overdue","Pays in"];
+  return `<div class="cmp"><div class="cmph"><b>Comparing ${ms.length} ${ms[0].kind.toLowerCase()}s</b><span class="muted">Longest bar wins on each row</span></div>
+    <div class="cmpt" style="grid-template-columns:150px repeat(${ms.length},minmax(120px,1fr))">
+      <div></div>${ms.map((m,j)=>`<div class="cmpc"><b>${m.title}</b><span class="pill ${m.pill==="Lost"||m.pill==="Slowing"?"warn":m.pill==="Growing"?"ok":""}">${m.pill}</span></div>`).join("")}
+      ${rows.map(r=>{ const name=ms[0].metrics[r][0], vals=ms.map(m=>m.metrics[r][1]), good=hi.includes(name)?Math.max(...vals):lo.includes(name)?Math.max(...vals):null;
+        const span=Math.max(...vals.map(Math.abs))||1;
+        return `<div class="cmpl">${name}</div>${ms.map((m,j)=>{ const v=m.metrics[r][1], w=Math.abs(v)/span*100, best=good!==null&&v===good&&ms.length>1;
+          return `<div class="cmpv ${best?"best":""}"><span>${m.metrics[r][2]}${best?' <i class="star">★</i>':""}</span><b style="width:${lo.includes(name)?100-w+6:w}%"></b></div>`; }).join("")}`; }).join("")}
+    </div></div>`;
+}
+function card(it,i){ const m=model(it); if(!m) return "";
+  return `<div class="bcard" draggable="true" data-bi="${i}"><div class="bh"><span class="bk">${m.kind}</span><button class="bx" title="Remove" aria-label="Remove from board" onclick="boardRemove(${i})">×</button></div>
+    <div class="bt">${m.title}</div>${m.sub?`<div class="bs">${m.sub}</div>`:""}
+    ${m.big?`<div class="bbig">${m.big}</div>${miniSpark(m.spark)}`:""}
+    ${m.pill&&!m.big?`<span class="pill" style="margin-top:6px">${m.pill}</span>`:""}
+    ${m.prog?`<div class="track" style="margin-top:10px"><b style="width:${m.prog*100}%"></b></div>`:""}
+    ${m.metrics.length?`<div class="bm">${m.metrics.slice(0,4).map(x=>`<div><span>${x[0]}</span><b>${x[2]}</b></div>`).join("")}</div>`:""}
+    <button class="lnk" onclick="go('${m.go}')">Open →</button></div>`; }
+
+window.boardHTML = () => {
+  const b=board(), custs=b.map((x,i)=>[x,i]).filter(([x])=>x.t==="cust"), others=b.map((x,i)=>[x,i]).filter(([x])=>x.t!=="cust"||custs.length<2);
+  return `<section class="board" id="board">
+    <div class="boardh"><div><h3>Your board</h3><div class="muted" style="font-size:12px">Drag customers, shipments, quotes or any number here to keep an eye on them. Drop two customers to compare.</div></div>
+      <div style="display:flex;gap:8px"><button class="btn sm sec" onclick="boardPick()">+ Add</button>${b.length?`<button class="btn sm sec" onclick="boardClear()">Clear</button>`:""}</div></div>
+    ${b.length?`${custs.length>=2?compare(custs.map(x=>x[0])):""}<div class="bgrid">${(custs.length>=2?b.map((x,i)=>[x,i]).filter(([x])=>x.t!=="cust"):b.map((x,i)=>[x,i])).map(([x,i])=>card(x,i)).join("")}<div class="bdrop">Drop here</div></div>`
+      :`<div class="bempty"><div class="bei">⇣</div><b>Drag anything here</b><span>Customer rows, shipments, the number tiles above, or deal cards from Sales.</span></div>`}
+  </section>`;
+};
+
+/* picker (works on touch, where dragging doesn't) */
+window.boardPick = () => {
+  const opts=[...CUST().map(c=>["cust",c.name,`Customer · ${c.st}`]),...S.shipments.map(s=>["ship",s.id,`Shipment · ${s.acct}`]),...S.quotes.map(q=>["quote",q.id,`Quote · ${q.acct}`]),...["Revenue","Gross profit","Chargeable weight","Active customers"].map(k=>["kpi",k,"Metric"])];
+  $("#modalBox").innerHTML=`<h3 style="margin-top:0">Add to your board</h3><input id="bpq" placeholder="Search customers, shipments, quotes…" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px">
+    <div id="bpl" style="max-height:50vh;overflow:auto"></div><div style="text-align:right;margin-top:10px"><button class="btn sec" onclick="closeM()">Done</button></div>`;
+  const draw=q=>{ $("#bpl").innerHTML=opts.filter(o=>!q||(o[1]+o[2]).toLowerCase().includes(q.toLowerCase())).map(o=>`<div class="bpo"><div><b>${o[1]}</b><div class="muted" style="font-size:12px">${o[2]}</div></div>${has({t:o[0],id:o[1]})?'<span class="pill ok">On board</span>':`<button class="btn sm" onclick="boardAdd('${o[0]}','${o[1].replace(/'/g,"\\'")}');boardPick()">Add</button>`}</div>`).join(""); };
+  draw(""); $("#bpq").oninput=e=>draw(e.target.value); $("#modal").classList.add("show");
+};
+
+/* inject board into the dashboard */
+const baseDash = V.dashboard;
+V.dashboard = () => { const h=baseDash(); const i=h.indexOf('<section class="dgrid">'); return i<0?h+boardHTML():h.slice(0,i)+boardHTML()+h.slice(i); };
+
+/* make things draggable across the app */
+function decorate(){
+  const root=document.getElementById("main"); if(!root) return;
+  const names=new Set(CUST().map(c=>c.name));
+  root.querySelectorAll(".ktile").forEach(el=>{ const l=el.querySelector(".kl"); if(l) tag(el,"kpi:"+l.textContent.trim().replace(/^./,c=>c.toUpperCase()).replace(/\b(\w)/g,(m,c,o)=>o?m.toLowerCase():m)); });
+  root.querySelectorAll(".mr").forEach(el=>{ const n=el.querySelector(".mn b"); if(n) tag(el,"cust:"+n.textContent.replace("☎","").trim()); });
+  root.querySelectorAll(".srow").forEach(el=>{ const m=el.textContent.match(/SHP-\d+/); if(m) tag(el,"ship:"+m[0]); });
+  root.querySelectorAll(".irow").forEach(el=>{ const q=el.textContent.match(/Q-\d+/); if(q) tag(el,"quote:"+q[0]); });
+  root.querySelectorAll(".deal, tr").forEach(el=>{ if(el.dataset.drag) return; const t=el.textContent; const s=t.match(/SHP-\d+/), q=t.match(/\bQ-\d+/);
+    const n=[...names].find(n=>t.includes(n)); const d=S.deals.find(d=>t.includes(d.acct));
+    if(el.closest("#board")) return;
+    if(el.classList.contains("deal")&&d&&view==="pipeline") tag(el,"deal:"+d.acct); else if(s) tag(el,"ship:"+s[0]); else if(q) tag(el,"quote:"+q[0]); else if(n) tag(el,"cust:"+n); });
+}
+function tag(el,v){ if(!v||el.dataset.drag) return; el.dataset.drag=v; el.setAttribute("draggable","true"); el.classList.add("dragable");
+  if(!el.querySelector(".pinb")&&!el.matches("tr")){ const b=document.createElement("button"); b.className="pinb"; b.title="Add to board"; b.setAttribute("aria-label","Add to board"); b.textContent="⊕"; b.onclick=e=>{ e.stopPropagation(); const it=parse(v); add(it); }; el.appendChild(b); } }
+
+/* drag mechanics */
+const dock=document.createElement("div"); dock.className="ddock"; dock.innerHTML=`<span>⊕</span><div><b>Drop to add to your board</b><div>Opens on the Command centre</div></div>`; document.body.appendChild(dock);
+let dragV=null, fromBoard=null;
+document.addEventListener("dragstart",e=>{ const bc=e.target.closest&&e.target.closest(".bcard"); if(bc){ fromBoard=+bc.dataset.bi; e.dataTransfer.effectAllowed="move"; e.dataTransfer.setData("text/plain","board"); bc.classList.add("ghost"); return; }
+  const el=e.target.closest&&e.target.closest("[data-drag]"); if(!el) return; dragV=el.dataset.drag; e.dataTransfer.effectAllowed="copy"; e.dataTransfer.setData("text/plain",dragV);
+  const g=document.createElement("div"); g.className="dghost"; g.textContent="⊕ "+dragV.split(":").slice(1).join(":"); document.body.appendChild(g); e.dataTransfer.setDragImage(g,10,10); setTimeout(()=>g.remove(),0);
+  document.body.classList.add("dragging"); if(view!=="dashboard"||!document.getElementById("board")) dock.classList.add("show"); });
+document.addEventListener("dragend",()=>{ document.body.classList.remove("dragging"); dock.classList.remove("show","over"); document.querySelectorAll(".board.over,.bcard.ghost,.bcard.tgt").forEach(x=>x.classList.remove("over","ghost","tgt")); dragV=null; fromBoard=null; });
+document.addEventListener("dragover",e=>{ const bd=e.target.closest&&e.target.closest("#board"); const dk=e.target.closest&&e.target.closest(".ddock");
+  if((bd||dk)&&(dragV||fromBoard!==null)){ e.preventDefault(); if(bd) bd.classList.add("over"); if(dk) dk.classList.add("over");
+    document.querySelectorAll(".bcard.tgt").forEach(x=>x.classList.remove("tgt")); const bc=e.target.closest(".bcard"); if(bc&&fromBoard!==null) bc.classList.add("tgt"); } });
+document.addEventListener("dragleave",e=>{ const bd=e.target.closest&&e.target.closest("#board"); if(bd&&!bd.contains(e.relatedTarget)) bd.classList.remove("over"); if(e.target.closest&&e.target.closest(".ddock")) dock.classList.remove("over"); });
+document.addEventListener("drop",e=>{ const bd=e.target.closest&&e.target.closest("#board"), dk=e.target.closest&&e.target.closest(".ddock"); document.body.classList.remove("dragging"); dock.classList.remove("show","over"); if(!bd&&!dk) return;
+  if(fromBoard!==null){ const bc=e.target.closest(".bcard"); if(bc){ const to=+bc.dataset.bi, b=board(); const [x]=b.splice(fromBoard,1); b.splice(to,0,x); save(); render(); } return; }
+  if(dragV){ e.preventDefault(); const it=parse(dragV); add(it); } }, true);
+
+const pr=render; render=function(){ pr(); try{ decorate(); }catch(e){} };
 render();
 })();
 

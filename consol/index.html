@@ -1463,7 +1463,13 @@ function seed(){
        docs:[{type:"Commercial invoice",name:"HP_CI_88431.pdf",src:"Customer upload",st:"Approved",v:1},{type:"Packing list",name:"HP_packing_list.pdf",src:"Customer upload",st:"Approved",v:1},{type:"House air waybill",name:"HAWB_CSL-1007.pdf",src:"Generated",st:"Approved",v:1},{type:"Shipper's letter of instruction",name:"HP_SLI_signed.pdf",src:"Customer upload",st:"Approved",v:1},{type:"Cartage advice with receipt",name:"Cartage_advice_PRO88213.pdf",src:"Generated",st:"Signed by driver",v:1},{type:"EEI filing (AES ITN)",name:"ITN X20261104118832",src:"Filed",st:"Ready",v:1},{type:"Master air waybill",name:"MAWB_176-48201937.pdf",src:"Generated",st:"Ready",v:1},{type:"Cargo labels",name:"Labels_176-48201937.pdf",src:"Generated",st:"Ready",v:1},{type:"Consolidation manifest",name:"Manifest_C00010422.pdf",src:"Generated",st:"Ready",v:1},{type:"IAC known shipper certificate",name:"IAC_KS_cert_176-48201937.pdf",src:"Generated (staff only, SSI)",st:"Ready",v:1}]}
     ],
     invoices:[
-      {id:"INV-5007",ship:"SHP-1007",acct:"Harbor & Pine Trading",amount:2290,status:"Draft",due:"Net 30"}
+      {id:"INV-5007",ship:"SHP-1007",acct:"Harbor & Pine Trading",amount:2290,status:"Draft",due:"Net 30"},
+      {id:"INV-5006",ship:"OCX-2287",acct:"Brightline Imports",amount:9840,status:"Issued",due:"Net 30"},
+      {id:"INV-5005",ship:"OCI-3184",acct:"Coastal Parts Co",amount:14260,status:"Issued",due:"Net 45"},
+      {id:"INV-5004",ship:"OCX-2211",acct:"Keystone Exports",amount:3920,status:"Issued",due:"Net 30"},
+      {id:"INV-5003",ship:"OCI-3109",acct:"Lakefront Machinery",amount:6115,status:"Paid",due:"Net 30"},
+      {id:"INV-5002",ship:"AEX-1194",acct:"Coastal Parts Co",amount:4385,status:"Paid",due:"Net 45"},
+      {id:"INV-5001",ship:"AIM-0871",acct:"Brightline Imports",amount:2730,status:"Paid",due:"Net 30"}
     ],
     bills:[
       {ship:"SHP-1007",vendor:"Metro Drayage",type:"Trucking",quoted:216,actual:261,note:"Waiting time 1.5h"},
@@ -6796,5 +6802,23 @@ window.plJobs=v=>{ P().jobs=+v; render(); };
 })();
 </script>
 
+<style id="polish-css">
+/* Polish: deal cards keep their buttons inside */
+.deal .row{flex-wrap:wrap;gap:6px;row-gap:6px}
+.deal .row .pill{flex:0 0 100%;width:max-content;max-width:100%}
+.deal .row .btn{flex:0 0 auto}
+.deal .n{display:flex;align-items:flex-start;gap:6px}
+.deal .ctn{min-width:0}
+/* Polish: no sideways page scroll on small screens; wide tables scroll inside their card */
+@media (max-width:760px){
+  .trWrap{grid-template-columns:minmax(0,1fr)!important}
+  .trWrap>*,.trList,.trList>*{min-width:0;max-width:100%}
+  .trList{position:static}
+  #main table,main table,.main table,table.trTbl{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .btn{white-space:nowrap}
+  span[style*="display:flex;gap:6px"]{flex-wrap:wrap}
+  #main input,main input{min-width:0}
+}
+</style>
 </body>
 </html>

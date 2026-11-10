@@ -5288,7 +5288,7 @@ document.addEventListener("keydown",e=>{ if(e.key.toLowerCase()!=="v"||e.repeat|
 const AGENT="agent_2401m72y5nx0etc920bf451y60x0", SDK="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.35.0/+esm", DEMO="https://northline-studio.fit/consol/";
 let EL=null, elP=null, elStatus="off", elMode="listening", lastSent="", agRow=null;
 const norm=x=>String(x||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-const SCREENS=["accounts","training","photo","dashboard","jobs","ops","pipeline","insights","billing","aiteam","exceptions","support","growth","calendar","intel","process","transition","claims","integrations","value"];
+const SCREENS=["accounts","training","photo","perf","dashboard","jobs","ops","pipeline","insights","billing","aiteam","exceptions","support","growth","calendar","intel","process","transition","claims","integrations","value"];
 function setStatus(st){ elStatus=st; const b=$v("#vLive"); if(b){ b.dataset.s=st; b.textContent={off:"● Start live voice",connecting:"Connecting to your AI team…",listening:"● Live · listening",speaking:"● Live · speaking",failed:"Live voice unavailable here"}[st]||st; }
   mic.classList.toggle("live",st==="listening"||st==="speaking"); }
 function whoOf(txt){ const m=txt.match(/^\s*(sales|operations|ops|finance|customer service|service)\b/i); if(!m) return MG.auto; const k=m[1].toLowerCase(); return MG[{sales:"sales",operations:"ops",ops:"ops",finance:"fin","customer service":"cs",service:"cs"}[k]]||MG.auto; }
@@ -6678,6 +6678,84 @@ if(V.accounts){ const b=V.accounts; V.accounts=()=>{ let h=b(); const s=(S.acct2
 /* Connect: included card */
 const bi=V.integrations; V.integrations=()=>{ const h=bi(); const card=`<div class="card" style="margin-bottom:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span class="pill" style="background:#e3f6ee;color:#0f7a4f">Included</span><div style="flex:1;min-width:240px;font-size:13px"><b>Gamma</b> for decks and <b>PandaDoc</b> for proposals and e-signature come with every Consol plan. Already connected; no separate account needed.</div><span class="pill ${S.ints.gamma?"ok":"grey"}">${S.ints.gamma?"✓":"○"} Gamma</span><span class="pill ${S.ints.pandadoc?"ok":"grey"}">${S.ints.pandadoc?"✓":"○"} PandaDoc</span></div>`; const i=h.indexOf("</header>"); return i<0?card+h:h.slice(0,i+9)+card+h.slice(i+9); };
 window.DOCS2=D;
+})();
+</script>
+
+<script id="gammacreate-js">
+/* ---------- One-click create in Gamma: quarterly review, sales deck, financial overview (real demo decks) ---------- */
+(function(){
+const DECKS={
+ qbr:{n:"Quarterly business review",d:"For one customer: volume, service, what went well, what to fix, growth ideas, next quarter plan.",by:"Sales manager",url:"https://gamma.app/docs/er5fl0ywvcba4xx",src:["Jobs and milestones","Invoices","Claims","Account growth"],acct:true},
+ sales:{n:"Sales deck",d:"For prospects: who you are, how you work, proof, products, a case study and how to start.",by:"Chief Revenue Officer",url:"https://gamma.app/docs/e10fhsx0xuhmkqa",src:["Your KPIs","Products","Best customer story"]},
+ fin:{n:"Financial overview",d:"For the owner, partners or the bank: revenue, margin, cash, who owes what, margin leaks and actions.",by:"Chief Financial Officer",url:"https://gamma.app/docs/b981m54a53s0hi1",src:["Invoices and payments","Supplier bills","Margin by lane","Cash forecast"]}
+};
+const STEPS=["Reading your live data","Writing the story","Designing in your brand","Ready in Gamma"];
+window.gmCreate=(pre)=>{
+  const accts=(window.ACCT_DATA?Object.keys(window.ACCT_DATA):["Coastal Parts Co"]);
+  $("#modalBox").innerHTML=`<h3 style="margin-top:0">Create in Gamma</h3><p class="muted" style="font-size:12px;margin-top:-6px">Built from your live data and your brand in about a minute. You can edit it in Gamma before you share it.</p>
+    <div style="display:grid;gap:8px">${Object.entries(DECKS).map(([k,x])=>`<label class="lvOpt" style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="radio" name="gk" value="${k}" ${(pre||"qbr")===k?"checked":""} style="margin-top:4px"><span><b>${x.n}</b><div>${x.d}</div><div style="margin-top:3px">Made by: ${x.by} · uses ${x.src.join(", ")}</div></span></label>`).join("")}</div>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px">Customer (for a quarterly review) <select id="gmAcct" class="trIn">${accts.map(a=>`<option ${a==="Coastal Parts Co"?"selected":""}>${a}</option>`).join("")}</select></label>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="btn sec" onclick="closeM()">Cancel</button><button class="btn" onclick="gmGo()">Create</button></div>`;
+  $("#modal").classList.add("show");
+};
+window.gmGo=()=>{
+  const k=(document.querySelector('input[name="gk"]:checked')||{}).value||"qbr", x=DECKS[k], acct=k==="qbr"?($("#gmAcct")||{}).value||"Coastal Parts Co":"Northstar Freight";
+  let i=0; const box=$("#modalBox");
+  const draw=()=>{ box.innerHTML=`<h3 style="margin-top:0">${x.n}${k==="qbr"?" · "+acct:""}</h3>
+    <div style="margin:10px 0">${STEPS.map((s,j)=>`<div style="display:flex;gap:10px;align-items:center;padding:7px 0;font-size:14px;color:${j<=i?"var(--ink)":"#9aa3b2"}"><span style="width:20px;text-align:center">${j<i||i===STEPS.length-1?"✓":j===i?"◌":"·"}</span>${s}</div>`).join("")}</div>
+    ${i===STEPS.length-1?`<div class="muted" style="font-size:12px;margin-bottom:10px">${k==="qbr"&&acct!=="Coastal Parts Co"?"Demo note: the sample deck shown is Coastal Parts Co's. In the product it's built for "+acct+".":"Made by the "+x.by+". Edit in Gamma, then share a link or export to PDF or PowerPoint."}</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button class="btn sec" onclick="gmCopy('${x.url}')">Copy share link</button><a class="btn" href="${x.url}" target="_blank" rel="noopener" style="text-decoration:none">Open in Gamma ↗</a><button class="btn sec" onclick="closeM()">Done</button></div>`:""}`; };
+  draw(); const t=setInterval(()=>{ i++; draw(); if(i>=STEPS.length-1){ clearInterval(t); try{ const d=window.DOCS2&&DOCS2(); if(d){ d.unshift({id:Date.now(),tool:"Gamma",kind:x.n,acct,by:x.by,st:"Ready",d:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"})}); } log("sys",`${x.n} for ${acct} built in Gamma`);}catch(e){} } },900);
+};
+window.gmCopy=u=>{ try{ navigator.clipboard.writeText(u); toast("Link copied. Anyone you share it with can view it."); }catch(e){ toast(u); } };
+window.GAMMA_DECKS=DECKS;
+/* Entry points */
+if(V.accounts){ const b=V.accounts; V.accounts=()=>b().replace('<h3 style="margin-top:0">Make a deck or agreement</h3>','<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0">Make a deck or agreement</h3><span style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" onclick="gmCreate(\'qbr\')">Create quarterly review</button><button class="btn sm sec" onclick="gmCreate(\'sales\')">Create sales deck</button><button class="btn sm sec" onclick="gmCreate(\'fin\')">Create financial overview</button></span></div>'); }
+window.dtDeck=acct=>{ gmCreate("qbr"); setTimeout(()=>{ const s=$("#gmAcct"); if(s) s.value=acct; },0); };
+})();
+</script>
+<style id="perf-css">
+.pfK{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.pfBar{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px}
+.pfBar div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.pfBar i{display:block;width:100%;border-radius:6px 6px 0 0}
+.pfRow{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:4px 0}
+.pfRow span:first-child{width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+<script id="perf-js">
+/* ---------- Forwarder performance: one dashboard per forwarder (same layout a white-label tenant gets), demo numbers ---------- */
+(function(){
+const nav=document.getElementById("nav"), ins=nav.querySelector('button[data-v="insights"]');
+const nb=document.createElement("button"); nb.dataset.v="perf"; nb.innerHTML=`<span class="ico">▤</span>Performance`; nb.onclick=()=>go("perf");
+if(ins) ins.parentNode.insertBefore(nb, ins.nextSibling);
+const MO=["Jun","Jul","Aug","Sep","Oct","Nov"], REQ=[298,331,352,389,421,393], BK=[162,180,196,214,239,223], KG=[61200,70400,79800,88100,99600,92300], REV=[198,221,236,259,288,271];
+const ORG=[["LAX",34],["JFK",22],["ORD",14],["MIA",11],["DFW",9]], DST=[["HKG",19],["FRA",16],["LHR",13],["GRU",10],["NRT",8]];
+const CAR=[["Carrier B",31],["Carrier C",24],["Carrier A",19],["Ocean line D",14],["Others",12]];
+const CUST=[["Coastal Parts Co",41,"15,580",215000,"Air export","Growing"],["Summit Freight Partners",33,"12,940",158000,"Air, trucking","Steady"],["Brightline Imports",29,"9,870",129000,"Ocean, air import","Growing"],["Northgate Logistics",22,"8,120",101000,"Air export","Slowing"],["Pacific Rim Traders",18,"6,430",84000,"Ocean import","Steady"],["Meridian Medical",14,"3,960",77000,"Air (cold chain)","New"]];
+const bars=(a,col,lab,fmt)=>{const mx=Math.max(...a);return `<div class="pfBar">${a.map((v,i)=>`<div><b style="color:var(--ink);font-size:11px">${fmt?fmt(v):v}</b><i style="height:${Math.round(v/mx*110)}px;background:${col}"></i>${lab[i]}</div>`).join("")}</div>`;};
+const hbar=(rows,col)=>{const mx=Math.max(...rows.map(r=>r[1]));return rows.map(r=>`<div class="pfRow"><span>${r[0]}</span><div class="trBar" style="flex:1"><i style="width:${r[1]/mx*100}%;background:${col}"></i></div><b style="width:36px;text-align:right">${r[1]}%</b></div>`).join("");};
+V.perf=()=>{
+  const req=REQ.reduce((a,b)=>a+b), bk=BK.reduce((a,b)=>a+b), rev=REV.reduce((a,b)=>a+b)*1000, kg=KG.reduce((a,b)=>a+b);
+  return `<header class="top"><div><h1>Performance</h1><div class="sub">${FWD}'s own dashboard: requests, bookings, conversion, booked value, weight, lanes, carriers and customers. Every forwarder on Consol gets one, kept current from the TMS, quotes and invoices. Last 6 months.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sec" onclick="gmCreate('fin')">Financial overview in Gamma</button></div></header>
+  <div class="pfK">
+    <div class="card kpi"><div class="l">Quote requests</div><div class="v">${req.toLocaleString("en-US")}</div><div class="d">+7% vs last 6 months</div></div>
+    <div class="card kpi"><div class="l">Bookings</div><div class="v">${bk.toLocaleString("en-US")}</div><div class="d">+11%</div></div>
+    <div class="card kpi"><div class="l">Win rate</div><div class="v">${(bk/req*100).toFixed(1)}%</div><div class="d">requests that booked</div></div>
+    <div class="card kpi"><div class="l">Booked value</div><div class="v">${money(rev)}</div><div class="d">all products</div></div>
+    <div class="card kpi"><div class="l">Avg chargeable weight</div><div class="v">${Math.round(kg/bk)} kg</div><div class="d">per booking</div></div>
+    <div class="card kpi"><div class="l">Spot quotes</div><div class="v">38%</div><div class="d">of bookings off contract rates</div></div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr));margin-top:14px">
+    <div class="card"><h3 style="margin-top:0">Requests and bookings by month</h3>${bars(REQ,"#c7d4fb",MO)}<div class="muted" style="font-size:11px;margin:6px 0 4px">Bookings</div>${bars(BK,"#2b59ff",MO)}</div>
+    <div class="card"><h3 style="margin-top:0">Booked value by month</h3>${bars(REV,"#00a389",MO,v=>"$"+v+"k")}<div class="muted" style="font-size:11px;margin:6px 0 4px">Chargeable weight (tonnes)</div>${bars(KG.map(v=>Math.round(v/1000)),"#a855f7",MO,v=>v+"t")}</div>
+    <div class="card"><h3 style="margin-top:0">Top origins</h3>${hbar(ORG,"#2b59ff")}<h3>Top destinations</h3>${hbar(DST,"#00a389")}</div>
+    <div class="card"><h3 style="margin-top:0">Carrier usage</h3>${hbar(CAR,"#e08a00")}<div class="muted" style="font-size:11.5px;margin-top:8px">Share of bookings. The Operations manager checks each carrier's on-time record before suggesting it.</div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3 style="margin-top:0">Customers</h3><table class="trTbl"><thead><tr><th>Customer</th><th>Bookings</th><th>Chargeable kg</th><th>Booked value</th><th>Buys</th><th>Trend</th><th></th></tr></thead><tbody>
+    ${CUST.map(c=>`<tr style="cursor:default"><td><b>${c[0]}</b></td><td>${c[1]}</td><td>${c[2]}</td><td>${money(c[3])}</td><td class="muted">${c[4]}</td><td><span class="trSt ${c[5]==="Growing"||c[5]==="New"?"ok":c[5]==="Slowing"?"bad":"near"}">${c[5]}</span></td><td style="text-align:right"><button class="btn sm sec" onclick="gmCreate('qbr');setTimeout(()=>{const s=$('#gmAcct');if(s)s.value='${c[0].replace(/'/g,"\\'")}'},0)">Quarterly review</button></td></tr>`).join("")}
+  </tbody></table><div class="muted" style="font-size:11px;margin-top:6px">Demo numbers for ${FWD}.</div></div>`;
+};
 })();
 </script>
 

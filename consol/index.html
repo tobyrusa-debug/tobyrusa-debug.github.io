@@ -796,6 +796,12 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .qtabs{margin-top:-4px}
 @media (max-width:900px){.pmrows{grid-template-columns:1fr}.jgrid{grid-template-columns:1fr}.pmr{grid-template-columns:110px minmax(0,1fr) 58px}.pmg{display:none}}
 
+.pbadge.big{font-size:12px;padding:4px 10px 4px 8px} .pbadge.big svg{width:14px;height:14px}
+.jsec{margin-bottom:22px}
+.jsech{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid color-mix(in srgb,var(--pc) 35%,transparent)}
+.jsech b{font-size:16px;letter-spacing:-.01em;color:var(--ink)} .jsech .muted{font-size:12px}
+.jsi{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--pc);color:#fff} .jsi svg{width:16px;height:16px}
+
 /* ---------- Huddles ---------- */
 .hpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
 .hp{display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;transition:.15s}
@@ -4031,7 +4037,7 @@ window.prodWk=()=>{ const k=S.prod||"all"; if(k==="all"||!P[k]) return INS.wk; c
 window.prodUnit=()=>{ const k=S.prod||"all"; return k==="all"||!P[k]?null:P[k]; };
 window.setProd=k=>{ S.prod=k; save(); render(); };
 window.prodSelect=()=>`<label class="psel">${ic("layers")}<select onchange="setProd(this.value)" aria-label="Product"><option value="all">All products</option>${Object.entries(P).map(([k,p])=>`<option value="${k}" ${S.prod===k?"selected":""}>${p.n}</option>`).join("")}</select></label>`;
-window.prodBadge=k=>`<span class="pbadge" style="--pc:${P[k].c}">${ic(P[k].i)}${P[k].s}</span>`;
+window.prodBadge=(k,big)=>`<span class="pbadge${big?" big":""}" style="--pc:${P[k].c}">${ic(P[k].i)}${P[k].n}</span>`;
 window.jobRail=j=>{ const ms=msOf(j.p); return `<div class="rail">${ms.map((m,i)=>`<span class="st ${i<j.step?"done":i===j.step?"now":""}" title="${m}"><i></i></span>`).join("")}</div><div class="rl"><span>${ms[0]}</span><span>${j.step<ms.length-1?`Next: <b>${ms[j.step+1]}</b>`:"<b>Complete</b>"}</span><span>${ms[ms.length-1]}</span></div>`; };
 
 /* revenue by product card */
@@ -4048,13 +4054,14 @@ V.jobs=()=>{ const J=allJobs(), list=J.filter(j=>jf==="all"||j.p===jf), cnt=k=>J
   return `<header class="top"><div><h1>All jobs</h1><div class="sub">Every product in one place: ocean and air import and export, domestic and cross-border trucking, warehousing, distribution and customs brokerage. Each job follows its own milestones and document checklist.</div></div>
     <button class="btn" onclick="go('quote')">+ New quote</button></header>
   <div class="pchips"><button class="pch ${jf==="all"?"on":""}" onclick="jobsFilter('all')">All <b>${J.length}</b></button>${Object.entries(P).map(([k,p])=>`<button class="pch ${jf===k?"on":""}" style="--pc:${p.c}" onclick="jobsFilter('${k}')">${ic(p.i)}${p.n} <b>${cnt(k)}</b></button>`).join("")}</div>
-  <div class="jgrid">${list.map(j=>{ const p=P[j.p];
-    return `<div class="card job" style="--pc:${p.c}"><div class="jh">${prodBadge(j.p)}<span class="mono jid">${j.id}</span>${j.flag?'<span class="pill warn">Needs you</span>':""}</div>
+  ${(jf==="all"?Object.keys(P).filter(k=>list.some(j=>j.p===k)):[jf]).map(pk=>`<div class="jsec"><div class="jsech" style="--pc:${P[pk].c}"><span class="jsi">${ic(P[pk].i)}</span><b>${P[pk].n}</b><span class="muted">${list.filter(j=>j.p===pk).length} job${list.filter(j=>j.p===pk).length>1?"s":""}</span></div>
+  <div class="jgrid">${list.filter(j=>j.p===pk).map(j=>{ const p=P[j.p];
+    return `<div class="card job" style="--pc:${p.c}"><div class="jh">${prodBadge(j.p,1)}<span class="mono jid">${j.id}</span>${j.flag?'<span class="pill warn">Needs you</span>':""}</div>
       <b class="jacct">${j.acct}</b><div class="muted" style="font-size:12px">${j.lane} · ${j.size}</div>
       <div style="margin:12px 0 4px">${jobRail(j)}</div>
       ${j.flag?`<div class="jflag">! ${j.flag}</div>`:""}
       <div class="jdocs">${p.docs.map((d,i)=>`<span class="${i<Math.min(j.step+1,p.docs.length-1)?"ok":""}">${i<Math.min(j.step+1,p.docs.length-1)?"✓ ":""}${d}</span>`).join("")}</div>
-      <div class="jfoot"><span class="muted" style="font-size:11.5px">${j.eta} · ${money(j.sell)} sell · ${money(j.sell-j.cost)} GP</span>${j.step<msOf(j.p).length-1?`<button class="btn sm sec" onclick="jobAdvance('${j.id}')">Move to ${msOf(j.p)[j.step+1]}</button>`:'<span class="pill ok">Complete</span>'}</div></div>`; }).join("")}</div>`; };
+      <div class="jfoot"><span class="muted" style="font-size:11.5px">${j.eta} · ${money(j.sell)} sell · ${money(j.sell-j.cost)} GP</span>${j.step<msOf(j.p).length-1?`<button class="btn sm sec" onclick="jobAdvance('${j.id}')">Move to ${msOf(j.p)[j.step+1]}</button>`:'<span class="pill ok">Complete</span>'}</div></div>`; }).join("")}</div></div>`).join("")}`; };
 
 /* multi-product quoting */
 const QF={

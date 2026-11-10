@@ -5288,7 +5288,7 @@ document.addEventListener("keydown",e=>{ if(e.key.toLowerCase()!=="v"||e.repeat|
 const AGENT="agent_2401m72y5nx0etc920bf451y60x0", SDK="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.35.0/+esm", DEMO="https://northline-studio.fit/consol/";
 let EL=null, elP=null, elStatus="off", elMode="listening", lastSent="", agRow=null;
 const norm=x=>String(x||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-const SCREENS=["accounts","dashboard","jobs","ops","pipeline","insights","billing","aiteam","exceptions","support","growth","calendar","intel","process","transition","claims","integrations","value"];
+const SCREENS=["accounts","training","photo","dashboard","jobs","ops","pipeline","insights","billing","aiteam","exceptions","support","growth","calendar","intel","process","transition","claims","integrations","value"];
 function setStatus(st){ elStatus=st; const b=$v("#vLive"); if(b){ b.dataset.s=st; b.textContent={off:"● Start live voice",connecting:"Connecting to your AI team…",listening:"● Live · listening",speaking:"● Live · speaking",failed:"Live voice unavailable here"}[st]||st; }
   mic.classList.toggle("live",st==="listening"||st==="speaking"); }
 function whoOf(txt){ const m=txt.match(/^\s*(sales|operations|ops|finance|customer service|service)\b/i); if(!m) return MG.auto; const k=m[1].toLowerCase(); return MG[{sales:"sales",operations:"ops",ops:"ops",finance:"fin","customer service":"cs",service:"cs"}[k]]||MG.auto; }
@@ -6165,5 +6165,404 @@ function upd(){ const st=window.HUD_STATE?HUD_STATE():{on:false}, b=document.get
 setInterval(upd,1000); upd();
 })();
 </script>
+<style id="training-css">
+.trWrap{display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:start}
+@media(max-width:900px){.trWrap{grid-template-columns:1fr}}
+.trList{display:flex;flex-direction:column;gap:6px;position:sticky;top:10px}
+.trMate{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer;text-align:left;font:inherit;width:100%}
+.trMate.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.trDot{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:12px;flex:none}
+.trMate small{display:block;color:var(--muted);font-size:11px}
+.trTag{font-size:10px;font-weight:700;border-radius:99px;padding:1px 7px;margin-left:auto;white-space:nowrap}
+.trK{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px}
+.trKc{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;position:relative}
+.trKc .n{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.trKc .v{font-size:22px;font-weight:750;margin:2px 0}
+.trKc .s{font-size:11px;color:var(--muted)}
+.trKc .spark{width:100%;height:30px;margin-top:4px}
+.trSt{font-size:10px;font-weight:700;border-radius:99px;padding:1px 7px}
+.trSt.ok{background:#e3f6ee;color:#0f7a4f}.trSt.near{background:#fff4e0;color:#a15c00}.trSt.bad{background:#fde7e7;color:#b42318}.trSt.new{background:#eef0f4;color:#475467}
+.trStd{font-size:9.5px;font-weight:700;color:#5a47c9;background:#f1eefc;border-radius:99px;padding:1px 6px}
+.trOut{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:8px;font-size:13px}
+.trOut .who{font-size:11px;color:var(--muted);margin-bottom:3px}
+.trEv{display:flex;gap:8px;font-size:12px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.trEv:last-child{border-bottom:0}
+.trVer{display:flex;gap:10px;align-items:flex-start;font-size:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.trVer:last-child{border-bottom:0}
+.trVer b{min-width:38px}
+.trTbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.trTbl th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;padding:6px 8px;border-bottom:1px solid var(--line)}
+.trTbl td{padding:7px 8px;border-bottom:1px solid var(--line)}
+.trTbl tr.sel td{background:#f5f6f8}
+.trTbl tr{cursor:pointer}
+.trMenu label{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.trMenu label small{color:var(--muted);margin-left:auto;white-space:nowrap}
+.trF{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;margin-top:8px}
+.trF input,.trF select,.trIn{border:1px solid var(--line);border-radius:8px;padding:7px;font:inherit;font-size:13px;min-width:0}
+.trBar{height:8px;border-radius:99px;background:#eef0f4;overflow:hidden}.trBar i{display:block;height:100%;border-radius:99px}
+</style>
+<script id="training-js">
+/* ---------- Training & KPIs: every AI teammate and digital twin is trainable, shows improvement, and is measured on KPIs ---------- */
+(function(){
+const nav=document.getElementById("nav"), after=nav.querySelector('button[data-v="twin"]')||nav.querySelector('button[data-v="aiteam"]');
+const nb=document.createElement("button"); nb.dataset.v="training"; nb.innerHTML=`<span class="ico">▲</span>Training & KPIs`; nb.onclick=()=>go("training"); nav.insertBefore(nb, after.nextSibling);
+
+/* KPI library: [id, name, unit, direction, target, at hire, fully trained, standard with purchase, measured from] */
+const LIB={
+ sales:[["qt","Quote turnaround","min","down",15,52,9,1,"Quotes"],["q2b","Quote → booking","%","up",30,17,34,1,"Quotes and bookings"],["fu","Follow-ups on time","%","up",95,61,98,1,"Email and CRM"],["pipe","Pipeline added a month","$","up",250000,90000,310000,1,"CRM"],["rr","Reply rate on outreach","%","up",12,4,14,0,"Email"],["disc","Average discount given","%","down",3,6.5,2.4,0,"Quotes"],["gm","Gross margin per job","$","up",420,310,455,0,"Jobs"],["win","Win-backs a month","#","up",3,0,4,0,"CRM"]],
+ ops:[["docs","Docs complete before cut-off","%","up",98,82,99,1,"Jobs"],["tender","On-time tender","%","up",97,88,98,1,"Milestones"],["catch","Problems caught before the customer","%","up",90,55,93,1,"Exceptions"],["rework","Bookings with no rework","%","up",95,79,97,1,"Bookings"],["tb","Time to book","min","down",20,64,14,0,"Bookings"],["comp","Compliance errors (AES, DG, KSMS)","#","down",0,4,0,0,"Filings"],["ms","Milestone updates on time","%","up",98,71,99,0,"Milestones"]],
+ fin:[["dso","DSO","days","down",35,52,33,1,"Invoices"],["inv24","Invoices out within 24 hours","%","up",95,58,97,1,"Invoices"],["match","Supplier bills matched to contract","%","up",98,74,99,1,"Supplier bills"],["dup","Duplicate charges caught a month","$","up",3000,400,4100,1,"Supplier bills"],["rec","Claims recovered a month","$","up",8000,1200,9400,0,"Claims"],["cn","Credit notes issued","#","down",2,9,2,0,"Invoices"],["over90","Owed over 90 days","$","down",10000,46000,8200,0,"Invoices"]],
+ cs:[["frt","First response time","min","down",5,38,3,1,"Email, WhatsApp, text"],["auto","Answered without a person","%","up",70,31,74,1,"Inbox"],["csat","Customer satisfaction","/5","up",4.6,3.9,4.7,1,"Surveys"],["esc","Right escalations","%","up",95,72,96,1,"Inbox"],["pro","Proactive delay notices","%","up",90,40,94,0,"Milestones"],["reopen","Reopened tickets","%","down",4,14,3,0,"Inbox"]],
+ twin:[["appr","Drafts approved with no edits","%","up",85,42,88,1,"Emma's approvals"],["match","Answers that match Emma's","%","up",90,61,92,1,"Side-by-side checks"],["saved","Hours saved for Emma a week","h","up",8,1.5,9.2,1,"Work log"],["rules","Rules learned","#","up",40,8,46,1,"Training"],["cover","Accounts it can cover alone","#","up",12,2,14,0,"Accounts"],["tone","Sounds like Emma (customer rating)","/5","up",4.5,3.6,4.7,0,"Surveys"]]
+};
+const UNI=[["acc","Practice test score","%","up",95,74,96,1,"Practice tests"],["edits","Human edits per 100 outputs","#","down",5,34,4,1,"Approvals"],["breach","Limit breaches","#","down",0,3,0,0,"Audit log"],["cost","Cost per task","$","down",0.4,0.9,0.31,0,"Usage"]];
+const FAM={sx:"sales",ae:"sales",aes:"ops",ops:"ops",oc:"ops",clm:"fin",cl:"fin",ar:"fin",ap:"fin",cs:"cs",cx:"cs"};
+const CATS={sales:["Rate requests","Follow-ups","Discount limits","Dangerous goods hand-off","Tone and sign-off"],ops:["Document checks","Cut-off times","Re-booking","Known shipper","Dangerous goods"],fin:["Bill matching","Duplicates","Collections tone","Claims","Credit holds"],cs:["Tracking answers","Delay notices","Escalations","Tone","Portal help"],twin:["Emma's rules","Account knowledge","Tone","Rate holds","Escalations"]};
+const OUTS={
+ sales:[["Reply to Brightline Imports, rate request LAX → FRA","Hi Chris, hope this finds you well! Thanks so much for reaching out. Our rate for 420 kg is $3.85/kg all-in, valid 7 days."],["Follow-up on quote Q-2058, day 5","Hi Jess, just checking in on the quote. Let me know if you have any questions."],["Discount request from Harbor & Pine","Approved 7% off to keep the account."]],
+ ops:[["Booking note, OCX-2207","Booked on Carrier B, cut-off Thursday 18:00. Commercial invoice still missing; tendering anyway to make the flight."],["Re-book, SHP-1011","Airline offloaded. Re-booked next day on Carrier C at +14% cost."],["Milestone update to customer, SHP-1007","Your shipment has departed."]],
+ fin:[["Reminder to Coastal Parts Co, 38 days overdue","FINAL NOTICE: pay immediately or your account will be put on hold."],["Supplier bill, Carrier B for SHP-1007","Paid $2,980 against a quoted $2,640. Small difference."],["Claim offer from trucker, damaged pallet","Accepted 55% of the claimed amount."]],
+ cs:[["WhatsApp reply to Jess Moore","Your shipment is delayed. Sorry."],["Email reply, where is SHP-1009?","It is in transit. ETA soon."],["Portal chat, customer wants to change delivery address","I've changed the address for you."]],
+ twin:[["Monday roll-up to Megan Hughes","Dear Megan, please find below an update on each of your shipments, one email per shipment to follow."],["Reply to Lewis Turner at Meridian","We can quote this tomorrow. Kind regards, Emma"],["Rate hold request, Friday afternoon","Held until Monday 5pm."]]
+};
+const SOPS={sales:["Sales playbook 2026","Discount rules","Lane price list Q4","Objection handling examples"],ops:["Air export SOP","Dangerous goods acceptance checklist","Cut-off times by airline","Re-booking rules"],fin:["Collections policy","Contract rates by carrier","Claims handling SOP","Credit hold rules"],cs:["Customer service tone guide","Delay notice templates","Escalation matrix","Portal FAQ"],twin:["Emma's account plans","Emma's call recordings","Emma's sent mail, last 90 days","Emma's rate hold rules"]};
+
+const spark=(vals,col)=>{const W=120,H=30,mx=Math.max(...vals),mn=Math.min(...vals),sp=(mx-mn)||1;const pts=vals.map((v,i)=>[i/(vals.length-1)*W,H-3-(v-mn)/sp*(H-8)]);const d=pts.map((q,i)=>(i?"L":"M")+q[0].toFixed(1)+" "+q[1].toFixed(1)).join(" "),l=pts[pts.length-1];return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d} L${W} ${H} L0 ${H}Z" fill="${col}" fill-opacity=".1"/><path d="${d}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="${l[0]}" cy="${l[1]}" r="2.5" fill="${col}"/></svg>`;};
+const hs=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))|0;const x=Math.sin(h)*10000;return x-Math.floor(x);};
+function mates(){
+  try{hireInit();}catch(e){}
+  const m=AGENTS.map(g=>({id:g.k,n:g.name,fam:g.k,col:g.col,ico:g.ico,kind:"AI manager"}));
+  m.push({id:"twin",n:"Emma's twin",fam:"twin",col:"#00b89c",ico:"◐",kind:"Digital twin"});
+  (S.hires||[]).forEach(h=>{const f=FAM[h.k]||(/sales/i.test(h.name)?"sales":/claim|financ|account|bill/i.test(h.name)?"fin":/service|support/i.test(h.name)?"cs":"ops"); m.push({id:h.id,n:h.name,fam:f,col:"#64748b",ico:(h.name||"A")[0],kind:"AI teammate"});});
+  return m;
+}
+function T(){ S.trn=S.trn||{sel:"sales",kp:{},cu:{},ev:{},ver:{},tests:{},rated:{},focus:{}}; return S.trn; }
+function vers(m){ const t=T(); if(!t.ver[m.id]){ const p0=.74+.28*hs(m.id); t.ver[m.id]=[{v:"1.0",d:"Aug 18",p:0,note:"Started with the standard playbook for this role"},{v:"1.1",d:"Sep 8",p:p0*.45,note:"Added "+SOPS[m.fam][0]+" and "+SOPS[m.fam][1]},{v:"1.2",d:"Oct 6",p:p0*.8,note:Math.round(24+40*hs(m.id+"c"))+" corrections from the team"},{v:"1.3",d:"Oct 27",p:p0,note:"Practice test passed, moved up to more autonomy"}]; } return t.ver[m.id]; }
+const curP=m=>{const v=vers(m);return v[v.length-1].p;};
+function lib(m){ return LIB[m.fam].concat(UNI); }
+function kpiIds(m){ const t=T(); if(!t.kp[m.id]) t.kp[m.id]=lib(m).filter(x=>x[7]).map(x=>x[0]); return t.kp[m.id]; }
+function rnd(v,u){ return u==="%"||u==="min"||u==="days"?Math.round(v):u==="$"?(Math.abs(v)<10?Math.round(v*100)/100:Math.round(v/10)*10):u==="/5"?Math.round(v*10)/10:u==="h"?Math.round(v*10)/10:Math.round(v); }
+function val(k,p){ return rnd(k[5]+(k[6]-k[5])*Math.min(1.05,p),k[2]); }
+function fmt(v,u){ if(v===null||v===undefined) return "—"; return u==="%"?v+"%":u==="$"?(Math.abs(v)<10?"$"+v.toFixed(2):money(v)):u==="min"?v+" min":u==="days"?v+" days":u==="h"?v+" h":u==="/5"?v.toFixed(1)+"/5":v.toLocaleString("en-US"); }
+function stat(k,v){ const up=k[3]==="up", t=k[4]; const ok=up?v>=t:v<=t; if(ok) return ["ok","On target"]; const gap=up?(t-v)/Math.max(Math.abs(t),1):(v-t)/Math.max(Math.abs(t),1); return gap<=.12||(t===0&&v<=1)?["near","Close"]:["bad","Behind"]; }
+function weekly(m,k){ const p=curP(m), n=8, out=[]; for(let i=0;i<n;i++){ const pi=p*(.55+.45*i/(n-1)); const noise=(hs(m.id+k[0]+i)-.5)*.06; out.push(k[5]+(k[6]-k[5])*Math.max(0,pi+noise)); } return out; }
+function custom(m){ const t=T(); return t.cu[m.id]||[]; }
+function rows(m){ const ids=kpiIds(m), L=lib(m); return ids.map(id=>L.find(x=>x[0]===id)).filter(Boolean); }
+function score(m){ const r=rows(m); const on=r.filter(k=>stat(k,val(k,curP(m)))[0]==="ok").length; return [on,r.length]; }
+function pend(m){ return (T().ev[m.id]||[]).filter(e=>!e.used); }
+function selM(){ const ms=mates(), t=T(); return ms.find(x=>x.id===t.sel)||ms[0]; }
+
+function kpiCard(m,k){
+  const p=curP(m), v=val(k,p), st=stat(k,v), w=weekly(m,k), hire=k[5];
+  const better=k[3]==="up"?v>hire:v<hire, pct=hire?Math.round(Math.abs(v-hire)/Math.abs(hire)*100):0;
+  const col=st[0]==="ok"?"#16a34a":st[0]==="near"?"#e08a00":"#d92d20";
+  return `<div class="trKc"><div class="n">${k[1]} ${k[7]?'<span class="trStd" title="Included with your plan">Standard</span>':""}<span class="trSt ${st[0]}" style="margin-left:auto">${st[1]}</span></div>
+    <div class="v">${fmt(v,k[2])}</div><div class="s">Target ${fmt(k[4],k[2])} · at hire ${fmt(hire,k[2])}${better&&pct?` · <b style="color:#0f7a4f">${pct}% better</b>`:""}</div>
+    ${spark(w,col)}<div class="s" style="display:flex;justify-content:space-between"><span>Last 8 weeks</span><span>From ${k[8]}</span></div></div>`;
+}
+function customCard(c){
+  return `<div class="trKc"><div class="n">${c.n} <span class="trStd" style="background:#eef0f4;color:#475467">Yours</span><span class="trSt new" style="margin-left:auto">Measuring</span></div>
+    <div class="v">—</div><div class="s">Target ${fmt(+c.t,c.u)} · ${c.dir==="up"?"higher":"lower"} is better</div>
+    <div class="s" style="margin-top:12px">First reading Monday, from ${c.src}. Tracked from today.</div></div>`;
+}
+function chart(m){
+  const v=vers(m), acc=UNI[0], ed=UNI[1];
+  const W=520,H=170,pl=34,pr=12,pt=14,pb=34, iw=W-pl-pr, ih=H-pt-pb, n=v.length;
+  const x=i=>pl+(n===1?iw/2:i/(n-1)*iw), y=s=>pt+ih-(s-50)/50*ih;
+  const pts=v.map((r,i)=>[x(i),y(val(acc,r.p))]), ptsE=v.map((r,i)=>[x(i),pt+ih*(val(ed,r.p)/40)]);
+  const line=a=>a.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const tgt=y(acc[4]);
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img" aria-label="Practice test score by version">
+    ${[50,75,100].map(s=>`<line x1="${pl}" x2="${W-pr}" y1="${y(s)}" y2="${y(s)}" stroke="#eef0f4"/><text x="${pl-6}" y="${y(s)+4}" font-size="10" text-anchor="end" fill="#8a93a6">${s}%</text>`).join("")}
+    <line x1="${pl}" x2="${W-pr}" y1="${tgt}" y2="${tgt}" stroke="#16a34a" stroke-dasharray="4 4"/><text x="${W-pr}" y="${tgt-4}" font-size="10" text-anchor="end" fill="#16a34a">target ${acc[4]}%</text>
+    <path d="${line(ptsE)}" fill="none" stroke="#c4c9d4" stroke-width="2" stroke-dasharray="3 3"/>
+    <path d="${line(pts)}" fill="none" stroke="${m.col}" stroke-width="2.5" stroke-linejoin="round"/>
+    ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${m.col}" stroke="#fff" stroke-width="1.5"><title>v${v[i].v}: ${val(acc,v[i].p)}%, ${v[i].note}</title></circle><text x="${p[0]}" y="${p[1]-8}" font-size="10" text-anchor="middle" font-weight="700" fill="#1f2433">${val(acc,v[i].p)}%</text><text x="${p[0]}" y="${H-18}" font-size="10" text-anchor="middle" fill="#1f2433">v${v[i].v}</text><text x="${p[0]}" y="${H-6}" font-size="9" text-anchor="middle" fill="#8a93a6">${v[i].d}</text>`).join("")}
+  </svg><div class="muted" style="font-size:11px;display:flex;gap:14px;flex-wrap:wrap"><span><b style="color:${m.col}">━</b> Practice test score</span><span><b style="color:#c4c9d4">┅</b> Human edits per 100 outputs (lower is better)</span></div>`;
+}
+
+V.training=()=>{
+  const ms=mates(), t=T(), m=selM(), p=curP(m), v=vers(m), last=v[v.length-1], pe=pend(m), r=rows(m), cu=custom(m), sc=score(m), acc=val(UNI[0],p), first=val(UNI[0],v[0].p);
+  const outs=OUTS[m.fam], tests=t.tests[m.id]||[];
+  const allOn=ms.reduce((a,x)=>{const s=score(x);return [a[0]+s[0],a[1]+s[1]];},[0,0]);
+  return `<header class="top"><div><h1>Training & KPIs</h1><div class="sub">Every AI teammate and digital twin learns from your SOPs, your examples and your team's corrections. Each one is measured on KPIs for its role. The standard set comes with your plan, and you can add or remove KPIs from the menu. Nothing you train goes live until you publish it, and you can roll back.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sec" onclick="trReport()">KPI report</button><button class="btn" onclick="trMenu()">KPI menu</button></div></header>
+  <div class="grid k4">
+    <div class="card kpi"><div class="l">KPIs on target</div><div class="v">${allOn[0]}/${allOn[1]}</div><div class="d">across ${ms.length} teammates</div></div>
+    <div class="card kpi"><div class="l">Avg practice test</div><div class="v">${Math.round(ms.reduce((a,x)=>a+val(UNI[0],curP(x)),0)/ms.length)}%</div><div class="d">up from ${Math.round(ms.reduce((a,x)=>a+val(UNI[0],vers(x)[0].p),0)/ms.length)}% at hire</div></div>
+    <div class="card kpi"><div class="l">Training waiting to publish</div><div class="v">${ms.reduce((a,x)=>a+pend(x).length,0)}</div><div class="d">corrections, examples and SOPs</div></div>
+    <div class="card kpi"><div class="l">Versions published</div><div class="v">${ms.reduce((a,x)=>a+vers(x).length-1,0)}</div><div class="d">every one can be rolled back</div></div>
+  </div>
+  <div class="trWrap" style="margin-top:14px">
+    <div class="trList">${ms.map(x=>{const s=score(x), pn=pend(x).length;return `<button class="trMate ${x.id===m.id?"on":""}" onclick="trSel('${x.id}')"><span class="trDot" style="background:${x.col}">${x.ico}</span><span><b style="font-size:13px">${x.n}</b><small>${x.kind} · v${vers(x)[vers(x).length-1].v}${pn?` · ${pn} to publish`:""}</small></span><span class="trTag" style="background:${s[0]===s[1]?"#e3f6ee":"#fff4e0"};color:${s[0]===s[1]?"#0f7a4f":"#a15c00"}">${s[0]}/${s[1]}</span></button>`;}).join("")}</div>
+    <div>
+      <div class="card" style="border-top:4px solid ${m.col}">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">
+          <div><h3 style="margin:0">${m.n} <span class="muted" style="font-weight:500;font-size:13px">· ${m.kind} · version ${last.v}</span></h3>
+          <div class="muted" style="font-size:12px;margin-top:4px">${sc[0]} of ${sc[1]} KPIs on target · practice test ${first}% at hire → <b style="color:#0f7a4f">${acc}%</b> now</div></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm sec" onclick="trTest('${m.id}')">Run practice test</button><button class="btn sm sec" onclick="trMenu()">Add or remove KPIs</button><button class="btn sm" ${pe.length?"":"disabled"} onclick="trPublish('${m.id}')">${pe.length?`Publish v${nextV(last.v)} (${pe.length})`:"Nothing to publish"}</button></div>
+        </div>
+        <h4 style="margin:14px 0 8px">KPIs</h4>
+        <div class="trK">${r.map(k=>kpiCard(m,k)).join("")}${cu.map(customCard).join("")}</div>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:14px">
+        <div class="card"><h3 style="margin-top:0">Improvement by version</h3>${chart(m)}
+          <div style="margin-top:8px">${v.slice().reverse().map((x,i)=>`<div class="trVer"><b>v${x.v}</b><span style="flex:1">${x.note}<div class="muted" style="font-size:11px">${x.d} · practice test ${val(UNI[0],x.p)}% · edits ${val(UNI[1],x.p)} per 100</div></span>${i===0&&v.length>1?`<button class="btn sm sec" onclick="trRollback('${m.id}')">Roll back</button>`:i===0?'<span class="trSt ok">Live</span>':""}</div>`).join("")}</div></div>
+        <div class="card"><h3 style="margin-top:0">Train it</h3>
+          <div class="muted" style="font-size:12px;margin-bottom:8px">Rate its recent work. A correction teaches it what to do next time.</div>
+          ${outs.map((o,i)=>{const key=m.id+":"+i, rt=t.rated[key];return `<div class="trOut"><div class="who">${o[0]}</div><div>${o[1]}</div>
+            ${rt?`<div style="font-size:12px;margin-top:6px;color:${rt.ok?"#0f7a4f":"#5a47c9"}">${rt.ok?"✓ Marked good. Kept as an example.":"✎ Correction saved: "+esc(rt.fix)}</div>`:
+            t.focus[key]?`<form onsubmit="event.preventDefault();trFix('${m.id}',${i},this.f.value)" style="display:flex;gap:6px;margin-top:6px"><input class="trIn" name="f" style="flex:1" placeholder="What should it have done instead?" autofocus><button class="btn sm">Save</button></form>`:
+            `<div style="display:flex;gap:6px;margin-top:6px"><button class="btn sm sec" onclick="trGood('${m.id}',${i})">👍 Good</button><button class="btn sm sec" onclick="trOpen('${m.id}',${i})">✎ Correct it</button></div>`}</div>`;}).join("")}
+          <div style="font-weight:600;font-size:13px;margin:12px 0 6px">Teach it from documents</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${SOPS[m.fam].map(s=>{const has=(t.ev[m.id]||[]).some(e=>e.t===s);return `<button class="btn sm ${has?"":"sec"}" ${has?"disabled":""} onclick="trSop('${m.id}','${s.replace(/'/g,"\\'")}')">${has?"✓ ":"+ "}${s}</button>`;}).join("")}
+            <label class="btn sm sec" style="cursor:pointer">Upload a file<input type="file" style="display:none" onchange="if(this.files[0])trSop('${m.id}',this.files[0].name)"></label></div>
+          <form onsubmit="event.preventDefault();if(this.r.value.trim()){trRule('${m.id}',this.r.value);this.r.value=''}" style="display:flex;gap:6px;margin-top:10px"><input class="trIn" name="r" style="flex:1" placeholder="Add a rule, e.g. Never hold a rate over a weekend"><button class="btn sm sec">Add rule</button></form>
+          <div style="font-weight:600;font-size:13px;margin:14px 0 4px">Waiting to publish (${pe.length})</div>
+          ${pe.length?pe.map(e=>`<div class="trEv"><span>${e.k==="corr"?"✎":e.k==="good"?"👍":e.k==="rule"?"§":e.k==="test"?"🧪":"📄"}</span><span style="flex:1">${esc(e.t)}</span><span class="muted">${e.d}</span></div>`).join(""):'<div class="muted" style="font-size:12px">Nothing yet. Each correction, example or document you add appears here until you publish a new version.</div>'}
+          ${tests.length?`<div style="font-weight:600;font-size:13px;margin:14px 0 4px">Practice tests</div>${tests.slice(0,4).map(x=>`<div class="trEv"><span>🧪</span><span style="flex:1">v${x.v}: ${x.s}/20 passed (${x.s*5}%)</span><span class="muted">${x.d}</span></div>`).join("")}`:""}
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px"><h3 style="margin-top:0">Whole team scorecard</h3>
+        <table class="trTbl"><thead><tr><th>Teammate</th><th>Version</th><th>Practice test</th><th>KPIs on target</th><th>Edits per 100</th><th>To publish</th></tr></thead><tbody>
+        ${ms.map(x=>{const s=score(x), px=curP(x), a=val(UNI[0],px);return `<tr class="${x.id===m.id?"sel":""}" onclick="trSel('${x.id}')"><td><b>${x.n}</b> <span class="muted" style="font-size:11px">${x.kind}</span></td><td>v${vers(x)[vers(x).length-1].v}</td><td><div style="display:flex;align-items:center;gap:6px"><div class="trBar" style="width:70px"><i style="width:${a}%;background:${a>=95?"#16a34a":a>=85?"#e08a00":"#d92d20"}"></i></div>${a}%</div></td><td>${s[0]}/${s[1]}</td><td>${val(UNI[1],px)}</td><td>${pend(x).length||"—"}</td></tr>`;}).join("")}
+        </tbody></table></div>
+    </div>
+  </div>`;
+};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nextV=v=>{const [a,b]=v.split(".").map(Number);return a+"."+(b+1);};
+const today=()=>new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"});
+function addEv(id,k,txt){ const t=T(); (t.ev[id]=t.ev[id]||[]).unshift({k,t:txt,d:today(),used:false}); }
+const byId=id=>mates().find(x=>x.id===id);
+window.trSel=id=>{T().sel=id;render();};
+window.trOpen=(id,i)=>{T().focus[id+":"+i]=1;render();};
+window.trGood=(id,i)=>{const t=T();t.rated[id+":"+i]={ok:1};addEv(id,"good","Good example: "+OUTS[byId(id).fam][i][0]);render();};
+window.trFix=(id,i,f)=>{ if(!f||!f.trim())return; const t=T(); t.rated[id+":"+i]={fix:f.trim()}; delete t.focus[id+":"+i]; addEv(id,"corr","Correction on "+OUTS[byId(id).fam][i][0].toLowerCase()+": "+f.trim()); toast("Correction saved. It goes live when you publish."); render(); };
+window.trSop=(id,s)=>{addEv(id,"sop","Read "+s);toast(byId(id).n+" is reading "+s);render();};
+window.trRule=(id,r)=>{addEv(id,"rule","New rule: "+r.trim());render();};
+window.trPublish=id=>{
+  const m=byId(id), pe=pend(m), v=vers(m), last=v[v.length-1];
+  const gain=Math.min(.14,.025*pe.length+.02), np=Math.min(1.05,last.p+gain*(1.08-last.p));
+  const kinds={corr:"correction",good:"example",sop:"document",rule:"rule",test:"test case"};
+  const cnt={}; pe.forEach(e=>cnt[e.k]=(cnt[e.k]||0)+1);
+  const note="Learned from "+Object.entries(cnt).map(([k,n])=>n+" "+kinds[k]+(n>1?"s":"")).join(", ");
+  const before=val(UNI[0],last.p), after=val(UNI[0],np);
+  v.push({v:nextV(last.v),d:today(),p:np,note}); pe.forEach(e=>e.used=true);
+  try{log("sys",m.n+" v"+nextV(last.v)+" published. "+note+".");}catch(e){}
+  toast(`${m.n} v${nextV(last.v)} is live. Practice test ${before}% → ${after}%`); render();
+};
+window.trRollback=id=>{ const m=byId(id), v=vers(m); if(v.length<2)return; const gone=v.pop(); toast(`${m.n} rolled back to v${v[v.length-1].v}. v${gone.v}'s training is kept, ready to publish again.`); (T().ev[id]=T().ev[id]||[]).unshift({k:"rule",t:"Re-publish what was in v"+gone.v+": "+gone.note.toLowerCase(),d:today(),used:false}); render(); };
+window.trTest=id=>{
+  const m=byId(id), p=curP(m), a=val(UNI[0],p), s=Math.max(10,Math.min(20,Math.round(a/5))), fails=20-s, cats=CATS[m.fam];
+  const res=cats.map((c,i)=>[c,4,4-(i<fails?Math.ceil(fails/cats.length)+(i===0&&fails>cats.length?1:0):0)]).map(r=>[r[0],r[1],Math.max(0,r[2])]);
+  const t=T(); (t.tests[id]=t.tests[id]||[]).unshift({v:vers(m)[vers(m).length-1].v,s,d:today()});
+  $("#modalBox").innerHTML=`<h3 style="margin-top:0">Practice test · ${m.n} v${vers(m)[vers(m).length-1].v}</h3>
+    <p class="muted" style="font-size:12px;margin-top:-6px">20 real situations from your own jobs, checked against your SOPs and how your best people handled them. Nothing is sent to anyone.</p>
+    <div style="font-size:28px;font-weight:750">${s}/20 <span style="font-size:14px;color:${s*5>=95?"#0f7a4f":"#a15c00"}">${s*5}%</span></div>
+    <div style="margin:10px 0">${res.map(r=>`<div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0"><span style="width:190px">${r[0]}</span><div class="trBar" style="flex:1"><i style="width:${r[2]/r[1]*100}%;background:${r[2]===r[1]?"#16a34a":"#e08a00"}"></i></div><b>${r[2]}/${r[1]}</b></div>`).join("")}</div>
+    ${fails?`<div class="muted" style="font-size:12px">It missed ${fails}. Turn the misses into training examples, and they go into the next version.</div>`:'<div style="font-size:12px;color:#0f7a4f">Passed everything. Ready for more autonomy if you want it.</div>'}
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">${fails?`<button class="btn sec" onclick="trMiss('${id}',${fails})">Add the ${fails} misses to training</button>`:""}<button class="btn" onclick="closeM();render()">Done</button></div>`;
+  $("#modal").classList.add("show");
+};
+window.trMiss=(id,n)=>{ const m=byId(id); CATS[m.fam].slice(0,n).forEach((c,i)=>addEv(id,"test","Practice test miss: "+c.toLowerCase())); for(let i=CATS[m.fam].length;i<n;i++) addEv(id,"test","Practice test miss: "+CATS[m.fam][i%CATS[m.fam].length].toLowerCase()); closeM(); toast(n+" misses added. Publish to train on them."); render(); };
+
+window.trMenu=()=>{
+  const m=selM(), ids=kpiIds(m), L=lib(m), cu=custom(m);
+  const row=k=>`<label><input type="checkbox" name="k" value="${k[0]}" ${ids.includes(k[0])?"checked":""}> ${k[1]} ${k[7]?'<span class="trStd">Standard</span>':""}<small>target ${fmt(k[4],k[2])} · ${k[8]}</small></label>`;
+  $("#modalBox").innerHTML=`<h3 style="margin-top:0">KPI menu · ${m.n}</h3>
+    <p class="muted" style="font-size:12px;margin-top:-6px">The standard KPIs for this role come with your plan. Turn any of them off, add more from the library, or make your own.</p>
+    <form id="trMF" class="trMenu" onsubmit="event.preventDefault();trSave()">
+      <div style="font-weight:600;font-size:12px;margin-top:6px">${({sales:"Sales",ops:"Operations",fin:"Finance",cs:"Customer service",twin:"Digital twin"})[m.fam]} KPIs</div>${LIB[m.fam].map(row).join("")}
+      <div style="font-weight:600;font-size:12px;margin-top:12px">Every AI teammate</div>${UNI.map(row).join("")}
+      ${cu.length?`<div style="font-weight:600;font-size:12px;margin-top:12px">Your own KPIs</div>${cu.map((c,i)=>`<label>${esc(c.n)}<small>target ${fmt(+c.t,c.u)} · ${c.src}</small><button type="button" class="btn sm sec" onclick="trDelC(${i})">Remove</button></label>`).join("")}`:""}
+      <div style="font-weight:600;font-size:12px;margin-top:12px">Add your own KPI</div>
+      <div class="trF"><input name="cn" placeholder="e.g. Quotes over $10k won"><select name="cu"><option value="#">Count</option><option value="%">%</option><option value="$">$</option><option value="min">Minutes</option><option value="days">Days</option><option value="h">Hours</option></select><input name="ct" type="number" step="any" placeholder="Target"><select name="cd"><option value="up">Higher is better</option><option value="down">Lower is better</option></select></div>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:12px">Measured from <select name="cs" class="trIn"><option>Jobs</option><option>Quotes</option><option>Email, WhatsApp, text</option><option>Invoices</option><option>Calls</option><option>CRM</option><option>Customer portal</option></select>
+        <label style="border:0;padding:0;margin-left:8px"><input type="checkbox" name="all"> Apply to every ${({sales:"sales",ops:"operations",fin:"finance",cs:"customer service",twin:"twin"})[m.fam]} teammate</label></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;margin-top:14px"><button type="button" class="btn sec" onclick="trStd()">Restore standard set</button><span style="display:flex;gap:8px"><button type="button" class="btn sec" onclick="closeM()">Cancel</button><button class="btn">Save KPIs</button></span></div>
+    </form>`;
+  $("#modal").classList.add("show");
+};
+window.trSave=()=>{
+  const f=$("#trMF"), m=selM(), t=T();
+  const ids=[...f.querySelectorAll('input[name="k"]:checked')].map(x=>x.value);
+  const targets=f.all.checked?mates().filter(x=>x.fam===m.fam):[m];
+  targets.forEach(x=>{ t.kp[x.id]=ids.slice(); });
+  const n=f.cn.value.trim();
+  if(n){ const c={n,u:f.cu.value,t:f.ct.value||0,dir:f.cd.value,src:f.cs.value}; targets.forEach(x=>{(t.cu[x.id]=t.cu[x.id]||[]).push(c);}); }
+  closeM(); toast(targets.length>1?`KPIs saved for ${targets.length} teammates`:`KPIs saved for ${m.n}`); render();
+};
+window.trDelC=i=>{ const m=selM(), t=T(); (t.cu[m.id]||[]).splice(i,1); trMenu(); };
+window.trStd=()=>{ const m=selM(), t=T(); t.kp[m.id]=lib(m).filter(x=>x[7]).map(x=>x[0]); trMenu(); };
+window.trReport=()=>{
+  const ms=mates();
+  $("#modalBox").innerHTML=`<h3 style="margin-top:0">KPI report · ${DAY}</h3><p class="muted" style="font-size:12px;margin-top:-6px">Every AI teammate against its KPIs. Also goes out with the Friday review.</p>
+    ${ms.map(x=>{const r=rows(x), p=curP(x), bad=r.filter(k=>stat(k,val(k,p))[0]!=="ok");return `<div style="margin-bottom:10px"><b style="color:${x.col}">${x.n}</b> <span class="muted" style="font-size:12px">v${vers(x)[vers(x).length-1].v} · ${r.length-bad.length}/${r.length} on target</span>
+    <div style="font-size:12px">${bad.length?"Behind: "+bad.map(k=>k[1]+" "+fmt(val(k,p),k[2])+" vs "+fmt(k[4],k[2])).join("; ")+". <span class='muted'>Fix: run a practice test and publish the misses.</span>":"Everything on target."}</div></div>`;}).join("")}
+    <div style="display:flex;justify-content:flex-end"><button class="btn" onclick="closeM()">Done</button></div>`;
+  $("#modal").classList.add("show");
+};
+window.TRAIN_DATA={mates,rows,val,curP,vers,fmt,stat,UNI};
+
+/* AI team header: shortcut to training */
+const bAI=V.aiteam; V.aiteam=()=>bAI().replace('<button class="btn sec" onclick="hireOpen()">+ Hire</button>','<button class="btn sec" onclick="go(\'training\')">Training & KPIs</button><button class="btn sec" onclick="hireOpen()">+ Hire</button>');
+})();
+</script>
+
+<script id="mailconnect-js">
+/* ---------- Email accounts: each person connects their own Gmail or Outlook with permission; Consol reads what they allow and sends as them ---------- */
+(function(){
+const DOM="northstarfreight.com";
+const PROV={
+  gmail:{n:"Gmail / Google Workspace",c:"#ea4335",ic:"G",who:"Google",scopes:[["Read your email","gmail.readonly","To match customer and carrier emails to accounts and jobs"],["Send email on your behalf","gmail.send","Replies and quotes go from your own address, in your sent folder"],["Create drafts","gmail.compose","Drafts wait in your Gmail as well as in Consol"]]},
+  outlook:{n:"Outlook / Microsoft 365",c:"#0a64d6",ic:"O",who:"Microsoft",scopes:[["Read your mail","Mail.Read","To match customer and carrier emails to accounts and jobs"],["Send mail as you","Mail.Send","Replies and quotes go from your own address, in your Sent Items"],["Keep access while you're away","offline_access","So it can sort mail overnight. Revoke any time"]]}
+};
+const READ=[["work","Customers, carriers and agents only","Threads with people in your CRM, carriers and agent networks. Everything else is skipped."],["label","Only a folder or label I choose","Only mail you move into a “Consol” label or folder"],["all","All work email","Everything in the inbox, except the labels you exclude below"]];
+const SEND=[["draft","Draft only","It writes the reply. You open it and press send yourself."],["ok","Send after my OK","It drafts, you approve in one click, it sends from your address."],["auto","Send routine replies on its own","Tracking updates and document requests go out on their own. Anything with money, a promise or a new contact still waits for you."]];
+function M(){ S.mail=S.mail||{acc:[{id:"m1",p:"gmail",who:"Emma Clarke",em:"emma@"+DOM,read:"work",send:"ok",ex:["Personal","HR"],since:"Oct 14",n:1842}],step:null}; return S.mail; }
+const lbl=(arr,k)=>(arr.find(x=>x[0]===k)||[])[1];
+function card(){
+  const m=M();
+  return `<div class="card" style="margin-bottom:14px;border-left:4px solid var(--brand)">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start"><div><h3 style="margin:0">Your team's email accounts</h3>
+    <div class="muted" style="font-size:12px;margin-top:4px;max-width:640px">Each person connects their own Gmail or Outlook and decides what Consol may read. Replies go out from their own address and land in their own sent folder, so customers see the person they know. Nothing is sent without the permission they set, and anyone can disconnect at any time.</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" onclick="mcStart('gmail')">Connect Gmail</button><button class="btn sm" onclick="mcStart('outlook')">Connect Outlook</button></div></div>
+    <div style="margin-top:10px">${m.acc.length?m.acc.map(a=>{const P=PROV[a.p];return `<div style="display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);flex-wrap:wrap">
+      <span style="width:30px;height:30px;border-radius:8px;background:${P.c};color:#fff;display:grid;place-items:center;font-weight:800">${P.ic}</span>
+      <div style="flex:1;min-width:220px"><b style="font-size:13px">${a.who}</b> <span class="muted" style="font-size:12px">${a.em}</span>
+      <div class="muted" style="font-size:11.5px">Reads: ${lbl(READ,a.read)}${a.ex.length?" · skips "+a.ex.join(", "):""} · Sends: ${lbl(SEND,a.send)} · connected ${a.since} · ${a.n.toLocaleString("en-US")} emails matched</div></div>
+      <span class="pill" style="background:#e3f6ee;color:#0f7a4f">Connected</span>
+      <button class="btn sm sec" onclick="mcEdit('${a.id}')">Permissions</button><button class="btn sm sec" onclick="mcOff('${a.id}')">Disconnect</button></div>`;}).join(""):'<div class="muted" style="font-size:12px">No mailboxes connected yet.</div>'}</div>
+    <div class="muted" style="font-size:11px;margin-top:6px">Consol only stores the emails it matches to a customer or job. Your password is never shared with Consol. You sign in on ${"Google's or Microsoft's"} own page.</div>
+  </div>`;
+}
+function step(){
+  const m=M(), s=m.step; if(!s) return;
+  const P=PROV[s.p], box=$("#modalBox");
+  if(s.n===1){
+    box.innerHTML=`<div style="max-width:440px;margin:0 auto"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="width:26px;height:26px;border-radius:7px;background:${P.c};color:#fff;display:grid;place-items:center;font-weight:800">${P.ic}</span><b>Sign in with ${P.who}</b><span class="muted" style="font-size:11px;margin-left:auto">${P.who}'s own sign-in page</span></div>
+      <div style="border:1px solid var(--line);border-radius:12px;padding:14px"><div style="font-size:15px;font-weight:650;margin-bottom:4px">Consol wants to access your ${P.who} account</div>
+      <div class="muted" style="font-size:12px;margin-bottom:10px">${s.em}</div>
+      ${P.scopes.map(x=>`<label style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line);font-size:13px"><input type="checkbox" checked disabled style="margin-top:3px"><span><b>${x[0]}</b><div class="muted" style="font-size:11.5px">${x[2]}</div><code style="font-size:10.5px;color:#8a93a6">${x[1]}</code></span></label>`).join("")}
+      <div class="muted" style="font-size:11px;margin-top:8px">You can remove access any time in your ${P.who} account settings or in Consol.${s.p==="outlook"?" Your IT admin may need to approve Consol once for the whole company.":""}</div></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px"><button class="btn sec" onclick="mcCancel()">Cancel</button><button class="btn" onclick="mcNext()">Allow</button></div></div>`;
+  } else {
+    box.innerHTML=`<h3 style="margin-top:0">What Consol may do with ${s.em}</h3><p class="muted" style="font-size:12px;margin-top:-6px">${s.edit?"Change these any time.":"Signed in. Now choose the limits. You can change them later."}</p>
+      <form id="mcF" onsubmit="event.preventDefault();mcSave()">
+      <div style="font-weight:600;font-size:13px;margin:8px 0 4px">What it reads</div>
+      ${READ.map(r=>`<label style="display:flex;gap:9px;padding:6px 0;font-size:13px;align-items:flex-start"><input type="radio" name="read" value="${r[0]}" ${s.read===r[0]?"checked":""} style="margin-top:3px"><span><b>${r[1]}</b><div class="muted" style="font-size:11.5px">${r[2]}</div></span></label>`).join("")}
+      <div style="font-weight:600;font-size:13px;margin:10px 0 4px">Never read</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:13px">${["Personal","HR","Payroll","Legal","Board"].map(x=>`<label><input type="checkbox" name="ex" value="${x}" ${s.ex.includes(x)?"checked":""}> ${x}</label>`).join("")}</div>
+      <div style="font-weight:600;font-size:13px;margin:12px 0 4px">Sending from ${s.em}</div>
+      ${SEND.map(r=>`<label style="display:flex;gap:9px;padding:6px 0;font-size:13px;align-items:flex-start"><input type="radio" name="send" value="${r[0]}" ${s.send===r[0]?"checked":""} style="margin-top:3px"><span><b>${r[1]}</b><div class="muted" style="font-size:11.5px">${r[2]}</div></span></label>`).join("")}
+      <div class="muted" style="font-size:11.5px;margin-top:6px">Every email sent as you is logged with who approved it. Your signature and sign-off are kept.</div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px"><button type="button" class="btn sec" onclick="mcCancel()">Cancel</button><button class="btn">${s.edit?"Save":"Connect mailbox"}</button></div></form>`;
+  }
+  $("#modal").classList.add("show");
+}
+window.mcStart=p=>{ const m=M(), taken=m.acc.map(a=>a.em); const who=["Sam Mitchell","Lucy Walker","Mark Bennett","Ava Brooks"].find(n=>!taken.includes(n.split(" ")[0].toLowerCase()+"@"+DOM))||"Sam Mitchell";
+  m.step={n:1,p,who,em:who.split(" ")[0].toLowerCase()+"@"+DOM,read:"work",send:"ok",ex:["Personal","HR"]}; step(); };
+window.mcNext=()=>{ M().step.n=2; step(); };
+window.mcCancel=()=>{ M().step=null; closeM(); };
+window.mcEdit=id=>{ const a=M().acc.find(x=>x.id===id); M().step={n:2,edit:id,p:a.p,who:a.who,em:a.em,read:a.read,send:a.send,ex:a.ex.slice()}; step(); };
+window.mcSave=()=>{
+  const m=M(), s=m.step, f=$("#mcF"), read=f.read.value, send=f.send.value, ex=[...f.querySelectorAll('input[name="ex"]:checked')].map(x=>x.value);
+  if(s.edit){ Object.assign(m.acc.find(x=>x.id===s.edit),{read,send,ex}); toast("Permissions saved for "+s.em); }
+  else { m.acc.push({id:"m"+Date.now(),p:s.p,who:s.who,em:s.em,read,send,ex,since:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"}),n:0}); try{log("sys",s.who+" connected "+PROV[s.p].n+" ("+s.em+")");}catch(e){} toast(s.em+" connected. Matching the last 90 days of email to customers and jobs."); }
+  m.step=null; closeM(); render();
+};
+window.mcOff=id=>{ const m=M(), a=m.acc.find(x=>x.id===id); m.acc=m.acc.filter(x=>x.id!==id); toast(a.em+" disconnected. Consol can no longer read or send from it."); render(); };
+window.MAIL_ACCOUNTS=()=>M().acc;
+const base=V.integrations; V.integrations=()=>{ const h=base(); const i=h.indexOf("</header>"); return i<0?card()+h:h.slice(0,i+9)+card()+h.slice(i+9); };
+/* Inbox: show which address replies go from */
+if(V.support){ const bs=V.support; V.support=()=>{ const h=bs(), a=M().acc; const note=`<div class="muted" style="font-size:12px;margin:-6px 0 12px">${a.length?`Replies send from each person's own address: ${a.map(x=>x.em).join(", ")}. <a href="#" onclick="go('integrations');return false">Manage mailboxes</a>`:`No mailbox connected. <a href="#" onclick="go('integrations');return false">Connect Gmail or Outlook</a> so replies go from your own address.`}</div>`; const i=h.indexOf("</header>"); return i<0?h:h.slice(0,i+9)+note+h.slice(i+9); }; }
+})();
+</script>
+
+<style id="photo-css">
+.phMode{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.phM{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;text-align:left;font:inherit;cursor:pointer}
+.phM.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.phM b{display:block;font-size:14px;margin-bottom:3px}.phM span{font-size:12px;color:var(--muted)}
+.phShot{border:2px dashed var(--line);border-radius:14px;min-height:240px;display:grid;place-items:center;text-align:center;background:#fafbfc;overflow:hidden;position:relative}
+.phShot img,.phShot video{max-width:100%;max-height:340px;display:block}
+.phAns{border-left:4px solid var(--brand);background:#f7f8fb;border-radius:10px;padding:12px 14px;font-size:14px}
+.phAns ul{margin:6px 0 0;padding-left:18px}.phAns li{margin:3px 0}
+.phConf{font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px}
+</style>
+<script id="photo-js">
+/* ---------- Photo & video check: narrow, reliable uses of the camera on the warehouse floor and in ops ---------- */
+(function(){
+const nav=document.getElementById("nav"), docs=nav.querySelector('button[data-v="docs"]');
+const nb=document.createElement("button"); nb.dataset.v="photo"; nb.innerHTML=`<span class="ico">◉</span>Photo check`; nb.onclick=()=>go("photo"); docs.parentNode.insertBefore(nb, docs);
+
+const MODES={
+ damage:{n:"Damage at receiving",d:"Photo or short video of a pallet as it arrives. Get the receipt note, the photos on the job and a claim draft.",q:"Is anything damaged?",ex:"Pallet arrives with a crushed corner"},
+ doc:{n:"What is this document?",d:"Photo of any paper or PDF. It says what it is, whether it belongs to a job, and what's missing.",q:"What is this and what do I do with it?",ex:"A document nobody recognises"},
+ stack:{n:"Can this be stacked?",d:"Photo of the pallet labels. It reads the handling marks and tells you how to store it.",q:"Is this stackable?",ex:"Pallet with handling labels"}
+};
+const ANS={
+ damage:{conf:["High","#e3f6ee","#0f7a4f"],job:"SHP-1011 · Lakeshore Cartage · pallet 2 of 6",
+   head:"Yes. One pallet is damaged.",
+   pts:["Crushed corner on the front left, shrink wrap torn, about 4 cartons visibly dented.","The other 5 pallets in the video look intact.","Before you sign, write on the delivery receipt: “6 pallets received, 1 damaged (corner crush, about 4 cartons dented), subject to inspection.”","Photos and the video are saved to SHP-1011 with the time and dock door."],
+   next:"Claim draft against Lakeshore Cartage is ready. It is not sent.",act:"damage"},
+ doc:{conf:["High","#e3f6ee","#0f7a4f"],job:"SHP-1007 · Coastal Parts Co",
+   head:"It's a house air waybill for SHP-1007.",
+   pts:["Issued by us to Coastal Parts Co: the receipt and contract for the cargo from LAX to HKG.","Shipper, consignee, 3 pieces and 412 kg match the job.","Nothing to do with it except file it. It's now attached to SHP-1007.","Missing on this job: the commercial invoice. Customs at HKG will ask for it."],
+   next:"A request to Megan Hughes for the commercial invoice is drafted. It is not sent.",act:"doc"},
+ stack:{conf:["Medium","#fff4e0","#a15c00"],job:"Inbound pallet · Brightline Imports",
+   head:"No. Don't stack it.",
+   pts:["Two sides carry the “Do not stack” symbol, plus “This side up” arrows and a fragile mark.","Store it at floor level, one high, and tag the location NS (no stack) in the WMS.","No dangerous goods label is visible.","Confidence is medium because the back of the pallet isn't in the photo. Take one more photo of the back to be sure."],
+   next:"Marked as no-stack on the receiving record.",act:"stack"}
+};
+let IMG=null;
+function P(){ S.photo=S.photo||{mode:"damage",vid:false,q:"",res:null,hist:[]}; return S.photo; }
+V.photo=()=>{
+  const p=P(), M=MODES[p.mode], r=p.res?ANS[p.mode]:null;
+  return `<header class="top"><div><h1>Photo check</h1><div class="sub">Point a phone at it and ask. Three jobs only, because these are the ones it gets right: damage at receiving, unknown documents, and whether a pallet can be stacked. It answers in words or out loud, files the photos to the job, and drafts anything that needs sending. Nothing is sent without you.</div></div></header>
+  <div class="phMode">${Object.entries(MODES).map(([k,m])=>`<button class="phM ${p.mode===k?"on":""}" onclick="phMode('${k}')"><b>${m.n}</b><span>${m.d}</span></button>`).join("")}</div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:14px">
+    <div class="card"><h3 style="margin-top:0">${M.n}</h3>
+      <div class="phShot">${IMG?(p.vid?`<video src="${IMG}" controls muted></video>`:`<img src="${IMG}" alt="Your photo">`):p.sample?`<div style="padding:20px"><div style="font-size:46px">${p.mode==="doc"?"📄":"📦"}</div><div class="muted" style="font-size:13px">Sample: ${M.ex}</div></div>`:`<div style="padding:20px"><div style="font-size:40px">📷</div><div class="muted" style="font-size:13px">Take a photo or a short video (up to 20 seconds)</div></div>`}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+        <label class="btn sm" style="cursor:pointer">Take photo<input type="file" accept="image/*" capture="environment" style="display:none" onchange="phFile(this)"></label>
+        <label class="btn sm sec" style="cursor:pointer">Short video<input type="file" accept="video/*" capture="environment" style="display:none" onchange="phFile(this)"></label>
+        <button class="btn sm sec" onclick="phSample()">Use a sample</button></div>
+      <form onsubmit="event.preventDefault();phAsk(this.q.value)" style="display:flex;gap:6px;margin-top:10px">
+        <input name="q" value="${(p.q||M.q).replace(/"/g,"&quot;")}" style="flex:1;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit">
+        <button type="button" class="btn sec" title="Ask out loud" onclick="phMic(this.form)">🎤</button><button class="btn">Check</button></form>
+    </div>
+    <div class="card"><h3 style="margin-top:0">Answer</h3>
+      ${r?`<div class="phAns"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px"><span class="muted" style="font-size:11.5px">${r.job}</span><span class="phConf" style="background:${r.conf[1]};color:${r.conf[2]}">Confidence: ${r.conf[0]}</span></div>
+        <div style="font-size:17px;font-weight:700">${r.head}</div><ul>${r.pts.map(x=>`<li>${x}</li>`).join("")}</ul>
+        <div style="margin-top:8px;font-size:13px"><b>Next:</b> ${r.next}</div></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${r.act==="damage"?`<button class="btn sm" onclick="phDraft('damage')">Review claim draft</button>`:r.act==="doc"?`<button class="btn sm" onclick="phDraft('doc')">Review invoice request</button>`:`<button class="btn sm sec" onclick="phMode('stack');phSample()">Add photo of the back</button>`}<button class="btn sm sec" onclick="phSpeak()">🔊 Read it out</button><button class="btn sm sec" onclick="phWrong()">That's wrong</button></div>`
+      :`<div class="muted" style="font-size:13px">Take a photo or use a sample, then press Check.</div>`}
+      <div class="muted" style="font-size:11.5px;margin-top:14px">If the photo is blurry, too dark or the labels can't be read, it says so and asks for another photo rather than guessing.</div>
+    </div>
+  </div>
+  ${p.hist.length?`<div class="card" style="margin-top:14px"><h3 style="margin-top:0">Recent checks</h3>${p.hist.slice(0,6).map(h=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)">${h.t} <span class="muted">· ${MODES[h.m].n} · ${h.d}</span></div>`).join("")}</div>`:""}`;
+};
+window.phMode=k=>{const p=P();p.mode=k;p.res=null;IMG=null;p.sample=false;p.q="";render();};
+window.phFile=inp=>{ const f=inp.files&&inp.files[0]; if(!f) return; const p=P(); p.vid=/^video/.test(f.type); p.sample=false; p.res=null;
+  if(p.vid){ IMG=URL.createObjectURL(f); render(); return; }
+  const rd=new FileReader(); rd.onload=()=>{ const im=new Image(); im.onload=()=>{ const c=document.createElement("canvas"), k=Math.min(1,640/Math.max(im.width,im.height)); c.width=im.width*k; c.height=im.height*k; c.getContext("2d").drawImage(im,0,0,c.width,c.height); IMG=c.toDataURL("image/jpeg",.7); render(); }; im.src=rd.result; }; rd.readAsDataURL(f); };
+window.phSample=()=>{const p=P();IMG=null;p.sample=true;p.res=null;render();};
+window.phAsk=q=>{ const p=P(); if(!IMG&&!p.sample){ toast("Take a photo or use a sample first"); return; } p.q=q; p.res=true;
+  p.hist.unshift({t:ANS[p.mode].head+" "+ANS[p.mode].job,m:p.mode,d:new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})});
+  try{log("ops","Photo check: "+ANS[p.mode].head+" ("+ANS[p.mode].job+")");}catch(e){} render(); };
+window.phMic=form=>{ const R=window.SpeechRecognition||window.webkitSpeechRecognition; if(!R){ toast("Voice isn't available in this browser. Type the question instead."); return; }
+  const r=new R(); r.lang="en-US"; r.onresult=e=>{ form.q.value=e.results[0][0].transcript; phAsk(form.q.value); }; r.onerror=()=>toast("Couldn't hear that. Try again or type it."); r.start(); toast("Listening…"); };
+window.phSpeak=()=>{ const a=ANS[P().mode]; try{ const u=new SpeechSynthesisUtterance(a.head+" "+a.pts.slice(0,2).join(" ")); speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){} };
+window.phWrong=()=>{ try{ const t=S.trn; if(t){ (t.ev.ops=t.ev.ops||[]).unshift({k:"corr",t:"Photo check marked wrong: "+ANS[P().mode].head,d:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"}),used:false}); } }catch(e){} toast("Thanks. Sent to Training & KPIs as a correction for the Operations manager."); };
+window.phDraft=k=>{
+  if(k==="damage") S.drafts.push({id:S.nextD++,status:"Waiting",co:"Lakeshore Cartage",to:"Lakeshore Cartage claims",kind:"Damage claim (from Photo check)",subj:"Damage claim: SHP-1011, pallet 2 of 6",body:"Hello,\n\nPallet 2 of 6 on SHP-1011 arrived at our warehouse today with a crushed front-left corner, torn shrink wrap and about 4 dented cartons. It was noted on the delivery receipt as received damaged, subject to inspection. Photos and video are attached.\n\nPlease confirm receipt of this claim. We will send the value once the cartons are inspected.\n\nThanks,\nNorthstar Freight warehouse"});
+  else S.drafts.push({id:S.nextD++,status:"Waiting",co:"Coastal Parts Co",to:"Megan Hughes",kind:"Missing document (from Photo check)",subj:"SHP-1007: commercial invoice needed",body:"Hi Megan,\n\nWe have the air waybill for SHP-1007, but the commercial invoice isn't on file yet. Customs at Hong Kong will ask for it. Could you send it over today?\n\nCheers,\nEmma"});
+  toast("Draft is waiting in Assistant. Nothing has been sent."); go("assistant");
+};
+})();
+</script>
+
 </body>
 </html>

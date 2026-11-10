@@ -6585,8 +6585,8 @@ const LV={
 const EXEC=[
  {id:"coo",n:"Chief Operating Officer",lv:"exec",ico:"◆",col:"#1baf7a",owns:"Runs the Operations and Customer service managers. Capacity, carriers, service levels, where jobs go wrong.",wk:"Weekly ops review, carrier scorecards, plans for peak",tasks:38},
  {id:"cfo",n:"Chief Financial Officer",lv:"exec",ico:"◆",col:"#eda100",owns:"Runs the Finance manager. Cash forecast, margin by customer and lane, credit limits, what to collect first.",wk:"13-week cash forecast, margin leaks, credit decisions for you",tasks:31},
- {id:"cro",n:"Chief Revenue Officer",lv:"exec",ico:"◆",col:"#2a78d6",owns:"Runs the Sales manager and Account growth. Pricing strategy, which accounts and lanes to chase, campaign plan.",wk:"Pipeline review, price changes, quarterly targets",tasks:34},
- {id:"pres",n:"President",lv:"pres",ico:"★",col:"#b54708",owns:"Reports to you. Joins up all departments: the weekly owner review, the plan, and the trade-offs between sales, ops and finance.",wk:"Friday owner review, monthly plan, decisions only you can make",tasks:12}
+ {id:"cro",n:"Chief Revenue Officer",lv:"exec",ico:"◆",col:"#2a78d6",owns:"Runs the Sales manager and Account growth. Pricing strategy, which accounts and lanes to chase, campaign plan.",wk:"Pipeline review deck in Gamma, price changes, quarterly targets",tasks:34},
+ {id:"pres",n:"President",lv:"pres",ico:"★",col:"#b54708",owns:"Reports to you. Joins up all departments: the weekly owner review, the plan, and the trade-offs between sales, ops and finance.",wk:"Friday owner review deck in Gamma, monthly plan, decisions only you can make",tasks:12}
 ];
 const dots=n=>`<span class="lvDots" title="Capability ${n} of 5">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
 const chip=k=>`<span class="lvChip" style="background:${LV[k].bg};color:${LV[k].c}">${LV[k].n} level</span>`;
@@ -6634,6 +6634,50 @@ if(V.training){
 window.lvSet=(id,k)=>{ const was=lvOf(id); if(was===k) return; L()[id]=k; const up=LV[k].cap>LV[was].cap;
   try{ const t=S.trn; const v=t&&t.ver&&t.ver[id]; if(v&&v.length){ const last=v[v.length-1]; v.push({v:last.v.split(".")[0]+"."+(+last.v.split(".")[1]+1),d:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"}),p:Math.max(0,Math.min(1.05,last.p+(up?.08:-.1))),note:(up?"Moved up":"Moved down")+" to "+LV[k].n+" level"}); } }catch(e){}
   toast(`${up?"Moved up":"Moved down"} to ${LV[k].n} level. ${up?"More capable, costs more per task.":"Cheaper per task; harder work gets passed up."} Roll back any time.`); render(); };
+})();
+</script>
+
+<script id="doctools-js">
+/* ---------- Gamma (decks) and PandaDoc (proposals, agreements, e-signature) are included with Consol ---------- */
+(function(){
+S.ints=S.ints||{}; if(S.ints.gamma===undefined) S.ints.gamma=true; if(S.ints.pandadoc===undefined) S.ints.pandadoc=true;
+function D(){ S.docs2=S.docs2||[
+  {id:1,tool:"Gamma",kind:"Quarterly review deck",acct:"Coastal Parts Co",by:"Sales manager",st:"Ready",d:"Nov 7"},
+  {id:2,tool:"PandaDoc",kind:"Rate agreement, LAX → HKG air",acct:"Meridian Medical",by:"Sales manager",st:"Viewed",d:"Nov 6"},
+  {id:3,tool:"Gamma",kind:"Friday owner review",acct:"Northstar Freight",by:"President",st:"Ready",d:"Nov 7"},
+  {id:4,tool:"PandaDoc",kind:"SOP and lane playbook",acct:"Brightline Imports",by:"Operations manager",st:"Signed",d:"Nov 4"}]; return S.docs2; }
+const stC={Draft:["#eef0f4","#475467"],Ready:["#e8f0fc","#2a78d6"],Sent:["#fff4e0","#a15c00"],Viewed:["#f1eefc","#5a47c9"],Signed:["#e3f6ee","#0f7a4f"]};
+const pill=s=>`<span class="pill" style="background:${stC[s][0]};color:${stC[s][1]}">${s}</span>`;
+function panel(title){
+  const d=D();
+  return `<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start"><div><h3 style="margin:0">${title||"Decks and proposals"}</h3>
+    <div class="muted" style="font-size:12px;margin-top:4px">Included with Consol: <b>Gamma</b> builds decks from live account data in your brand. <b>PandaDoc</b> handles proposals, rate agreements and contracts with e-signature, and tells you when they're opened and signed. Everything starts as a draft for your OK.</div></div></div>
+    <table class="trTbl" style="margin-top:8px"><thead><tr><th>Document</th><th>Customer</th><th>Made by</th><th>Tool</th><th>Status</th><th></th></tr></thead><tbody>
+    ${d.map(x=>`<tr style="cursor:default"><td>${x.kind}</td><td>${x.acct}</td><td class="muted">${x.by}</td><td>${x.tool}</td><td>${pill(x.st)}</td><td style="text-align:right">${x.st==="Draft"?`<button class="btn sm" onclick="dtSend(${x.id})">Review and send</button>`:`<span class="muted" style="font-size:11px">${x.d}</span>`}</td></tr>`).join("")}
+    </tbody></table></div>`;
+}
+window.dtAgree=acct=>{
+  const a=(window.ACCT_DATA||{})[acct]||{}, gaps=(a.gaps||[]).slice(0,2);
+  const secs=[["Parties",`${FWD} and ${acct}`],["Lanes and rates","Current contracted lanes with all-in rates, valid 90 days"],["Service levels","Transit times, cut-offs, proactive delay notices, claims handling"],["New products",gaps.length?gaps.map(g=>{try{const P=(typeof PRODUCTS!=="undefined"?PRODUCTS:[]);const f=Array.isArray(P)?P.find(x=>x.k===g.p||x.id===g.p):P[g.p];if(f)return f.n||f.name||f.t||g.p;}catch(e){}return g.p;}).join(", ")+" added at introductory rates":"Room to add ocean, customs and trucking"],["Payment","30-day terms, monthly statement"],["Signatures",`${acct} and ${FWD}`]];
+  $("#modalBox").innerHTML=`<h3 style="margin-top:0">Rate agreement · ${acct}</h3><div class="muted" style="font-size:12px;margin-top:-6px">Built from the account, its lanes and your template. Saved in PandaDoc as a draft for your review.</div>
+    <div style="border:1px solid var(--line);border-radius:10px;margin-top:10px">${secs.map(([h,t],i)=>`<div style="padding:8px 10px;border-top:${i?"1px solid var(--line)":"0"}"><div style="font-size:11px;color:var(--muted)">${h}</div><div style="font-size:13px">${t}</div></div>`).join("")}</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn sec" onclick="closeM()">Cancel</button><button class="btn" onclick="dtSave('PandaDoc','Rate agreement','${acct.replace(/'/g,"\\'")}')">Save as draft in PandaDoc</button></div>`;
+  $("#modal").classList.add("show");
+};
+window.dtDeck=acct=>{ dtSave("Gamma","Quarterly review deck",acct,"Ready"); };
+window.dtSave=(tool,kind,acct,st)=>{ const d=D(); d.unshift({id:Date.now(),tool,kind,acct,by:"Sales manager",st:st||"Draft",d:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"})}); try{log("sys",`${acct}: ${kind.toLowerCase()} ${st==="Ready"?"built in":"drafted in"} ${tool}`);}catch(e){} closeM(); toast(st==="Ready"?`${kind} built in Gamma. Open it there to edit or present.`:`${kind} saved as a draft in PandaDoc. Nothing sent.`); render(); };
+window.dtSend=id=>{ const x=D().find(y=>y.id===id); x.st="Sent"; toast(`${x.kind} sent to ${x.acct} through PandaDoc. You'll see when it's opened and signed.`); render();
+  setTimeout(()=>{x.st="Viewed";render();},2500); setTimeout(()=>{x.st="Signed";toast(`${x.acct} signed the ${x.kind.toLowerCase()}.`);render();},5500); };
+
+/* Account growth: per-account actions + panel */
+if(V.accounts){ const b=V.accounts; V.accounts=()=>{ let h=b(); const s=(S.acct2&&S.acct2.sel)||null;
+  const top=(window.ACCT_DATA?Object.keys(window.ACCT_DATA):[]).slice(0,5);
+  const quick=`<div class="card" style="margin-top:14px"><h3 style="margin-top:0">Make a deck or agreement</h3><div class="muted" style="font-size:12px;margin-bottom:8px">For your biggest accounts. Decks build in Gamma; agreements are drafted in PandaDoc.</div>
+    ${top.map(n=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);flex-wrap:wrap"><b style="font-size:13px">${n}</b><span style="display:flex;gap:6px"><button class="btn sm sec" onclick="dtDeck('${n.replace(/'/g,"\\'")}')">Review deck (Gamma)</button><button class="btn sm sec" onclick="dtAgree('${n.replace(/'/g,"\\'")}')">Rate agreement (PandaDoc)</button></span></div>`).join("")}</div>`;
+  return h+quick+panel(); }; }
+/* Connect: included card */
+const bi=V.integrations; V.integrations=()=>{ const h=bi(); const card=`<div class="card" style="margin-bottom:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span class="pill" style="background:#e3f6ee;color:#0f7a4f">Included</span><div style="flex:1;min-width:240px;font-size:13px"><b>Gamma</b> for decks and <b>PandaDoc</b> for proposals and e-signature come with every Consol plan. Already connected; no separate account needed.</div><span class="pill ${S.ints.gamma?"ok":"grey"}">${S.ints.gamma?"✓":"○"} Gamma</span><span class="pill ${S.ints.pandadoc?"ok":"grey"}">${S.ints.pandadoc?"✓":"○"} PandaDoc</span></div>`; const i=h.indexOf("</header>"); return i<0?card+h:h.slice(0,i+9)+card+h.slice(i+9); };
+window.DOCS2=D;
 })();
 </script>
 

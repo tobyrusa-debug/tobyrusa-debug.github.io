@@ -680,6 +680,51 @@ body.dragging .bdrop{display:flex}
 @media (max-width:1100px){.twhero{grid-template-columns:1fr}.twsrc{grid-template-columns:1fr 1fr}}
 @media (max-width:900px){.twgrid{grid-template-columns:1fr}.twstats{grid-template-columns:repeat(3,1fr)}.twmodes{grid-template-columns:1fr}.twsrc{grid-template-columns:1fr}.rl2{grid-template-columns:1fr}.rl2 .ract{justify-content:flex-start}}
 
+/* ---------- Document review in chat and email ---------- */
+.drchip{display:inline-flex;align-items:center;gap:8px;font-size:12.5px} .drchip svg{width:15px;height:15px} .drchip span{opacity:.75;font-size:11px}
+.drc{margin-top:10px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:12px;padding:12px;color:var(--ink);font-size:12.5px}
+.drc.warn{border-left-color:#e08a00}
+.drh{display:flex;gap:10px;align-items:center}
+.dri{width:36px;height:42px;border-radius:7px;background:linear-gradient(160deg,#eef2ff,#dfe6fb);color:var(--brand);font:700 9.5px var(--f-mono);display:grid;place-items:end center;padding-bottom:6px;flex:none;position:relative}
+.dri::before{content:"";position:absolute;right:0;top:0;width:10px;height:10px;background:linear-gradient(225deg,#fff 50%,#c9d4f5 50%);border-radius:0 7px 0 3px}
+.drh b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drf{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px 12px;margin:10px 0;padding:10px;background:#f7f9fc;border-radius:10px}
+.drf span{display:block;font-size:10.5px;color:#8a93a8} .drf b{font-weight:600;font-variant-numeric:tabular-nums}
+.drk{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.drk div{font-size:12.5px;padding:5px 8px;border-radius:8px} .drk .y{background:var(--ok-soft);color:#076b4b} .drk .n{background:#fff4e5;color:#9a4a00;font-weight:500}
+.drv{margin-top:8px;font-weight:600;font-size:12.5px}
+.dra{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.drchat{position:relative}
+.drveil{position:absolute;inset:0;border-radius:inherit;display:none;align-items:center;justify-content:center;background:rgba(235,240,255,.92);border:2px dashed var(--brand);z-index:6;pointer-events:none}
+.drveil div{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--brand);font-size:12.5px} .drveil svg{width:28px;height:28px} .drveil b{font-size:15px}
+body.filedrag .drchat .drveil{display:flex;opacity:.65} .drchat.drhot .drveil{opacity:1!important;background:rgba(222,231,255,.96)}
+.drclip{display:grid;place-items:center;width:38px;height:38px;flex:none;border:1px solid var(--line);border-radius:10px;cursor:pointer;color:var(--muted);background:#fff}
+.drclip:hover{color:var(--brand);border-color:var(--brand)} .drclip svg{width:17px;height:17px}
+.drtarget{position:relative;transition:outline .15s}
+body.filedrag .drtarget{outline:2px dashed rgba(43,89,255,.45);outline-offset:3px}
+.drtarget.drhot{outline:2px solid var(--brand)!important;background:#f3f6ff!important}
+.dratt{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.draw{position:relative} .draw .drc{margin-top:0} .draw .bx{position:absolute;top:8px;right:8px}
+.dradd{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);border:1.5px dashed #cdd5e4;border-radius:10px;padding:8px 10px;cursor:pointer;background:#fafbfd}
+.dradd:hover{border-color:var(--brand);color:var(--brand)} .dradd svg{width:15px;height:15px}
+
+/* ---------- No double work ---------- */
+.clmw{margin-top:5px}
+.clm{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#7a4b00;background:#fff4e0;border:1px solid #f6dcaa;border-radius:99px;padding:2px 9px 2px 3px;white-space:nowrap}
+.clm i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-size:8.5px;font-weight:700;position:relative}
+.clm i::after{content:"";position:absolute;right:-2px;bottom:-2px;width:7px;height:7px;border-radius:50%;background:#12c48b;border:1.5px solid #fff4e0;animation:nowp 1.6s infinite}
+.claimed{box-shadow:inset 0 0 0 1px #f6dcaa}
+.clmm .clmh{display:flex;gap:12px;align-items:center}
+.clmm i,.ndr i{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-weight:700;font-size:13px;flex:none}
+.nodup{margin-bottom:16px}
+.ndstat{text-align:right;font-size:12px;color:var(--muted)} .ndstat b{font-size:22px;color:var(--ink);letter-spacing:-.03em;margin-right:4px} .ndstat span{display:block;font-size:11.5px;color:var(--ok);font-weight:600}
+.ndgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ndh{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a93a8;font-weight:600;margin-bottom:6px}
+.ndr{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0f2f6;font-size:12.5px;line-height:1.4}
+.ndr i{width:28px;height:28px;font-size:10px}
+.ndn{flex:none;min-width:44px;text-align:center;font:600 12px var(--f-mono);color:#076b4b;background:var(--ok-soft);border-radius:8px;padding:5px 6px}
+@media (max-width:900px){.ndgrid{grid-template-columns:1fr}.nodup .ch{flex-direction:column}.ndstat{text-align:left}}
+
 </style>
 </head>
 <body>
@@ -4588,6 +4633,185 @@ document.addEventListener("drop",e=>{ const bd=e.target.closest&&e.target.closes
   if(dragV){ e.preventDefault(); const it=parse(dragV); add(it); } }, true);
 
 const pr=render; render=function(){ pr(); try{ decorate(); }catch(e){} };
+render();
+})();
+
+</script>
+<script id="docreview-js">
+/* ---------- Drop documents into chat and email drafts for an AI review ---------- */
+(function(){
+const ic=n=>window.icon?icon(n):"";
+const fmtSize=b=>b>1e6?(b/1e6).toFixed(1)+" MB":Math.max(1,Math.round(b/1e3))+" KB";
+const extOf=n=>(n.split(".").pop()||"").toUpperCase().slice(0,4);
+
+/* demo email drafts so there is something to attach to */
+function seedDrafts(){
+  S.drafts=S.drafts||[]; if(S.draftsSeeded) return; S.draftsSeeded=1;
+  S.drafts.unshift(
+    {id:S.nextD++,status:"Waiting",co:"Coastal Parts Co",to:"Mei Chen",kind:"Rate hold reply (Q-2041)",subj:"Re: Hold Q-2041 until Friday?",body:"Hi Mei,\n\nNo problem. I can hold Q-2041 at $4,310 all-in (Carson → LAX → HKG, 820 kg) until Friday 5pm, subject to space on the day. The quote is attached.\n\nSend the PO over when you have it and we'll book straight away.\n\nCheers, Priya"},
+    {id:S.nextD++,status:"Waiting",co:"Harbor & Pine Trading",to:"Jess Moore",kind:"Invoice (SHP-1007)",subj:"Invoice INV-5007 for SHP-1007",body:"Hi Jess,\n\nPlease find attached invoice INV-5007 for SHP-1007 (Newark → JFK → DXB, 3 pieces, 540 kg): $2,290, due in 30 days.\n\nThanks for the business,\nSam"});
+  save();
+}
+const origSend = window.sendDraft;
+window.sendDraft = function(id){ const d=S.drafts.find(x=>x.id===id); if(d&&!S.dir.find(x=>x.co===d.co)){ d.status="Sent"; S.stats.human++; log("mail",`Sent to ${d.to}, ${d.co}: ${d.subj}${(S.att&&S.att[id]||[]).length?` (${S.att[id].length} attachment${S.att[id].length>1?"s":""})`:""}`); toast(`Sent to ${d.to}.`); render(); return; } return origSend(id); };
+
+/* the review engine */
+function readText(f){ return new Promise(res=>{ if(!/\.(txt|csv|md|json|eml|html?)$/i.test(f.name)||f.size>2e6) return res(""); const r=new FileReader(); r.onload=()=>res(String(r.result||"")); r.onerror=()=>res(""); r.readAsText(f); }); }
+async function review(f, ctx){
+  const text=await readText(f), hay=(f.name+" "+text);
+  let type=classify(f.name);
+  if(type==="Other"&&/quote|rate|q-\d+/i.test(f.name)) type="Quote";
+  if(type==="Other"&&/inv[-_ ]?\d|invoice/i.test(f.name)) type="Commercial invoice";
+  const sid=(hay.match(/SHP-?\d+/i)||[])[0], qid=(hay.match(/Q-?\d{4}/i)||[])[0];
+  const stem=f.name.toLowerCase().replace(/\.[a-z0-9]+$/,"").replace(/[_\- ]?(rev\d*|r\d|v\d|final|signed)$/,"");
+  const s=S.shipments.find(x=>sid&&x.id.replace(/\D/g,"")===sid.replace(/\D/g,""))||(ctx&&ctx.ship)||S.shipments.find(x=>(x.docs||[]).some(dd=>stem.length>4&&dd.name&&dd.name.toLowerCase().startsWith(stem)))||null;
+  const q=S.quotes.find(x=>qid&&x.id.replace(/\D/g,"")===qid.replace(/\D/g,""))||(ctx&&ctx.quote)||null;
+  const R={name:f.name,size:f.size,ext:extOf(f.name),type,fields:[],checks:[],acts:[],link:null};
+  const amounts=[...text.matchAll(/\$\s?([\d,]+(?:\.\d\d)?)/g)].map(m=>parseFloat(m[1].replace(/,/g,""))), kgs=[...text.matchAll(/([\d,]+(?:\.\d)?)\s?kg/gi)].map(m=>parseFloat(m[1].replace(/,/g,"")));
+  if(type==="Quote"&&q){ R.link=q.id; const amt=amounts[0]??(/(_r\d|rev|v2)/i.test(f.name)?q.sell-60:q.sell);
+    R.fields=[["Quote",q.id],["Customer",q.acct],["Lane",q.lane],["All-in",money(amt)],["Carrier",q.carrier]];
+    R.checks.push(amt===q.sell?{ok:1,m:`Price matches ${q.id} in Consol (${money(q.sell)})`}:{ok:0,m:`The document says ${money(amt)}, ${q.id} in Consol is ${money(q.sell)}`});
+    R.checks.push({ok:1,m:`Margin ${(((q.sell-q.cost)/q.sell)*100).toFixed(1)}%, above your 10% floor`});
+    R.checks.push(/valid|expir/i.test(text)||!text?{ok:1,m:"Validity date is on the quote"}:{ok:0,m:"No validity date found. Add one before sending"});
+  } else if(s && ["Packing list","Commercial invoice","Shipper's letter of instruction","Safety data sheet (SDS)","Shipper's Declaration for Dangerous Goods","House air waybill","EEI filing (AES ITN)"].includes(type)){
+    R.link=s.id; let ex=null; try{ ex=extractDoc(s,type,f.name); }catch(e){}
+    R.fields=[["Shipment",s.id],["Customer",s.acct],...((ex&&ex.fields)||[]).map(x=>[x[0],x[1]])];
+    if(kgs.length&&type==="Packing list"){ const k=kgs[0]; const g=Math.round(s.cw/s.pcs)*s.pcs; R.checks.push(k===g?{ok:1,m:`Weight ${k} kg matches the booking`}:{ok:0,m:`Document says ${k} kg, booking says ${g} kg`}); }
+    if(ex&&ex.issue) R.checks.push({ok:0,m:ex.issue.msg}); else if(!R.checks.length) R.checks.push({ok:1,m:`Pieces, weight and parties match ${s.id}`});
+    R.checks.push(/sign/i.test(text)||!text?{ok:1,m:"Signed"}:{ok:0,m:"No signature found"});
+    if(/lithium|UN\s?\d{4}|class\s?\d|flammable/i.test(hay)) R.checks.push({ok:0,m:"Mentions dangerous goods. Operations must check before tender"});
+  } else {
+    R.fields=[["Type",type==="Other"?"Not recognised":type],["Size",fmtSize(f.size)]];
+    R.checks.push({ok:0,m:"Couldn't match this to a quote or shipment. Name it with the reference (for example SHP-1007 or Q-2041) or pick one"});
+  }
+  const bad=R.checks.filter(c=>!c.ok).length;
+  R.verdict=bad?`${bad} thing${bad>1?"s":""} to fix before this goes out`:"Looks right. Safe to send";
+  if(R.link&&R.link.startsWith("SHP")) R.acts.push(["File on "+R.link,`drFile('${R.link}','${f.name.replace(/'/g,"")}','${type}')`]);
+  if(bad&&R.link) R.acts.push(["Draft a correction request",`drFix('${R.link}')`]);
+  return R;
+}
+function card(R,compact){
+  const bad=R.checks.filter(c=>!c.ok).length;
+  return `<div class="drc ${bad?"warn":"ok"}"><div class="drh"><span class="dri">${R.ext||"DOC"}</span><div style="min-width:0"><b>${R.name}</b><div class="muted" style="font-size:11.5px">${R.type==="Other"?"Unknown type":R.type} · ${fmtSize(R.size)}${R.link?` · matched to ${R.link}`:""}</div></div></div>
+    ${compact?"":`<div class="drf">${R.fields.map(f=>`<div><span>${f[0]}</span><b>${f[1]}</b></div>`).join("")}</div>`}
+    <div class="drk">${R.checks.map(c=>`<div class="${c.ok?"y":"n"}">${c.ok?"✓":"!"} ${c.m}</div>`).join("")}</div>
+    <div class="drv">${R.verdict}</div>
+    ${R.acts.length&&!compact?`<div class="dra">${R.acts.map(a=>`<button class="btn sm sec" onclick="${a[1]}">${a[0]}</button>`).join("")}</div>`:""}</div>`;
+}
+window.drFile=(sid,name,type)=>{ const s=S.shipments.find(x=>x.id===sid); if(!s) return; try{ addDoc(s,{type:type==="Quote"?"Other":type,name,src:"Reviewed in chat",st:"Needs review"}); }catch(e){} log("sys",`${sid}: ${name} filed from chat review`); toast(`Filed on ${sid}. It's in Documents.`); render(); };
+window.drFix=ref=>{ const s=S.shipments.find(x=>x.id===ref), q=S.quotes.find(x=>x.id===ref); const who=s?s.acct:q?q.acct:"the customer";
+  S.drafts.unshift({id:S.nextD++,status:"Waiting",co:who,to:(S.deals.find(d=>d.acct===who)||{}).contact||"the shipper",kind:`Correction request (${ref})`,subj:`${ref}: please send a corrected document`,body:`Hi,\n\nThanks for the document for ${ref}. A couple of details don't match the booking, so we can't tender it yet. Could you send a corrected copy today?\n\nThanks,\nSam`});
+  save(); toast(`Correction request drafted. It's waiting for your OK in Assistant.`); };
+
+/* chat */
+async function chatFiles(files){
+  if(typeof chInit==="function") chInit(); const C=S.chat, k=C.open; C.th[k]=C.th[k]||[];
+  [...files].forEach(f=>C.th[k].push({who:"me",t:`<span class="drchip">${ic("file-text")}<b>${f.name}</b><span>${fmtSize(f.size)}</span></span>`}));
+  C.th[k].push({who:"ai",by:"Assistant",t:`<span class="thinking"><i></i><i></i><i></i></span> Reading ${files.length>1?files.length+" documents":"the document"}…`,tmp:1}); render(); scrollChat();
+  const rs=[]; for(const f of files) rs.push(await review(f));
+  await new Promise(r=>setTimeout(r,900));
+  C.th[k]=C.th[k].filter(m=>!m.tmp);
+  C.th[k].push({who:"ai",by:"Assistant",t:`Here's my review${rs.length>1?` of ${rs.length} documents`:""}.${rs.map(r=>card(r)).join("")}`});
+  log("sys",`Chat: reviewed ${rs.map(r=>r.name).join(", ")}`); save(); render(); scrollChat();
+}
+function scrollChat(){ setTimeout(()=>{ const b=document.getElementById("chBody"); if(b) b.scrollTop=1e9; },30); }
+
+/* email drafts */
+async function draftFiles(id,files){
+  const d=S.drafts.find(x=>x.id===id); if(!d) return; S.att=S.att||{}; S.att[id]=S.att[id]||[];
+  const q=S.quotes.find(x=>d.body.includes(x.id)||d.subj.includes(x.id)), s=S.shipments.find(x=>d.body.includes(x.id)||d.subj.includes(x.id));
+  for(const f of files){ const R=await review(f,{quote:q,ship:s});
+    const amt=(d.body.match(/\$([\d,]+)/)||[])[1]; if(amt&&R.fields.some(x=>/All-in|Total value/.test(x[0]))){ const fv=R.fields.find(x=>/All-in|Total value/.test(x[0]))[1]; if(fv.replace(/[^\d]/g,"")!==amt.replace(/,/g,"")) R.checks.push({ok:0,m:`Email says $${amt}, attachment says ${fv}`}); else R.checks.push({ok:1,m:`Amount in the email matches the attachment`}); }
+    const bad=R.checks.filter(c=>!c.ok).length; R.verdict=bad?`${bad} thing${bad>1?"s":""} to fix before you send`:"Attachment checked. Safe to send";
+    S.att[id].push(R); }
+  log("mail",`Attached and checked ${files.length} file${files.length>1?"s":""} on the email to ${d.to}`); save(); render();
+  toast(S.att[id].some(r=>r.checks.some(c=>!c.ok))?"<b>Check the attachment.</b> Something doesn't match the email.":"<b>Attachment checked.</b> It matches the email.");
+}
+window.drRemoveAtt=(id,i)=>{ S.att[id].splice(i,1); save(); render(); };
+function decorateDrafts(){
+  document.querySelectorAll('#main .slackmsg').forEach(el=>{ const b=el.querySelector('button[onclick^="sendDraft("]'); if(!b) return; const id=+b.getAttribute("onclick").match(/\d+/)[0];
+    el.classList.add("drtarget"); el.dataset.draft=id;
+    const list=(S.att&&S.att[id])||[];
+    if(!el.querySelector(".dratt")){ const w=document.createElement("div"); w.className="dratt";
+      w.innerHTML=`${list.map((r,i)=>`<div class="draw">${card(r,true)}<button class="bx" title="Remove attachment" onclick="drRemoveAtt(${id},${i})">×</button></div>`).join("")}
+        <label class="dradd">${ic("file-text")} ${list.length?"Attach another":"Drop a file here or attach"} to check it against this email<input type="file" multiple hidden></label>`;
+      b.parentNode.parentNode.insertBefore(w,b.parentNode); w.querySelector("input").onchange=e=>{ if(e.target.files.length) draftFiles(id,[...e.target.files]); }; }
+  });
+}
+function decorateChat(){
+  const form=document.querySelector('#main form[onsubmit*="chSend"]'); if(!form||form.querySelector(".drclip")) return;
+  const card=form.closest(".card")||form.parentNode.parentNode; card.classList.add("drchat");
+  const l=document.createElement("label"); l.className="drclip"; l.title="Attach a document for review"; l.innerHTML=`${ic("file-text")}<input type="file" multiple hidden>`; form.insertBefore(l,form.firstChild);
+  l.querySelector("input").onchange=e=>{ if(e.target.files.length) chatFiles([...e.target.files]); };
+  if(!card.querySelector(".drveil")){ const v=document.createElement("div"); v.className="drveil"; v.innerHTML=`<div>${ic("file-text")}<b>Drop to review</b><span>Checked against your quotes and shipments</span></div>`; card.appendChild(v); }
+}
+
+/* drag files from the desktop */
+const isFiles=e=>e.dataTransfer&&[...(e.dataTransfer.types||[])].includes("Files");
+let depth=0;
+document.addEventListener("dragenter",e=>{ if(!isFiles(e)) return; depth++; document.body.classList.add("filedrag"); });
+document.addEventListener("dragleave",e=>{ if(!isFiles(e)) return; depth=Math.max(0,depth-1); if(!depth) document.body.classList.remove("filedrag"); });
+document.addEventListener("dragover",e=>{ if(!isFiles(e)) return; const t=e.target.closest&&(e.target.closest(".drchat")||e.target.closest(".drtarget"));
+  document.querySelectorAll(".drhot").forEach(x=>{ if(x!==t) x.classList.remove("drhot"); }); if(t){ e.preventDefault(); t.classList.add("drhot"); } });
+document.addEventListener("drop",e=>{ depth=0; document.body.classList.remove("filedrag"); document.querySelectorAll(".drhot").forEach(x=>x.classList.remove("drhot"));
+  if(!isFiles(e)||!e.dataTransfer.files.length) return; const ch=e.target.closest&&e.target.closest(".drchat"), dr=e.target.closest&&e.target.closest(".drtarget");
+  if(ch){ e.preventDefault(); e.stopPropagation(); chatFiles([...e.dataTransfer.files]); } else if(dr){ e.preventDefault(); e.stopPropagation(); draftFiles(+dr.dataset.draft,[...e.dataTransfer.files]); } }, true);
+
+seedDrafts();
+const pr=render; render=function(){ pr(); try{ if(view==="chat") decorateChat(); decorateDrafts(); }catch(err){ console.error(err); } };
+window.drTestChat=chatFiles; window.drTestDraft=draftFiles;
+})();
+
+</script>
+<script id="collision-js">
+/* ---------- No double work: claims, presence and duplicate merging ---------- */
+(function(){
+const PEOPLE={Priya:{c:"#0b9466",i:"PK",me:false},Sam:{c:"#2b59ff",i:"SM",me:true},Lena:{c:"#a855f7",i:"LN"},Atlas:{c:"#1baf7a",i:"✈",ai:true},"Finance AI":{c:"#eda100",i:"$",ai:true}};
+const ago=t=>{ const m=Math.max(1,Math.round((Date.now()-t)/60000)); return m<60?m+" min ago":Math.round(m/60)+" h ago"; };
+function claims(){ if(!S.clm){ const n=Date.now(); S.clm={
+  "Q-2041":{by:"Priya",what:"Drafting the rate-hold reply to Mei Chen",at:n-3*60000},
+  "T-302":{by:"Priya",what:"Replying to Mei about holding Q-2041",at:n-3*60000},
+  "SHP-1007":{by:"Atlas",what:"Watching for the departure message from Carrier B",at:n-22*60000,scope:".srow,.bcard,.deal"},
+  "Metro Drayage":{by:"Finance AI",what:"Disputing the $45 waiting-time charge",at:n-41*60000,scope:".irow"}};
+  S.merged=[{who:"Mei Chen · Coastal Parts Co",what:"“Can you hold Q-2041 until Friday?” sent to Sam, Priya and sales@",n:3,to:"Priya"},
+    {who:"Jess Moore · Harbor & Pine",what:"“When does SHP-1007 fly?” by email and in the portal chat",n:2,to:"Customer service AI"},
+    {who:"Metro Drayage",what:"Same waiting-time invoice emailed twice to accounts@",n:2,to:"Finance AI"}];
+  S.saved2={dupes:17,hrs:5.5}; } return S.clm; }
+function claimFor(el){ const c=claims(), text=el.textContent; return Object.keys(c).find(k=>text.includes(k)&&(!c[k].scope||el.matches(c[k].scope))); }
+function chip(k){ const c=claims()[k], p=PEOPLE[c.by]||{c:"#64748b",i:c.by[0]}; return `<span class="clm" title="${c.what}"><i style="background:${p.c}">${p.i}</i>${c.by===("Sam")?"You're on this":`${c.by} is on this`} · ${ago(c.at)}</span>`; }
+
+/* show who's on what */
+function decorate(){
+  document.querySelectorAll("#main .irow, #main .srow, #main .deal, #main .slackmsg, #main .bcard").forEach(el=>{
+    if(el.querySelector(".clm")) return; const k=claimFor(el); if(!k) return; const c=claims()[k]; if(c.by==="Sam") return;
+    const w=document.createElement("div"); w.className="clmw"; w.innerHTML=chip(k); el.classList.add("claimed"); el.dataset.claim=k;
+    const sh=el.querySelector(":scope > .sh"); if(sh){ sh.after(w); return; } const host=el.querySelector(".it,.n,.bt")||el; host.appendChild(w); });
+}
+/* stop the second person before they start */
+document.addEventListener("click",e=>{
+  const btn=e.target.closest&&e.target.closest("button"); if(!btn) return; const el=btn.closest(".claimed"); if(!el) return;
+  const on=btn.getAttribute("onclick")||""; if(!/accept\(|sendDraft\(|advance\(|go\('support'\)|go\('billing'\)|go\('exceptions'\)|go\('docs'\)/.test(on)) return;
+  const k=el.dataset.claim, c=claims()[k]; if(!c||c.by==="Sam"||c.ok) return;
+  e.preventDefault(); e.stopPropagation();
+  const p=PEOPLE[c.by]||{c:"#64748b",i:"?"};
+  $("#modalBox").innerHTML=`<div class="clmm"><div class="clmh"><i style="background:${p.c}">${p.i}</i><div><b>${c.by} is already on this</b><div class="muted" style="font-size:12.5px">${c.what} · started ${ago(c.at)}</div></div></div>
+    <p style="font-size:13.5px;line-height:1.5;margin:14px 0">If you carry on, ${k} could get two replies or be worked twice. ${p.ai?`${c.by} is an AI teammate working inside your limits.`:""}</p>
+    <div style="display:flex;flex-direction:column;gap:8px"><button class="btn" onclick="closeM();toast('Left with ${c.by}. You\\'ll get a note when it\\'s done.')">Leave it with ${c.by}</button>
+    <button class="btn sec" onclick="closeM();toast('Message sent to ${c.by}: “Need a hand with ${k}?”')">Message ${c.by}</button>
+    <button class="btn sec" onclick="clmTake('${k.replace(/'/g,"")}')">Take over (${c.by} is told)</button></div></div>`;
+  $("#modal").classList.add("show");
+}, true);
+window.clmTake=k=>{ const c=claims()[k]; const was=c.by; c.by="Sam"; c.at=Date.now(); c.what="Taken over by you"; log("sys",`${k}: Sam took over from ${was}. ${was} was told.`); save(); closeM(); toast(`You have ${k} now. ${was} was told, so nobody works it twice.`); render(); };
+
+/* the Command centre panel */
+function panel(){ claims(); const c=S.clm;
+  return `<section class="card nodup"><div class="ch"><div><h3>No double work</h3><div class="muted" style="font-size:12px">Everyone, people and AI, can see who's on what. Duplicate requests become one task with one owner.</div></div>
+    <div class="ndstat"><b>${S.saved2.dupes}</b> duplicates stopped this week<span>about ${S.saved2.hrs} hours saved</span></div></div>
+    <div class="ndgrid"><div><div class="ndh">Who's on what right now</div>${Object.entries(c).map(([k,v])=>{ const p=PEOPLE[v.by]||{c:"#64748b",i:"?"}; return `<div class="ndr"><i style="background:${p.c}">${p.i}</i><div><b>${k}</b> · ${v.what}<div class="muted" style="font-size:11.5px">${v.by}${p.ai?" (AI)":""} · ${ago(v.at)}</div></div></div>`; }).join("")}</div>
+    <div><div class="ndh">Duplicates merged today</div>${S.merged.map(m=>`<div class="ndr"><span class="ndn">${m.n}→1</span><div>${m.what}<div class="muted" style="font-size:11.5px">${m.who} · one task for ${m.to}</div></div></div>`).join("")}</div></div></section>`; }
+const base=V.dashboard; V.dashboard=()=>{ const h=base(); const i=h.indexOf('<section class="dgrid3">'); return i<0?h+panel():h.slice(0,i)+panel()+h.slice(i); };
+
+const pr=render; render=function(){ pr(); try{ decorate(); }catch(err){ console.error(err); } };
 render();
 })();
 

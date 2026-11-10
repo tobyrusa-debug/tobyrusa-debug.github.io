@@ -725,6 +725,22 @@ body.filedrag .drtarget{outline:2px dashed rgba(43,89,255,.45);outline-offset:3p
 .ndn{flex:none;min-width:44px;text-align:center;font:600 12px var(--f-mono);color:#076b4b;background:var(--ok-soft);border-radius:8px;padding:5px 6px}
 @media (max-width:900px){.ndgrid{grid-template-columns:1fr}.nodup .ch{flex-direction:column}.ndstat{text-align:left}}
 
+/* ---------- Consol Edge ---------- */
+.edge{display:grid;grid-template-columns:200px minmax(0,1fr);gap:22px;margin-bottom:16px;align-items:start}
+.edgebox{display:flex;flex-direction:column;align-items:center;padding-top:18px}
+.ebx{position:relative;width:150px;height:150px;border-radius:28px;background:linear-gradient(155deg,#2a3550 0%,#0d1324 70%);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -8px 20px rgba(0,0,0,.5),0 24px 40px -18px rgba(6,10,20,.7);display:grid;place-items:center}
+.elogo{width:46px;height:46px;border-radius:13px;background:conic-gradient(from 210deg,#2b59ff,#00b89c,#7aa2ff,#2b59ff);color:transparent;box-shadow:0 0 24px rgba(0,209,178,.35)}
+.eled{position:absolute;bottom:18px;width:34px;height:4px;border-radius:4px;background:#12e0b0;box-shadow:0 0 12px #12e0b0;animation:nowp 2s ease-in-out infinite}
+.eled.amb{background:#ffb020;box-shadow:0 0 12px #ffb020}
+.ebshadow{width:120px;height:14px;border-radius:50%;background:radial-gradient(closest-side,rgba(6,10,20,.25),transparent);margin-top:8px}
+.egrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:12px;background:#f7f9fc;border-radius:12px}
+.egrid span{display:block;font-size:10.5px;color:#8a93a8} .egrid b{font-size:13px;font-weight:600}
+.elist{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.erow{display:flex;gap:9px;align-items:flex-start;padding:6px 0;font-size:12.5px}
+.edot{width:8px;height:8px;border-radius:50%;background:#12c48b;margin-top:5px;flex:none;box-shadow:0 0 0 3px var(--ok-soft)}
+.eup{display:flex;gap:3px} .eup i{flex:1;height:22px;border-radius:3px;background:#2fd19a} .eup i.amb{background:#ffb020}
+@media (max-width:900px){.edge{grid-template-columns:1fr}.edgebox{padding-top:0}.egrid{grid-template-columns:1fr 1fr}.elist{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -4813,6 +4829,32 @@ const base=V.dashboard; V.dashboard=()=>{ const h=base(); const i=h.indexOf('<se
 
 const pr=render; render=function(){ pr(); try{ decorate(); }catch(err){ console.error(err); } };
 render();
+})();
+
+</script>
+<script id="edge-js">
+/* ---------- Consol Edge: an always-on box at the customer's site ---------- */
+(function(){
+function E(){ S.edge=S.edge||{net:"fibre",up:41}; return S.edge; }
+window.edgeFailover=()=>{ const e=E(); e.net=e.net==="fibre"?"4g":"fibre"; save(); log("sys",`Consol Edge switched to ${e.net==="4g"?"4G backup":"fibre"}. Agents stayed online.`); toast(e.net==="4g"?"<b>Fibre cut simulated.</b> Edge moved to 4G in 3 seconds. No agent went offline.":"<b>Back on fibre.</b> 4G is on standby again."); render(); };
+window.edgeRestart=()=>{ log("sys","Consol Edge restarted remotely by Consol support"); toast("Restarting remotely. Back in about 40 seconds, and agents carry on in the cloud meanwhile."); };
+function card(){ const e=E(), days=[...Array(30)].map((_,i)=>i===17?"amb":"ok");
+  return `<section class="card edge"><div class="edgebox"><div class="ebx"><span class="eled ${e.net==="4g"?"amb":""}"></span><span class="elogo">C</span></div><div class="ebshadow"></div></div>
+    <div class="edgemain"><div class="ch"><div><h3>Consol Edge · Newark warehouse</h3><div class="muted" style="font-size:12.5px">An always-on box on your site, managed by Consol. It keeps your AI team connected to the things that only exist in your building, even when every laptop is asleep.</div></div><span class="pill ok">Online ${e.up} days</span></div>
+      <div class="egrid">
+        <div><span>Connection</span><b>${e.net==="4g"?"4G backup (fibre down)":"Fibre · 4G on standby"}</b></div>
+        <div><span>Battery backup</span><b>100% · about 3 hours</b></div>
+        <div><span>Agents served</span><b>4 AI managers + Priya's twin</b></div>
+        <div><span>Last check-in</span><b>12 seconds ago</b></div>
+      </div>
+      <div class="ndh" style="margin-top:14px">Connected on site</div>
+      <div class="elist">${[["Label printer · warehouse","Printing labels for SHP-1007"],["Floor scale","Weights go straight to the booking"],["Desktop TMS (no API)","Bookings copied in both directions"],["Airline and trucking portals","3 sessions kept signed in"]].map(([n,d])=>`<div class="erow"><span class="edot"></span><div><b>${n}</b><div class="muted" style="font-size:11.5px">${d}</div></div></div>`).join("")}</div>
+      <div class="ndh" style="margin-top:14px">Last 30 days</div>
+      <div class="eup">${days.map(d=>`<i class="${d}" title="${d==="amb"?"Ran 2 h on 4G after a fibre cut":"100% online"}"></i>`).join("")}</div>
+      <div class="muted" style="font-size:11.5px;margin-top:4px">100% agent uptime. One fibre cut, covered by 4G.</div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn sm" onclick="edgeFailover()">${e.net==="4g"?"Restore fibre":"Test failover"}</button><button class="btn sm sec" onclick="edgeRestart()">Restart remotely</button><span class="muted" style="font-size:11.5px;align-self:center">Leased monthly. Shipped set up, monitored and replaced by Consol.</span></div>
+    </div></section>`; }
+const base=V.integrations; V.integrations=()=>{ const h=base(); const i=h.indexOf("</header>"); return i<0?card()+h:h.slice(0,i+9)+card()+h.slice(i+9); };
 })();
 
 </script>

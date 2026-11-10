@@ -619,6 +619,67 @@ body.dragging .bdrop{display:flex}
 .dghost{position:fixed;top:-100px;left:-100px;padding:6px 12px;border-radius:99px;background:#2b59ff;color:#fff;font:600 12px var(--f-body);box-shadow:0 8px 20px -6px rgba(43,89,255,.7)}
 .bpo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid #f0f2f6}
 
+/* ---------- Digital twin ---------- */
+.twhero{border-radius:20px;padding:20px;color:#dfe6f5;background:radial-gradient(120% 140% at 0% 0%,#1a2b5c 0%,#0b1328 55%,#070b17 100%);box-shadow:var(--sh-3);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px 24px;margin-bottom:22px;position:relative;overflow:hidden}
+.twhero::after{content:"";position:absolute;right:-80px;top:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,209,178,.22),transparent)}
+.twid{display:flex;gap:16px;align-items:center;position:relative;z-index:1}
+.twav{position:relative;width:96px;height:96px;flex:none}
+.twring{position:absolute;inset:0;transform:rotate(-90deg)} .twring .rb{fill:none;stroke:rgba(255,255,255,.1);stroke-width:5} .twring .rf{fill:none;stroke:#00d1b2;stroke-width:5;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(0,209,178,.7));transition:stroke-dasharray .6s}
+.twp{position:absolute;left:14px;top:20px;width:52px;height:52px;border-radius:50%;background:#0b9466;color:#fff;display:grid;place-items:center;font-weight:700;font-size:17px;border:3px solid #0b1328}
+.twt{position:absolute;right:12px;bottom:14px;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4a72ff,#00b89c);color:#fff;display:grid;place-items:center;font-size:18px;border:3px solid #0b1328;box-shadow:0 0 18px rgba(0,209,178,.6)}
+.twname{font-size:20px;font-weight:600;color:#fff;letter-spacing:-.02em} .twx{font-size:12px;font-weight:600;color:#7cf2dc;margin-left:6px}
+.twrole{font-size:12.5px;color:#9aa8c6;margin-top:2px}
+.twst{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12.5px;color:#cfe9e4}
+.twstats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;position:relative;z-index:1;align-self:center}
+.tsv{font-family:var(--f-mono);font-size:22px;color:#fff;letter-spacing:-.02em} .tsl{font-size:10.5px;color:#8f9bb8;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.twmodes{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;position:relative;z-index:1}
+.twm{text-align:left;border-radius:14px;padding:12px 14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#c6d0e6;display:flex;flex-direction:column;gap:3px;transition:.15s}
+.twm b{color:#fff;font-size:13.5px} .twm span{font-size:12px;line-height:1.4}
+.twm:hover{background:rgba(255,255,255,.08)} .twm.on{background:linear-gradient(135deg,rgba(43,89,255,.35),rgba(0,184,156,.2));border-color:rgba(124,242,220,.5);box-shadow:0 0 0 1px rgba(124,242,220,.25) inset}
+.twh{font-size:15px;margin:0 0 12px;letter-spacing:-.01em}
+.twsrc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.tws{padding:14px 16px} .tws.done{border-color:#bfe8dc}
+.twsh{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center}
+.twsi{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand)} .twsi svg{width:17px;height:17px}
+.tws.done .twsi{background:var(--live-soft);color:#03735f}
+.tc{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tb{height:6px;border-radius:99px;background:#e8ecf3;overflow:hidden} .tb b{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--brand),var(--live));transition:width .4s}
+.twgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.ivbox{background:#f6f8fc;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:96px}
+.ivq{display:flex;gap:10px;align-items:flex-start;font-size:14px;font-weight:500}
+.ivav{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-size:13px;background:linear-gradient(135deg,#4a72ff,#00b89c)}
+.ivrec{display:flex;align-items:center;gap:10px;margin:12px 0 6px}
+.vdot{width:10px;height:10px;border-radius:50%;background:#e5372a;animation:blink 1s steps(2) infinite}
+.ivwave{display:flex;gap:2px;align-items:center;height:22px} .ivwave i{width:3px;border-radius:2px;background:var(--brand);animation:eq .9s ease-in-out infinite}
+.ivwave i:nth-child(3n){animation-delay:.15s} .ivwave i:nth-child(3n+1){animation-delay:.3s} .ivwave i:nth-child(4n){animation-delay:.45s}
+@keyframes eq{0%,100%{height:4px}50%{height:20px}}
+.iva{font-size:13.5px;line-height:1.5;color:#39425a;font-style:italic}
+.btn svg{width:15px;height:15px;vertical-align:-2px;margin-right:4px}
+.vclone{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:13px}
+.vrow{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px solid #f0f2f6;font-size:13px}
+.vth{height:42px;border-radius:9px;background:linear-gradient(135deg,#0d1730,#24386b);color:#fff;display:grid;place-items:center} .vth svg{width:16px;height:16px}
+.vl{font-size:12px;color:#03735f;margin-top:2px}
+.rules2{display:flex;flex-direction:column;gap:8px}
+.rl2{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.rl2.ok{background:#f3fbf8;border-color:#cdeee3}
+.rsrc{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#46506a} .rsrc svg{width:14px;height:14px}
+.rt{font-size:13px;line-height:1.45}
+.rconf{height:4px;width:120px;border-radius:99px;background:#e8ecf3;margin:7px 0 2px;display:block} .rconf span{display:block;height:100%;border-radius:99px;background:var(--live)}
+.ract{display:flex;gap:6px}
+.twchat{display:flex;flex-direction:column}
+.tcl{display:flex;flex-direction:column;gap:10px;max-height:300px;overflow:auto;margin-bottom:10px}
+.tu{align-self:flex-end;max-width:85%;background:var(--brand);color:#fff;padding:8px 12px;border-radius:14px 14px 4px 14px;font-size:13px}
+.ta{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;max-width:95%}
+.tsrc{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px} .tsrc span{font-size:11px;padding:2px 8px;border-radius:99px;background:#f1f3f8;color:#46506a}
+.tchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.vchip2{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 11px;font-size:12px;color:#39425a;text-align:left}
+.vchip2:hover{border-color:var(--brand);color:var(--brand)}
+.tform{display:flex;gap:8px} .tform input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.guard{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:9px;font-size:13px;line-height:1.45}
+.ch svg{width:16px;height:16px;color:var(--muted)}
+@media (max-width:1100px){.twhero{grid-template-columns:1fr}.twsrc{grid-template-columns:1fr 1fr}}
+@media (max-width:900px){.twgrid{grid-template-columns:1fr}.twstats{grid-template-columns:repeat(3,1fr)}.twmodes{grid-template-columns:1fr}.twsrc{grid-template-columns:1fr}.rl2{grid-template-columns:1fr}.rl2 .ract{justify-content:flex-start}}
+
 </style>
 </head>
 <body>
@@ -3646,16 +3707,140 @@ document.addEventListener("drop",e=>{ e.preventDefault(); document.querySelector
 applyBrand();
 render();
 </script>
+<script id="twin-js">
+/* ---------- Digital twin: a key employee trains an AI twin that supports them ---------- */
+(function(){
+const nav=document.getElementById("nav"), after=nav.querySelector('button[data-v="aiteam"]');
+const b=document.createElement("button"); b.dataset.v="twin"; b.innerHTML=`<span class="ico">◐</span>Digital twin`; nav.insertBefore(b, after.nextSibling);
+
+const SRC=[
+  {k:"voice",n:"Voice",ic:"mic",d:"Interviews and a voice sample so the twin explains things the way Priya does",unit:"minutes",total:42},
+  {k:"email",n:"Email",ic:"mail",d:"Sent mail and threads with customers, carriers and the team",unit:"threads",total:3812},
+  {k:"cal",n:"Calendar",ic:"calendar",d:"Who she meets, how often, and what each meeting is for",unit:"events",total:614},
+  {k:"slack",n:"Slack",ic:"hash",d:"Channels she's in and her DMs on work topics",unit:"messages",total:9240},
+  {k:"files",n:"Files",ic:"folder-open",d:"Rate sheets, SOPs, proposals and account plans",unit:"files",total:388},
+  {k:"video",n:"Call recordings",ic:"video",d:"Recorded customer and carrier calls, with transcripts",unit:"calls",total:96}
+];
+const RULES=[
+  {s:"email",t:"Mei Chen at Coastal Parts Co wants one weekly roll-up email on Mondays, not an update per shipment.",c:94},
+  {s:"slack",t:"Holds a rate up to 3 working days for repeat customers. Never over a weekend without the airline confirming space.",c:88},
+  {s:"video",t:"On LAX → HKG she offers Carrier B first, and Carrier C when the shipment is over 1,000 kg.",c:91},
+  {s:"cal",t:"Has a monthly account review with every customer over $50,000 a year, booked for the first Tuesday.",c:86},
+  {s:"email",t:"Signs off “Cheers, Priya” to existing customers and “Kind regards” to new leads.",c:97},
+  {s:"files",t:"Meridian Medical ships temperature-controlled goods: always quotes with a cold-chain handling line and +12% buffer on transit time.",c:82},
+  {s:"voice",t:"Sends anything with dangerous goods to Operations before giving a customer a price.",c:93},
+  {s:"slack",t:"Escalates to Sam when a discount would take margin below 10%.",c:90}
+];
+const Q=[
+  {q:"When a customer asks you to hold a rate, how do you decide?",a:"If they're a repeat customer I'll hold it for up to three working days. Never over a weekend unless the airline has confirmed space, because rates can move on a Monday."},
+  {q:"What do you check before quoting dangerous goods?",a:"I don't quote it myself. I send the SDS to Ops first, they confirm the class and whether it needs a freighter, then I price it."},
+  {q:"How do you like to update a busy customer like Coastal Parts?",a:"Mei hates lots of emails. One roll-up on Monday morning with every open shipment, the ETA and anything she needs to do."}
+];
+const ASK=[
+  {q:"Mei wants to hold Q-2041 until Friday. What would you do?",a:"I'd hold it until Friday 5pm, subject to space. Coastal is a repeat customer and that's inside my three-day rule, but I'd ask Carrier B to confirm space first because Friday is close to the weekend. I've drafted the reply to Mei for you to send.",src:["Slack · #sales, 2 Oct","Email · Mei Chen, Q-2041","Rule · rate holds"]},
+  {q:"Who's my contact at Meridian and what do they care about?",a:"Luis Ortega, logistics manager. He cares about transit time to São Paulo and the cold chain more than price. On the last call he asked twice whether we can guarantee 2–8°C storage at GRU.",src:["Call · Meridian intro, 28 Oct","File · Meridian account plan"]},
+  {q:"Draft my Monday update to Coastal Parts",a:"Hi Mei, here's your Monday round-up. Q-2041 Carson → LAX → HKG: held at $4,310 until Friday 5pm, waiting on your PO. Nothing else open this week. Send the PO over and we'll book the same day. Cheers, Priya",src:["Rule · weekly roll-up","Email style · 212 sent messages"]},
+  {q:"What have you handled for me this week?",a:"I answered 14 routine rate questions, drafted 9 follow-ups you approved, prepared the briefing for your Meridian call and flagged one discount that would have taken margin under 10%. About 6.5 hours back for you.",src:["Twin activity log"]}
+];
+function T(){ S.twin=S.twin||{on:{email:1,cal:1,slack:1,voice:0,files:0,video:0},prog:{email:100,cal:100,slack:100,voice:0,files:0,video:0},mode:"copilot",ok:{},gone:{},qi:0,chat:[],paused:false}; return S.twin; }
+function ready(){ const t=T(); const w={voice:15,email:25,cal:10,slack:20,files:15,video:15}; let r=0; SRC.forEach(s=>r+=w[s.k]*(t.prog[s.k]||0)/100); return Math.round(r); }
+const ic=n=>window.icon?icon(n):"";
+const SRCN=k=>SRC.find(s=>s.k===k).n;
+
+window.twConnect=k=>{ const t=T(); if(t.on[k]) return; t.on[k]=1; t.prog[k]=1; render();
+  const iv=setInterval(()=>{ t.prog[k]=Math.min(100,t.prog[k]+7+Math.random()*9); const bar=document.querySelector(`[data-tw="${k}"]`);
+    if(bar){ bar.querySelector(".tb b").style.width=t.prog[k]+"%"; const s=SRC.find(x=>x.k===k); bar.querySelector(".tc").textContent=`${Math.round(s.total*t.prog[k]/100).toLocaleString("en-US")} ${s.unit} read`; }
+    const g=document.getElementById("twReady"); if(g) g.textContent=ready()+"%";
+    if(t.prog[k]>=100){ clearInterval(iv); t.prog[k]=100; save(); log("sys",`Digital twin: finished learning from ${SRCN(k)}`); toast(`<b>${SRCN(k)} connected.</b> The twin found new things to learn. Check “What your twin learned”.`); render(); } },450); };
+window.twMode=m=>{ T().mode=m; save(); log("sys",`Digital twin mode set to ${m}`); render(); };
+window.twRule=(i,a)=>{ const t=T(); if(a==="ok"){ t.ok[i]=1; } else { t.gone[i]=1; } save(); render(); };
+window.twPause=()=>{ const t=T(); t.paused=!t.paused; save(); toast(t.paused?"Twin paused. It won't draft or act until Priya resumes it.":"Twin resumed."); render(); };
+window.twAsk=i=>{ const t=T(); const x=ASK[i]; t.chat.push({u:x.q}); render(); setTimeout(()=>{ t.chat.push({a:x.a,src:x.src}); save(); render(); const c=document.getElementById("twChat"); if(c) c.scrollTop=1e9; },900); };
+window.twFree=e=>{ e.preventDefault(); const v=e.target.q.value.trim(); if(!v) return; const t=T(); t.chat.push({u:v}); e.target.q.value=""; render();
+  setTimeout(()=>{ t.chat.push({a:"I haven't learned enough about that yet to answer the way Priya would. I've added it to my next training interview so she can teach me.",src:["Training queue"]}); render(); },800); };
+window.twInterview=()=>{ const t=T(); const q=Q[t.qi%Q.length]; const box=document.getElementById("twIv"); if(!box) return;
+  box.innerHTML=`<div class="ivq"><span class="ivav">◐</span>${q.q}</div><div class="ivrec"><span class="vdot"></span><span class="ivwave">${"<i></i>".repeat(24)}</span><span class="muted" style="font-size:12px">Listening to Priya…</span></div><div class="iva" id="twIvA"></div>`;
+  const words=q.a.split(" "); let n=0; const iv=setInterval(()=>{ n++; const a=document.getElementById("twIvA"); if(!a){ clearInterval(iv); return; } a.textContent="“"+words.slice(0,n).join(" ")+(n<words.length?"":"”");
+    if(n>=words.length){ clearInterval(iv); t.qi++; t.prog.voice=Math.min(100,(t.prog.voice||0)+34); t.on.voice=1; save(); setTimeout(()=>{ toast("<b>Learned.</b> Added to the twin's playbook for Priya to confirm."); render(); },700); } },90); };
+
+V.twin = () => {
+  const t=T(), r=ready(), learned=RULES.map((x,i)=>[x,i]).filter(([x,i])=>!t.gone[i]&&(t.prog[x.s]||0)>=100);
+  const pending=RULES.filter((x,i)=>!t.gone[i]&&(t.prog[x.s]||0)<100).length;
+  const modes=[["shadow","Shadow","Watches and learns. Drafts nothing."],["copilot","Co-pilot","Drafts replies and prep for Priya to approve."],["delegate","Delegate","Handles routine work on its own inside her limits, and covers when she's away."]];
+  const cc=2*Math.PI*44;
+  return `<header class="top"><div><h1>Priya's digital twin</h1><div class="sub">An AI copy of how Priya Kapoor, senior account manager, works: her accounts, her rules and her voice. It supports her and covers for her. Priya trains it, owns it and decides what it can do.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sec" onclick="twPause()">${t.paused?"Resume twin":"Pause twin"}</button><button class="btn" onclick="document.getElementById('twTest').scrollIntoView({behavior:'smooth'})">Talk to the twin</button></div></header>
+
+  <div class="twhero">
+    <div class="twid">
+      <div class="twav"><svg viewBox="0 0 100 100" class="twring"><circle cx="50" cy="50" r="44" class="rb"/><circle cx="50" cy="50" r="44" class="rf" stroke-dasharray="${cc*r/100} ${cc}"/></svg>
+        <span class="twp">PK</span><span class="twt">◐</span></div>
+      <div><div class="twname">Priya Kapoor <span class="twx">+ twin</span></div><div class="twrole">Senior account manager · Coastal Parts Co, Meridian Medical + 11 accounts</div>
+        <div class="twst"><span class="pulse"></span>${t.paused?"Paused by Priya":t.mode==="delegate"?"Delegate mode · acting within limits":t.mode==="copilot"?"Co-pilot mode · drafting for approval":"Shadow mode · learning only"}</div></div>
+    </div>
+    <div class="twstats">
+      <div><div class="tsv" id="twReady">${r}%</div><div class="tsl">Trained</div></div>
+      <div><div class="tsv">${learned.length*37+412}</div><div class="tsl">Things learned</div></div>
+      <div><div class="tsv">13</div><div class="tsl">Accounts known</div></div>
+      <div><div class="tsv">6.5h</div><div class="tsl">Saved this week</div></div>
+      <div><div class="tsv">96%</div><div class="tsl">Drafts approved</div></div>
+    </div>
+    <div class="twmodes">${modes.map(([k,n,d])=>`<button class="twm ${t.mode===k?"on":""}" onclick="twMode('${k}')"><b>${n}</b><span>${d}</span></button>`).join("")}</div>
+  </div>
+
+  <h3 class="twh">Train the twin</h3>
+  <div class="twsrc">${SRC.map(s=>{ const p=t.prog[s.k]||0, on=t.on[s.k];
+    return `<div class="card tws ${on&&p>=100?"done":""}" data-tw="${s.k}"><div class="twsh"><span class="twsi">${ic(s.ic)}</span><div><b>${s.n}</b><div class="tc">${on?`${Math.round(s.total*p/100).toLocaleString("en-US")} ${s.unit} read`:"Not connected"}</div></div>
+      ${on&&p>=100?'<span class="pill ok">Learned</span>':on?'<span class="pill">Learning…</span>':`<button class="btn sm" onclick="twConnect('${s.k}')">${s.k==="voice"?"Start":"Connect"}</button>`}</div>
+      <div class="muted" style="font-size:12px;margin:8px 0 10px">${s.d}</div><div class="tb"><b style="width:${p}%"></b></div></div>`; }).join("")}</div>
+
+  <div class="twgrid">
+    <div class="card"><div class="ch"><h3>Voice interview</h3><span class="muted" style="font-size:12px">5 minutes a day</span></div>
+      <div class="muted" style="font-size:12.5px;margin-bottom:10px">The twin asks Priya about the judgement calls that never get written down. She answers out loud and it learns the rule behind the answer.</div>
+      <div id="twIv" class="ivbox"><div class="ivq"><span class="ivav">◐</span>${Q[t.qi%Q.length].q}</div></div>
+      <button class="btn" style="margin-top:12px" onclick="twInterview()">${ic("mic")} Answer by voice</button>
+      <div class="vclone"><div><b>Voice sample</b><div class="muted" style="font-size:12px">${Math.min(10,Math.round((t.prog.voice||0)/10))} of 10 minutes recorded. Used only to read Priya's own drafts back to her, never to call anyone as her.</div></div><div class="tb" style="width:120px"><b style="width:${t.prog.voice||0}%"></b></div></div>
+    </div>
+    <div class="card"><div class="ch"><h3>Learning from call recordings</h3><span class="muted" style="font-size:12px">${t.on.video?"96 calls":"Connect recordings"}</span></div>
+      ${[["Meridian Medical · intro call","28 Oct · 34 min","Cold chain at GRU is Luis's main worry"],["Carrier B · Q4 capacity review","24 Oct · 51 min","Carrier B has space LAX → HKG Tue and Thu"],["Coastal Parts · monthly review","21 Oct · 27 min","Mei expects the PO for Q-2041 this week"]].map(([n,d,l])=>`<div class="vrow"><span class="vth">${ic("play")}</span><div><b>${n}</b><div class="muted" style="font-size:11.5px">${d}</div><div class="vl">${t.on.video?`Learned: ${l}`:"Not read yet"}</div></div></div>`).join("")}
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px"><div class="ch"><div><h3>What your twin learned</h3><div class="muted" style="font-size:12px">Priya confirms each rule before the twin uses it. Nothing is used until she says yes.${pending?` ${pending} more will appear as you connect sources.`:""}</div></div></div>
+    <div class="rules2">${learned.length?learned.map(([x,i])=>`<div class="rl2 ${t.ok[i]?"ok":""}"><span class="rsrc">${ic(SRC.find(s=>s.k===x.s).ic)}${SRCN(x.s)}</span><div class="rt">${x.t}<div class="rconf"><span style="width:${x.c}%"></span></div><span class="muted" style="font-size:11px">${x.c}% sure</span></div>
+      ${t.ok[i]?'<span class="pill ok">In use</span>':`<div class="ract"><button class="btn sm ok" onclick="twRule(${i},'ok')">Confirm</button><button class="btn sm sec" onclick="twRule(${i},'no')">Forget</button></div>`}</div>`).join(""):'<div class="empty">Connect a source and the twin will show you what it picked up.</div>'}</div></div>
+
+  <div class="twgrid" id="twTest" style="margin-top:16px">
+    <div class="card twchat"><div class="ch"><h3>Talk to the twin</h3><span class="muted" style="font-size:12px">Answers in Priya's style, with sources</span></div>
+      <div class="tcl" id="twChat">${t.chat.length?t.chat.map(m=>m.u?`<div class="tu">${m.u}</div>`:`<div class="ta"><span class="ivav">◐</span><div><div>${m.a}</div><div class="tsrc">${m.src.map(s=>`<span>${s}</span>`).join("")}</div></div></div>`).join(""):`<div class="muted" style="font-size:12.5px">Try a question below. In the live product Priya and her team can also talk to it by voice.</div>`}</div>
+      <div class="tchips">${ASK.map((x,i)=>`<button class="vchip2" onclick="twAsk(${i})">${x.q}</button>`).join("")}</div>
+      <form class="tform" onsubmit="twFree(event)"><input name="q" placeholder="Ask Priya's twin…" autocomplete="off"><button class="btn sm">Ask</button></form>
+    </div>
+    <div class="card"><div class="ch"><h3>Priya's rules for her twin</h3>${ic("lock")}</div>
+      <ul class="guard">
+        <li><b>Priya owns it.</b> She can pause it, see everything it has read and delete it with all its data.</li>
+        <li><b>Private stays private.</b> Personal email, HR, health and anything labelled private is never read.</li>
+        <li><b>Always says it's AI.</b> Every message it sends to a customer is marked as sent by Priya's assistant.</li>
+        <li><b>Limits match hers.</b> Discounts up to 5%, nothing below 10% margin, no new-customer pricing.</li>
+        <li><b>Leaves with consent.</b> If Priya moves on, the company keeps the account knowledge, not her voice or style.</li>
+      </ul>
+      <div class="muted" style="font-size:11.5px;margin-top:10px">Every read, draft and action is in the audit log.</div>
+    </div>
+  </div>`;
+};
+})();
+
+</script>
 <script id="flightdeck-js">
 /* ---------- Flight-deck UX layer: grouped rail, command bar, ⌘K palette, Data exchange view ---------- */
 (function(){
-const IC = {"bot": "<path d=\"M12 8V4H8\" /> <rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\" /> <path d=\"M2 14h2\" /> <path d=\"M20 14h2\" /> <path d=\"M15 13v2\" /> <path d=\"M9 13v2\" />", "circle-dollar-sign": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\" /> <path d=\"M12 18V6\" />", "messages-square": "<path d=\"M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z\" /> <path d=\"M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1\" />", "sparkles": "<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\" /> <path d=\"M20 3v4\" /> <path d=\"M22 5h-4\" /> <path d=\"M4 17v2\" /> <path d=\"M5 18H3\" />", "triangle-alert": "<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /> <path d=\"M12 9v4\" /> <path d=\"M12 17h.01\" />", "radio": "<path d=\"M4.9 19.1C1 15.2 1 8.8 4.9 4.9\" /> <path d=\"M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5\" /> <circle cx=\"12\" cy=\"12\" r=\"2\" /> <path d=\"M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5\" /> <path d=\"M19.1 4.9C23 8.8 23 15.1 19.1 19\" />", "smartphone": "<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\" /> <path d=\"M12 18h.01\" />", "chart-column": "<path d=\"M3 3v16a2 2 0 0 0 2 2h16\" /> <path d=\"M18 17V9\" /> <path d=\"M13 17V5\" /> <path d=\"M8 17v-3\" />", "layout-dashboard": "<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\" />", "target": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <circle cx=\"12\" cy=\"12\" r=\"6\" /> <circle cx=\"12\" cy=\"12\" r=\"2\" />", "arrow-left-right": "<path d=\"M8 3 4 7l4 4\" /> <path d=\"M4 7h16\" /> <path d=\"m16 21 4-4-4-4\" /> <path d=\"M20 17H4\" />", "calculator": "<rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\" /> <line x1=\"8\" x2=\"16\" y1=\"6\" y2=\"6\" /> <line x1=\"16\" x2=\"16\" y1=\"14\" y2=\"18\" /> <path d=\"M16 10h.01\" /> <path d=\"M12 10h.01\" /> <path d=\"M8 10h.01\" /> <path d=\"M12 14h.01\" /> <path d=\"M8 14h.01\" /> <path d=\"M12 18h.01\" /> <path d=\"M8 18h.01\" />", "plane": "<path d=\"M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z\" />", "users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" /> <circle cx=\"9\" cy=\"7\" r=\"4\" /> <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\" /> <path d=\"M16 3.13a4 4 0 0 1 0 7.75\" />", "file-text": "<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\" /> <path d=\"M14 2v4a2 2 0 0 0 2 2h4\" /> <path d=\"M10 9H8\" /> <path d=\"M16 13H8\" /> <path d=\"M16 17H8\" />", "receipt": "<path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\" /> <path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\" /> <path d=\"M12 17.5v-11\" />", "truck": "<path d=\"M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2\" /> <path d=\"M15 18H9\" /> <path d=\"M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14\" /> <circle cx=\"17\" cy=\"18\" r=\"2\" /> <circle cx=\"7\" cy=\"18\" r=\"2\" />", "scale": "<path d=\"m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\" /> <path d=\"m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\" /> <path d=\"M7 21h10\" /> <path d=\"M12 3v18\" /> <path d=\"M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2\" />", "life-buoy": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"m4.93 4.93 4.24 4.24\" /> <path d=\"m14.83 9.17 4.24-4.24\" /> <path d=\"m14.83 14.83 4.24 4.24\" /> <path d=\"m9.17 14.83-4.24 4.24\" /> <circle cx=\"12\" cy=\"12\" r=\"4\" />", "trending-up": "<polyline points=\"22 7 13.5 15.5 8.5 10.5 2 17\" /> <polyline points=\"16 7 22 7 22 13\" />", "calendar-days": "<path d=\"M8 2v4\" /> <path d=\"M16 2v4\" /> <rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\" /> <path d=\"M3 10h18\" /> <path d=\"M8 14h.01\" /> <path d=\"M12 14h.01\" /> <path d=\"M16 14h.01\" /> <path d=\"M8 18h.01\" /> <path d=\"M12 18h.01\" /> <path d=\"M16 18h.01\" />", "plug": "<path d=\"M12 22v-5\" /> <path d=\"M9 8V2\" /> <path d=\"M15 8V2\" /> <path d=\"M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z\" />", "external-link": "<path d=\"M15 3h6v6\" /> <path d=\"M10 14 21 3\" /> <path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\" />", "share-2": "<circle cx=\"18\" cy=\"5\" r=\"3\" /> <circle cx=\"6\" cy=\"12\" r=\"3\" /> <circle cx=\"18\" cy=\"19\" r=\"3\" /> <line x1=\"8.59\" x2=\"15.42\" y1=\"13.51\" y2=\"17.49\" /> <line x1=\"15.41\" x2=\"8.59\" y1=\"6.51\" y2=\"10.49\" />", "search": "<circle cx=\"11\" cy=\"11\" r=\"8\" /> <path d=\"m21 21-4.3-4.3\" />", "bell": "<path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\" /> <path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\" />", "command": "<path d=\"M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3\" />", "rotate-ccw": "<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\" /> <path d=\"M3 3v5h5\" />", "network": "<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\" /> <rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\" /> <rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\" /> <path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\" /> <path d=\"M12 12V8\" />", "shield-check": "<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\" /> <path d=\"m9 12 2 2 4-4\" />", "zap": "<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\" />", "link-2": "<path d=\"M9 17H7A5 5 0 0 1 7 7h2\" /> <path d=\"M15 7h2a5 5 0 1 1 0 10h-2\" /> <line x1=\"8\" x2=\"16\" y1=\"12\" y2=\"12\" />", "user-plus": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" /> <circle cx=\"9\" cy=\"7\" r=\"4\" /> <line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\" /> <line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\" />"};
+const IC = {"bot": "<path d=\"M12 8V4H8\" /> <rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\" /> <path d=\"M2 14h2\" /> <path d=\"M20 14h2\" /> <path d=\"M15 13v2\" /> <path d=\"M9 13v2\" />", "circle-dollar-sign": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\" /> <path d=\"M12 18V6\" />", "messages-square": "<path d=\"M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z\" /> <path d=\"M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1\" />", "sparkles": "<path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\" /> <path d=\"M20 3v4\" /> <path d=\"M22 5h-4\" /> <path d=\"M4 17v2\" /> <path d=\"M5 18H3\" />", "triangle-alert": "<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /> <path d=\"M12 9v4\" /> <path d=\"M12 17h.01\" />", "radio": "<path d=\"M4.9 19.1C1 15.2 1 8.8 4.9 4.9\" /> <path d=\"M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5\" /> <circle cx=\"12\" cy=\"12\" r=\"2\" /> <path d=\"M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5\" /> <path d=\"M19.1 4.9C23 8.8 23 15.1 19.1 19\" />", "smartphone": "<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\" /> <path d=\"M12 18h.01\" />", "chart-column": "<path d=\"M3 3v16a2 2 0 0 0 2 2h16\" /> <path d=\"M18 17V9\" /> <path d=\"M13 17V5\" /> <path d=\"M8 17v-3\" />", "layout-dashboard": "<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\" />", "target": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <circle cx=\"12\" cy=\"12\" r=\"6\" /> <circle cx=\"12\" cy=\"12\" r=\"2\" />", "arrow-left-right": "<path d=\"M8 3 4 7l4 4\" /> <path d=\"M4 7h16\" /> <path d=\"m16 21 4-4-4-4\" /> <path d=\"M20 17H4\" />", "calculator": "<rect width=\"16\" height=\"20\" x=\"4\" y=\"2\" rx=\"2\" /> <line x1=\"8\" x2=\"16\" y1=\"6\" y2=\"6\" /> <line x1=\"16\" x2=\"16\" y1=\"14\" y2=\"18\" /> <path d=\"M16 10h.01\" /> <path d=\"M12 10h.01\" /> <path d=\"M8 10h.01\" /> <path d=\"M12 14h.01\" /> <path d=\"M8 14h.01\" /> <path d=\"M12 18h.01\" /> <path d=\"M8 18h.01\" />", "plane": "<path d=\"M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z\" />", "users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" /> <circle cx=\"9\" cy=\"7\" r=\"4\" /> <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\" /> <path d=\"M16 3.13a4 4 0 0 1 0 7.75\" />", "file-text": "<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\" /> <path d=\"M14 2v4a2 2 0 0 0 2 2h4\" /> <path d=\"M10 9H8\" /> <path d=\"M16 13H8\" /> <path d=\"M16 17H8\" />", "receipt": "<path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\" /> <path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\" /> <path d=\"M12 17.5v-11\" />", "truck": "<path d=\"M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2\" /> <path d=\"M15 18H9\" /> <path d=\"M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14\" /> <circle cx=\"17\" cy=\"18\" r=\"2\" /> <circle cx=\"7\" cy=\"18\" r=\"2\" />", "scale": "<path d=\"m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\" /> <path d=\"m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\" /> <path d=\"M7 21h10\" /> <path d=\"M12 3v18\" /> <path d=\"M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2\" />", "life-buoy": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"m4.93 4.93 4.24 4.24\" /> <path d=\"m14.83 9.17 4.24-4.24\" /> <path d=\"m14.83 14.83 4.24 4.24\" /> <path d=\"m9.17 14.83-4.24 4.24\" /> <circle cx=\"12\" cy=\"12\" r=\"4\" />", "trending-up": "<polyline points=\"22 7 13.5 15.5 8.5 10.5 2 17\" /> <polyline points=\"16 7 22 7 22 13\" />", "calendar-days": "<path d=\"M8 2v4\" /> <path d=\"M16 2v4\" /> <rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\" /> <path d=\"M3 10h18\" /> <path d=\"M8 14h.01\" /> <path d=\"M12 14h.01\" /> <path d=\"M16 14h.01\" /> <path d=\"M8 18h.01\" /> <path d=\"M12 18h.01\" /> <path d=\"M16 18h.01\" />", "plug": "<path d=\"M12 22v-5\" /> <path d=\"M9 8V2\" /> <path d=\"M15 8V2\" /> <path d=\"M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z\" />", "external-link": "<path d=\"M15 3h6v6\" /> <path d=\"M10 14 21 3\" /> <path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\" />", "share-2": "<circle cx=\"18\" cy=\"5\" r=\"3\" /> <circle cx=\"6\" cy=\"12\" r=\"3\" /> <circle cx=\"18\" cy=\"19\" r=\"3\" /> <line x1=\"8.59\" x2=\"15.42\" y1=\"13.51\" y2=\"17.49\" /> <line x1=\"15.41\" x2=\"8.59\" y1=\"6.51\" y2=\"10.49\" />", "search": "<circle cx=\"11\" cy=\"11\" r=\"8\" /> <path d=\"m21 21-4.3-4.3\" />", "bell": "<path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\" /> <path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\" />", "command": "<path d=\"M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3\" />", "rotate-ccw": "<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\" /> <path d=\"M3 3v5h5\" />", "network": "<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\" /> <rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\" /> <rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\" /> <path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\" /> <path d=\"M12 12V8\" />", "shield-check": "<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\" /> <path d=\"m9 12 2 2 4-4\" />", "zap": "<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\" />", "link-2": "<path d=\"M9 17H7A5 5 0 0 1 7 7h2\" /> <path d=\"M15 7h2a5 5 0 1 1 0 10h-2\" /> <line x1=\"8\" x2=\"16\" y1=\"12\" y2=\"12\" />", "user-plus": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" /> <circle cx=\"9\" cy=\"7\" r=\"4\" /> <line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\" /> <line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\" />", "mail": "<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\" /> <path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\" />", "calendar": "<path d=\"M8 2v4\" /> <path d=\"M16 2v4\" /> <rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\" /> <path d=\"M3 10h18\" />", "hash": "<line x1=\"4\" x2=\"20\" y1=\"9\" y2=\"9\" /> <line x1=\"4\" x2=\"20\" y1=\"15\" y2=\"15\" /> <line x1=\"10\" x2=\"8\" y1=\"3\" y2=\"21\" /> <line x1=\"16\" x2=\"14\" y1=\"3\" y2=\"21\" />", "folder-open": "<path d=\"m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2\" />", "video": "<path d=\"m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5\" /> <rect x=\"2\" y=\"6\" width=\"14\" height=\"12\" rx=\"2\" />", "mic": "<path d=\"M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z\" /> <path d=\"M19 10v2a7 7 0 0 1-14 0v-2\" /> <line x1=\"12\" x2=\"12\" y1=\"19\" y2=\"22\" />", "scan-face": "<path d=\"M3 7V5a2 2 0 0 1 2-2h2\" /> <path d=\"M17 3h2a2 2 0 0 1 2 2v2\" /> <path d=\"M21 17v2a2 2 0 0 1-2 2h-2\" /> <path d=\"M7 21H5a2 2 0 0 1-2-2v-2\" /> <path d=\"M8 14s1.5 2 4 2 4-2 4-2\" /> <path d=\"M9 9h.01\" /> <path d=\"M15 9h.01\" />", "lock": "<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\" /> <path d=\"M7 11V7a5 5 0 0 1 10 0v4\" />", "pause": "<rect x=\"14\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\" /> <rect x=\"6\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\" />", "play": "<polygon points=\"6 3 20 12 6 21 6 3\" />", "check": "<path d=\"M20 6 9 17l-5-5\" />", "pencil": "<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\" /> <path d=\"m15 5 4 4\" />", "trash-2": "<path d=\"M3 6h18\" /> <path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\" /> <path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\" /> <line x1=\"10\" x2=\"10\" y1=\"11\" y2=\"17\" /> <line x1=\"14\" x2=\"14\" y1=\"11\" y2=\"17\" />", "brain": "<path d=\"M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z\" /> <path d=\"M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z\" /> <path d=\"M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4\" /> <path d=\"M17.599 6.5a3 3 0 0 0 .399-1.375\" /> <path d=\"M6.003 5.125A3 3 0 0 0 6.401 6.5\" /> <path d=\"M3.477 10.896a4 4 0 0 1 .585-.396\" /> <path d=\"M19.938 10.5a4 4 0 0 1 .585.396\" /> <path d=\"M6 18a4 4 0 0 1-1.967-.516\" /> <path d=\"M19.967 17.484A4 4 0 0 1 18 18\" />", "message-circle": "<path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\" />"};
 const svg = (n,c="") => `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${IC[n]||""}</svg>`;
 window.icon = svg;
 
 /* --- rail: icons, groups, new Exchange entry --- */
 const NAV = {
-  aiteam:["bot","Autopilot"], value:["circle-dollar-sign"], chat:["messages-square"], assistant:["sparkles"], exceptions:["triangle-alert"], live:["radio"], app:["smartphone"],
+  aiteam:["bot","Autopilot"], twin:["scan-face"], value:["circle-dollar-sign"], chat:["messages-square"], assistant:["sparkles"], exceptions:["triangle-alert"], live:["radio"], app:["smartphone"],
   dashboard:["layout-dashboard","Home"], insights:["chart-column","Insight"],
   pipeline:["target","Commercial"], transition:["arrow-left-right"], quote:["calculator"],
   ops:["plane","Operations"], team:["users"], docs:["file-text"],
@@ -3762,6 +3947,7 @@ pal.innerHTML = `<div class="pal" role="dialog" aria-label="Command menu"><div c
 document.body.appendChild(pal);
 const ACTIONS = [
   {t:"Talk to your AI team", g:"Actions", i:"radio", h:"Voice · hold V", run:()=>{ if(window.openVoice) openVoice(); }},
+  {t:"Talk to Priya's digital twin", g:"Actions", i:"scan-face", h:"Digital twin", run:()=>go("twin")},
   {t:"New deal", g:"Actions", i:"user-plus", h:"Sales", run:()=>{ go("pipeline"); setTimeout(()=>newDeal(),60); }},
   {t:"Build a quote", g:"Actions", i:"calculator", h:"Quote", run:()=>go("quote")},
   {t:"See what partners shared today", g:"Actions", i:"share-2", h:"Exchange", run:()=>go("network")},

@@ -874,6 +874,26 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .hn2t b{display:block;font-size:13px} .hn2t span{font-size:11px;color:var(--muted)}
 .hn2r input{border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:12.5px;min-width:0}
 
+/* ---------- Processes ---------- */
+.pcard{margin-bottom:16px}
+.pwrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+.pflow{display:block;width:100%;height:auto;min-width:860px}
+.pln{font:600 12px var(--f-body);fill:#39425a}
+.pstep{cursor:pointer} .pstep:hover rect:first-child{stroke:#9aa5bb} .pstep:focus{outline:none} .pstep:focus rect:first-child{stroke:var(--brand);stroke-width:2.5}
+.pst{font:600 12px var(--f-body);fill:#0b1220} .psw{font:500 10.5px var(--f-body);fill:#5a6377} .pss{font:500 10px var(--f-mono);fill:#8a93a8}
+.pstep.on rect:first-child{filter:drop-shadow(0 6px 12px rgba(16,24,40,.15))}
+.sop{margin-bottom:16px;border-top:3px solid var(--pc)}
+.sopg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:12px;background:#f7f9fc;border-radius:12px}
+.sopg span{display:block;font-size:10.5px;color:#8a93a8} .sopg b{font-size:13px}
+.sopl{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:7px;font-size:13.5px;line-height:1.5}
+.sopf{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.sope{font-size:12.5px;padding:8px 10px;border-radius:9px;background:#fff4e5;color:#9a4a00}
+.raci th{text-align:center} .raci th:nth-child(2){text-align:left} .raci td{text-align:center} .raci td:nth-child(2){text-align:left}
+.raci tr{cursor:pointer} .raci tr.on td{background:#eef2ff}
+.rr,.ra{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;font-size:11px;color:#fff} .rr{background:#2b59ff} .ra{background:#0b1220}
+.ri{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;font-size:11px;background:#f1f3f8;color:#5a6377}
+@media (max-width:900px){.sopg,.sopf{grid-template-columns:1fr 1fr}}
+
 </style>
 </head>
 <body>
@@ -4139,6 +4159,90 @@ V.quote=()=>{ const k=S.qprod||"aix"; const tabs=`<div class="pchips qtabs">${[[
 })();
 
 </script>
+<script id="process-js">
+/* ---------- Processes: swimlane flow per product, who does what, and an SOP for every step ---------- */
+(function(){
+const LANES=[["cust","Customer","#64748b"],["sales","Sales","#2a78d6"],["ops","Operations","#1baf7a"],["cus","Customs","#9333ea"],["fin","Finance","#eda100"],["cs","Customer service","#e87ba4"],["own","Owner / manager","#0b1220"]];
+// step: [id, lane, title, does, approves, sla, systems, sop[], escalate]
+const P={
+ aix:{n:"Air export",steps:[
+  ["rq","cust","Quote request","Customer","—","—",["Portal","Email"],["Customer sends origin, destination, pieces, weight, dimensions and ready date by portal or email.","Consol reads the request and creates a lead or opens the account in the CRM."],"Missing details: Sales asks within 15 minutes."],
+  ["qt","sales","Price and send quote","Sales Executive (AI)","Sales Manager if margin < 10%","15 min",["Pelicargo","HubSpot"],["Check chargeable weight (actual vs volume at 6,000 cm³/kg).","Pull air, screening and trucking rates; pick the best 3 routings.","Apply the customer's markup and check margin is above 10%.","Send the quote with validity date; log it in the CRM with a follow-up on day 2 and day 5."],"Discount over 5% or margin under 10%: Sales Manager approves."],
+  ["bk","ops","Book airline and truck","Air Export Supervisor (AI)","—","1 h",["Pelicargo","TMS"],["On acceptance, book the airline space and confirm the flight.","Book pickup with the trucker; send driver details to the shipper.","Create the job, MAWB and HAWB numbers in the TMS.","Dangerous goods or over 1,500 kg: hold and send to the owner."],"DG or >1,500 kg: owner approves before booking."],
+  ["dc","ops","Documents and known-shipper check","Air Export Supervisor (AI)","—","Before pickup",["TMS","KSMS"],["Collect commercial invoice, packing list and SLI from the shipper (portal upload link).","Check the shipper is a known shipper; if not, freighter only.","Draft HAWB and send to the customer to approve."],"Unknown shipper: re-quote on a freighter."],
+  ["ae","cus","File AES (EEI)","Customs Entry Writer (AI)","Licensed broker on request","Before tender",["ACE / AES"],["Check value over $2,500 or a licence is needed; if not, record the exemption.","File the EEI with Schedule B codes and get the ITN.","Print the ITN on the AWB."],"AES rejection: fix within 1 h or hold tender."],
+  ["tn","ops","Pickup, screening and tender","Air Export Supervisor (AI) + trucker","—","By cut-off",["Tracking","TMS"],["Confirm pickup and proof of pickup with photos.","Screening facility confirms 'screened, no alarms'.","Tender to the airline before cut-off with all documents."],"Missed cut-off: re-book next flight within +10% cost, tell the customer."],
+  ["tr","cs","Track and update the customer","Customer Service Rep (AI)","—","Each milestone",["Tracking","Portal","Email"],["Send departure and arrival updates automatically.","Answer status questions in under a minute.","Delays: tell the customer before they ask, with the new ETA."],"Customer unhappy or claim threatened: hand to a person."],
+  ["iv","fin","Invoice and collect","Finance Lead (AI)","Finance Manager for credit holds","On departure",["QuickBooks / Xero","TMS"],["Invoice on departure with all charges.","Match supplier bills to quotes; dispute anything over.","Chase on day 31; credit holds go to the owner."],"Bill over quote: rebill or dispute within 2 days."],
+  ["cl","own","Review exceptions and margin","Owner","—","Weekly",["Consol"],["Review the decisions queue and margin by lane.","Approve discounts, DG bookings and credit holds.","Adjust limits for the AI team."],"—"]]},
+ ocx:{n:"Ocean export",steps:[
+  ["rq","cust","Quote request","Customer","—","—",["Portal","Email"],["Customer sends cargo, container type, port pair and ready date."],"Missing details: Sales asks within 15 minutes."],
+  ["qt","sales","Price and send quote","Sales Executive (AI)","Sales Manager if margin < 10%","1 h",["Carrier contracts","HubSpot"],["Compare contract and spot rates; check transit and free time.","Add BAF, THC, docs and trucking to the port.","Send the quote with validity; log follow-ups."],"Below contract minimum: Ocean Manager decides."],
+  ["bk","ops","Book space and release container","Ocean Coordinator (AI)","—","Same day",["Carrier portal","TMS"],["Book with the carrier; get the booking confirmation.","Arrange empty container release and trucker for loading.","Note the cargo cut-off and VGM cut-off."],"No space: offer next sailing or another carrier."],
+  ["si","ops","VGM and shipping instructions","Ocean Coordinator (AI)","—","Before SI cut-off",["Carrier portal"],["Get the verified gross mass from the shipper.","Submit shipping instructions and check the draft bill of lading."],"Late SI: carrier fee; tell the customer."],
+  ["ae","cus","File AES (EEI)","Customs Entry Writer (AI)","Licensed broker on request","Before loading",["ACE / AES"],["File the EEI and send the ITN to the carrier."],"AES rejection: fix within 1 h."],
+  ["gi","ops","Gate-in, load and sail","Ocean Coordinator (AI) + trucker","—","By cargo cut-off",["Tracking"],["Confirm gate-in at the port.","Confirm loaded on board and sailing."],"Rolled cargo: re-book and tell the customer."],
+  ["bl","ops","Release bill of lading","Ocean Coordinator (AI)","Finance Lead if unpaid","After sailing",["Carrier portal","TMS"],["Release the original or telex bill once paid or on credit terms."],"Unpaid on prepaid terms: hold the bill."],
+  ["iv","fin","Invoice and collect","Finance Lead (AI)","Finance Manager for credit holds","On sailing",["Accounting"],["Invoice on sailing; match carrier and trucker bills; chase on day 31."],"Credit limit exceeded: owner decides."],
+  ["tr","cs","Track and update the customer","Customer Service Rep (AI)","—","Each milestone",["Tracking","Portal"],["Send sailing, transhipment and arrival updates automatically."],"Delay over 3 days: call the customer."]]},
+ oci:{n:"Ocean import",steps:[
+  ["po","cust","Booking at origin","Customer / overseas agent","—","—",["Email","Agent portal"],["Supplier or agent books the shipment and sends the documents."],"—"],
+  ["is","cus","File ISF (10+2)","Junior Ocean Import Coordinator (AI)","Licensed broker","72 h before loading",["ACE"],["Collect the 10 importer elements from the supplier and invoice.","File the ISF at least 72 hours before loading.","Correct any changes before arrival."],"Late ISF: warn of possible $5,000 penalty; file now."],
+  ["an","ops","Arrival notice and delivery planning","Ocean Import Specialist (AI)","—","5 days before arrival",["Tracking","TMS"],["Send the arrival notice to the customer.","Check free time at the terminal and book delivery inside it."],"Free time under 2 days: book trucker now."],
+  ["en","cus","Customs entry and duty","Customs Compliance Specialist (AI)","Licensed broker signs","Before arrival",["ACE"],["Classify the goods and file the entry (7501).","Pay duty and fees; monitor for exams or holds."],"CBP exam: tell the customer today, bill the fee at cost + $45."],
+  ["rl","ops","Freight release and delivery","Ocean Import Specialist (AI) + trucker","—","Within free time",["Terminal portal","TMS"],["Confirm customs and carrier release.","Truck delivers; return the empty container on time."],"Demurrage risk: escalate to the Ocean Import Manager."],
+  ["iv","fin","Invoice duties and freight","Finance Lead (AI)","—","On delivery",["Accounting"],["Invoice freight, duty and fees; collect duty before paying CBP on new accounts."],"Duty unpaid: hold the next release."],
+  ["tr","cs","Keep the customer updated","Customer Service Rep (AI)","—","Each milestone",["Portal"],["Send arrival, release and delivery updates."],"—"]]},
+ dtr:{n:"Trucking",steps:[
+  ["rq","cust","Load request","Customer","—","—",["Portal","Email"],["Customer sends pickup, delivery, pallets and time window."],"—"],
+  ["qt","sales","Price the load","Sales Executive (AI)","—","10 min",["Rate tables","HubSpot"],["Price linehaul, fuel surcharge and extras; send the quote."],"Rate over budget: Transportation Manager reviews."],
+  ["dp","ops","Dispatch carrier","Junior Dispatcher (AI)","—","1 h",["TMS","Carrier network"],["Book a carrier from the scorecard; send the rate confirmation.","Send driver details to the shipper."],"No carrier in 2 h: Transportation Manager steps in."],
+  ["bd","cus","Border documents (cross-border only)","Cross-Border Trucking Specialist (AI)","Mexican broker","Before arrival at border",["Broker portal"],["Prepare carta porte and commercial invoice; broker files the pedimento."],"Document error at Laredo: fix within 1 h."],
+  ["pk","ops","Pickup, transit and delivery","Junior Dispatcher (AI) + driver","—","Per appointment",["Tracking"],["Track the truck; warn early of delays.","Collect the proof of delivery the same day."],"Delay over 2 h: tell the customer and rebook the dock."],
+  ["iv","fin","Invoice and pay carrier","Finance Lead (AI)","—","On POD",["Accounting"],["Invoice with POD; bill waiting time and extras; pay the carrier."],"Carrier bill over rate: dispute."]]},
+ cus:{n:"Customs brokerage",steps:[
+  ["dc","cust","Send documents","Customer","—","—",["Portal"],["Importer sends invoice, packing list and power of attorney."],"—"],
+  ["cl","cus","Classify the goods","Customs Compliance Specialist (AI)","Licensed broker","Same day",["ACE","HTS"],["Assign HTS codes from product details; flag Section 301/232 duties."],"Unclear product: ask the importer for specs."],
+  ["fi","cus","Prepare and file the entry","Junior Customs Entry Writer (AI)","Licensed broker signs","Before arrival",["ACE"],["Prepare the entry; the licensed broker reviews and signs; file in ACE."],"Rejected entry: fix the same day."],
+  ["dt","fin","Pay duty and fees","Finance Lead (AI)","—","On release",["ACE","Accounting"],["Pay duty through ACH; invoice the importer."],"Importer hasn't paid duty: hold."],
+  ["rl","cus","Release and close","Senior Customs Brokerage Manager (AI)","Licensed broker","On release",["ACE"],["Confirm release; keep records 5 years; answer CBP requests within 30 days."],"CBP audit or penalty: licensed broker and owner."]]}
+};
+let pk="aix", sel=null;
+window.procProd=k=>{ pk=k; sel=null; render(); };
+window.procSel=id=>{ sel=id; render(); setTimeout(()=>{ const e=document.getElementById("sop"); if(e) e.scrollIntoView({behavior:"smooth",block:"nearest"}); },30); };
+function chart(){ const st=P[pk].steps, lanes=LANES.filter(l=>st.some(s=>s[1]===l[0])), LH=84, LW=118, CW=146, BW=132, BH=58, W=LW+st.length*CW+20, H=lanes.length*LH;
+  const ly=k=>lanes.findIndex(l=>l[0]===k)*LH, bx=i=>LW+i*CW+10, by=s=>ly(s[1])+(LH-BH)/2;
+  let arrows=""; for(let i=0;i<st.length-1;i++){ const a=st[i], b=st[i+1], x1=bx(i)+BW, y1=by(a)+BH/2, x2=bx(i+1), y2=by(b)+BH/2, mx=(x1+x2)/2;
+    arrows+=`<path d="M${x1} ${y1} H${mx} V${y2} H${x2-6}" fill="none" stroke="#9aa5bb" stroke-width="1.6" marker-end="url(#ah)"/>`; }
+  return `<svg class="pflow" viewBox="0 0 ${W} ${H}"  role="img" aria-label="${P[pk].n} process flow"><defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#9aa5bb"/></marker></defs>
+    ${lanes.map((l,i)=>`<rect x="0" y="${i*LH}" width="${W}" height="${LH}" fill="${i%2?"#fbfcfe":"#f4f6fa"}"/><rect x="0" y="${i*LH}" width="${LW-8}" height="${LH}" fill="${l[2]}" opacity=".08"/><rect x="0" y="${i*LH}" width="4" height="${LH}" fill="${l[2]}"/><text x="14" y="${i*LH+LH/2+4}" class="pln">${l[1]}</text>`).join("")}
+    ${arrows}
+    ${st.map((s,i)=>{ const l=LANES.find(x=>x[0]===s[1]), on=sel===s[0]; return `<g class="pstep ${on?"on":""}" onclick="procSel('${s[0]}')" tabindex="0" role="button" aria-label="${s[2]} SOP"><rect x="${bx(i)}" y="${by(s)}" width="${BW}" height="${BH}" rx="12" fill="#fff" stroke="${on?l[2]:"#d8dee9"}" stroke-width="${on?2.5:1.2}"/><rect x="${bx(i)}" y="${by(s)}" width="5" height="${BH}" rx="2" fill="${l[2]}"/>
+      <text x="${bx(i)+14}" y="${by(s)+19}" class="pst">${i+1}. ${s[2].length>18?s[2].slice(0,17)+"…":s[2]}</text><text x="${bx(i)+14}" y="${by(s)+36}" class="psw">${s[3].replace(' (AI)','').length>22?s[3].replace(' (AI)','').slice(0,21)+"…":s[3].replace(' (AI)','')}</text><text x="${bx(i)+14}" y="${by(s)+50}" class="pss">SLA ${s[5]}</text></g>`; }).join("")}
+  </svg>`; }
+function sop(){ const s=P[pk].steps.find(x=>x[0]===sel)||P[pk].steps[0], i=P[pk].steps.indexOf(s), l=LANES.find(x=>x[0]===s[1]);
+  return `<div class="card sop" id="sop" style="--pc:${l[2]}"><div class="ch"><div><div class="eyebrow" style="margin:0">SOP · ${P[pk].n} · step ${i+1} of ${P[pk].steps.length}</div><h3 style="font-size:17px;margin-top:4px">${s[2]}</h3></div>
+      <div style="display:flex;gap:6px"><button class="btn sm sec" ${i?"":"disabled"} onclick="procSel('${(P[pk].steps[i-1]||[])[0]}')">← Previous</button><button class="btn sm sec" ${i<P[pk].steps.length-1?"":"disabled"} onclick="procSel('${(P[pk].steps[i+1]||[])[0]}')">Next →</button></div></div>
+    <div class="sopg"><div><span>Team</span><b>${l[1]}</b></div><div><span>Responsible (does it)</span><b>${s[3]}</b></div><div><span>Approves</span><b>${s[4]}</b></div><div><span>Time allowed</span><b>${s[5]}</b></div></div>
+    <div class="ndh" style="margin-top:14px">Procedure</div><ol class="sopl">${s[7].map(x=>`<li>${x}</li>`).join("")}</ol>
+    <div class="sopf"><div><div class="ndh">Systems used</div><div class="jdocs">${s[6].map(x=>`<span>${x}</span>`).join("")}</div></div><div><div class="ndh">When it goes wrong</div><div class="sope">${s[8]}</div></div></div></div>`; }
+function raci(){ const st=P[pk].steps, cols=LANES.filter(l=>l[0]!=="cust");
+  const cell=(s,l)=>s[1]===l[0]?'<b class="rr">R</b>':(s[4]!=="—"&&((l[0]==="own"&&/owner|broker/i.test(s[4]))||(l[0]==="sales"&&/sales/i.test(s[4]))||(l[0]==="fin"&&/finance/i.test(s[4]))||(l[0]==="ops"&&/ocean|operations|transport/i.test(s[4]))))?'<b class="ra">A</b>':(l[0]==="cs"?'<span class="ri">I</span>':"");
+  return `<div class="card"><div class="ch"><div><h3>Who does what</h3><div class="muted" style="font-size:12px"><b class="rr">R</b> does the work · <b class="ra">A</b> approves · <span class="ri">I</span> kept informed. Click a row for its SOP.</div></div></div>
+    <div style="overflow-x:auto"><table class="raci"><thead><tr><th>#</th><th>Step</th>${cols.map(l=>`<th>${l[1]}</th>`).join("")}</tr></thead><tbody>${st.map((s,i)=>`<tr onclick="procSel('${s[0]}')" class="${sel===s[0]?"on":""}"><td>${i+1}</td><td><b>${s[2]}</b><div class="muted" style="font-size:11px">${s[3]}</div></td>${cols.map(l=>`<td>${cell(s,l)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>`; }
+V.process=()=>{ if(!sel) sel=P[pk].steps[1][0];
+  return `<header class="top"><div><h1>Processes</h1><div class="sub">How each product runs from request to cash: which team owns each step, who approves, how long it should take, and the SOP your people and AI teammates follow.</div></div>
+    <button class="btn sec" onclick="toast('SOP pack ready to export as a document (demo).')">Export SOP pack</button></header>
+  <div class="pchips">${Object.entries(P).map(([k,p])=>`<button class="pch ${pk===k?"on":""}" style="--pc:${(window.PRODUCTS&&PRODUCTS[k]||{c:"#2b59ff"}).c}" onclick="procProd('${k}')">${window.icon&&PRODUCTS&&PRODUCTS[k]?icon(PRODUCTS[k].i):""}${p.n}</button>`).join("")}</div>
+  <div class="card pcard"><div class="ch"><div><h3>${P[pk].n}: process flow</h3><div class="muted" style="font-size:12px">Each row is a team. Click any step to open its SOP.</div></div><div class="lg">${LANES.filter(l=>P[pk].steps.some(s=>s[1]===l[0])).map(l=>`<span><i style="background:${l[2]};width:10px;height:10px;border-radius:3px"></i>${l[1]}</span>`).join("")}</div></div>
+    <div class="pwrap">${chart()}</div></div>
+  ${sop()}
+  ${raci()}`; };
+const nav=document.getElementById("nav"), jb=nav.querySelector('button[data-v="jobs"]');
+const b=document.createElement("button"); b.dataset.v="process"; b.innerHTML=`<span class="ico">⇢</span>Processes and SOPs`; nav.insertBefore(b, jb.nextSibling);
+})();
+
+</script>
 <script id="twin-js">
 /* ---------- Digital twin: a key employee trains an AI twin that supports them ---------- */
 (function(){
@@ -4275,7 +4379,7 @@ const NAV = {
   aiteam:["bot","Autopilot"], twin:["scan-face"], value:["circle-dollar-sign"], chat:["messages-square"], huddle:["video"], assistant:["sparkles"], exceptions:["triangle-alert"], live:["radio"], app:["smartphone"],
   dashboard:["layout-dashboard","Home"], insights:["chart-column","Insight"],
   pipeline:["target","Commercial"], transition:["arrow-left-right"], quote:["calculator"],
-  jobs:["layers","Operations"], ops:["plane"], team:["users"], docs:["file-text"],
+  jobs:["layers","Operations"], process:["route"], ops:["plane"], team:["users"], docs:["file-text"],
   billing:["receipt","Finance"], suppliers:["truck"], claims:["scale"],
   support:["life-buoy","Customers"], growth:["trending-up"], calendar:["calendar-days"],
   network:["network","Network"], integrations:["plug"], portal:["external-link"]

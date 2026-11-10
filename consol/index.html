@@ -894,6 +894,14 @@ body.filedrag #vsheet .drveil{display:flex;opacity:.7;background:rgba(10,18,40,.
 .ri{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;font-size:11px;background:#f1f3f8;color:#5a6377}
 @media (max-width:900px){.sopg,.sopf{grid-template-columns:1fr 1fr}}
 
+.lcgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+.lcw{display:block;width:100%;max-width:560px;margin:0 auto;height:auto}
+.lcc1{font:600 14px var(--f-body);fill:#fff} .lcc2{font:600 34px var(--f-mono);fill:#fff} .lcc3{font:500 11px var(--f-body);fill:#9fb0cf}
+.lcn{cursor:pointer} .lcn:focus{outline:none} .lcn.on circle{filter:drop-shadow(0 8px 16px rgba(16,24,40,.2))}
+.lcn1{font:600 20px var(--f-mono)} .lcn3{font:600 9px var(--f-body);fill:#8a93a8} .lcn2{font:600 12.5px var(--f-body);fill:#0b1220}
+.lcp{border-top:3px solid var(--pc);position:sticky;top:76px}
+@media (max-width:1000px){.lcgrid{grid-template-columns:1fr}.lcp{position:static}}
+
 </style>
 </head>
 <body>
@@ -4159,6 +4167,91 @@ V.quote=()=>{ const k=S.qprod||"aix"; const tabs=`<div class="pchips qtabs">${[[
 })();
 
 </script>
+<script id="lifecycle-js">
+/* ---------- Customer lifecycle: prospect → lead → customer → retention → win-back, as a cycle ---------- */
+(function(){
+const ST=[
+ {k:"pros",n:"Prospect",c:"#64748b",who:"Sales Executive (AI)",ap:"Sales Manager",
+  what:"WCA members, trade-show contacts and lookalike forwarders who haven't engaged yet.",
+  steps:["Pull new WCA members and contacts into the CRM with lanes and country.","Send a short personal intro from the account owner, no list blasts.","Watch for opens and portal visits; move to Lead when they reply or register."],
+  exit:"Replies, registers on the portal or asks for a rate.",kpi:"Reply rate, registrations",
+  list:()=>(S.dir||[]).filter(d=>/Not contacted|Opened/.test(d.st)).map(d=>d.co)},
+ {k:"lead",n:"Lead",c:"#2a78d6",who:"Sales Executive (AI)",ap:"Sales Manager",
+  what:"They've shown interest. Find out what they ship, where and how often.",
+  steps:["Book a 15-minute discovery call on the calendar.","Record lanes, volumes, products used and current forwarder in the CRM.","Qualify: budget, timing, decision maker, and fit with your lanes."],
+  exit:"Lanes and volume confirmed and a fit for your network.",kpi:"Lead to qualified rate, time to first call",
+  list:()=>[...S.deals.filter(d=>d.stage==="Lead").map(d=>d.acct),...(S.dir||[]).filter(d=>d.st==="Registered").map(d=>d.co)]},
+ {k:"qual",n:"Qualified",c:"#3b82f6",who:"Sales Executive (AI)",ap:"Trade Lane Manager",
+  what:"A real opportunity with known lanes and volume.",
+  steps:["Build the rate plan for their lanes across every product they could use.","Agree service levels and payment terms.","Prepare the first quote within the same day."],
+  exit:"Quote sent.",kpi:"Qualified to quoted, pipeline value",
+  list:()=>S.deals.filter(d=>d.stage==="Qualified").map(d=>d.acct)},
+ {k:"quote",n:"Quoted",c:"#6366f1",who:"Sales Executive (AI)",ap:"Sales Manager for discounts over 5%",
+  what:"Quote is out. Follow up until it books or is lost, with a reason.",
+  steps:["Follow up on day 2 and day 5; call on day 7.","Answer objections with data: transit, reliability, total landed cost.","Record win or loss and the reason in the CRM."],
+  exit:"First booking confirmed.",kpi:"Quote to booking rate, days to win",
+  list:()=>S.deals.filter(d=>d.stage==="Quoted").map(d=>d.acct)},
+ {k:"onb",n:"Onboarding",c:"#0e7490",who:"Transition & Implementation Manager (AI)",ap:"Owner",
+  what:"Won. Set them up properly before volume arrives so ops and finance don't inherit a mess.",
+  steps:["Credit check, payment terms and billing details approved by finance.","Load addresses, rate card, SOPs and portal users with their logo.","Run the first 3 shipments with the transition team watching."],
+  exit:"Pilot shipments done and signed off by the customer.",kpi:"Days to go-live, pilot issues",
+  list:()=>{ try{ tInit(); }catch(e){} return (S.trans||[]).map(t=>t.acct); }},
+ {k:"act",n:"Active customer",c:"#1baf7a",who:"Operations + Finance + Customer service (AI)",ap:"Account owner",
+  what:"Shipping and being billed. Every job runs, invoices go out on departure, and questions are answered in a minute.",
+  steps:["Run every job to SOP across the products they use.","Invoice on departure or delivery; chase on day 31.","Send proactive updates; no customer should have to ask where their freight is."],
+  exit:"90 days of steady shipping: hand to retention and development.",kpi:"On-time, invoice accuracy, DSO, response time",
+  list:()=>(INS.cust||[]).filter(c=>c.st==="New").map(c=>c.name)},
+ {k:"ret",n:"Retention and development",c:"#c2410c",who:"Key Account Manager (AI) + account owner",ap:"Sales Director",
+  what:"Keep them and grow them: more lanes, more products and a bigger share of their freight.",
+  steps:["Monthly account review: volume, service, margin and issues.","Cross-sell products they don't use yet: an air customer often needs customs, ocean or warehousing.","Renew rates before they expire; agree volume commitments."],
+  exit:"Grows, stays steady, or slows (moves to At risk).",kpi:"Net revenue retention, products per customer, share of wallet",
+  list:()=>(INS.cust||[]).filter(c=>c.st==="Growing"||c.st==="Steady").map(c=>c.name)},
+ {k:"risk",n:"At risk",c:"#e08a00",who:"Key Account Manager (AI)",ap:"Owner",
+  what:"Bookings dropping, complaints, slow payment or a competitor quoting.",
+  steps:["Flag automatically when volume falls 25% against the prior 4 weeks.","Call within 48 hours to find the reason: price, service or their business.","Fix it with a service plan or a targeted rate, inside your margin floor."],
+  exit:"Back to steady, or no bookings for 30 days (Lost).",kpi:"Saves, time to first call",
+  list:()=>(INS.cust||[]).filter(c=>c.st==="Slowing").map(c=>c.name)},
+ {k:"lost",n:"Lost and win-back",c:"#d9534f",who:"Sales Executive (AI)",ap:"Sales Manager",
+  what:"No bookings for 30+ days. Find out why, then win them back. They become a lead again.",
+  steps:["Log the loss reason from the last calls and emails.","Send a personal win-back with what has changed (rate, service, new product).","Re-enter as a Lead when they reply."],
+  exit:"Replies: back to Lead. The cycle starts again.",kpi:"Win-back rate, revenue recovered",
+  list:()=>(INS.cust||[]).filter(c=>c.st==="Lost").map(c=>c.name)}
+];
+let lsel="ret";
+window.lcSel=k=>{ lsel=k; render(); };
+function wheel(){ const W=560,H=560,cx=280,cy=280,R=205,n=ST.length;
+  const pos=i=>{ const a=-Math.PI/2+i/n*Math.PI*2; return [cx+Math.cos(a)*R, cy+Math.sin(a)*R, a]; };
+  let arcs=""; for(let i=0;i<n;i++){ const a1=-Math.PI/2+i/n*Math.PI*2+0.2, a2=-Math.PI/2+(i+1)/n*Math.PI*2-0.2;
+    const p1=[cx+Math.cos(a1)*R,cy+Math.sin(a1)*R], p2=[cx+Math.cos(a2)*R,cy+Math.sin(a2)*R];
+    arcs+=`<path d="M${p1[0]} ${p1[1]} A${R} ${R} 0 0 1 ${p2[0]} ${p2[1]}" fill="none" stroke="${i===n-1?"#d9534f":"#c3cbdb"}" stroke-width="${i===n-1?2.5:2}" ${i===n-1?'stroke-dasharray="6 5"':""} marker-end="url(#lca${i===n-1?"r":""})"/>`; }
+  const total=ST.reduce((a,s)=>a+s.list().length,0);
+  return `<svg class="lcw" viewBox="0 0 ${W} ${H}" role="img" aria-label="Customer lifecycle"><defs>
+    <marker id="lca" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#c3cbdb"/></marker>
+    <marker id="lcar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#d9534f"/></marker></defs>
+    <circle cx="${cx}" cy="${cy}" r="120" fill="#0b1328"/><circle cx="${cx}" cy="${cy}" r="120" fill="none" stroke="rgba(122,162,255,.25)" stroke-width="10"/>
+    <text x="${cx}" y="${cy-22}" text-anchor="middle" class="lcc1">Customer lifecycle</text><text x="${cx}" y="${cy+14}" text-anchor="middle" class="lcc2">${total}</text><text x="${cx}" y="${cy+36}" text-anchor="middle" class="lcc3">accounts in the cycle</text>
+    <text x="${cx}" y="${cy+62}" text-anchor="middle" class="lcc3" style="fill:#ff9b95">Lost accounts loop back as leads</text>
+    ${arcs}
+    ${ST.map((s,i)=>{ const [x,y]=pos(i), on=lsel===s.k, n2=s.list().length; return `<g class="lcn ${on?"on":""}" onclick="lcSel('${s.k}')" tabindex="0" role="button" aria-label="${s.n}">
+      <circle cx="${x}" cy="${y}" r="${on?44:38}" fill="#fff" stroke="${s.c}" stroke-width="${on?4:2.5}"/>
+      <text x="${x}" y="${y+2}" text-anchor="middle" class="lcn1" style="fill:${s.c}">${n2}</text>
+      <text x="${x}" y="${y+16}" text-anchor="middle" class="lcn3">${i+1}</text>
+      <text x="${x}" y="${y+(y>cy?62:-52)}" text-anchor="middle" class="lcn2">${s.n}</text></g>`; }).join("")}
+  </svg>`; }
+function panel(){ const s=ST.find(x=>x.k===lsel), i=ST.indexOf(s), L=s.list(), nx=ST[(i+1)%ST.length];
+  return `<div class="card lcp" style="--pc:${s.c}"><div class="eyebrow" style="margin:0">Stage ${i+1} of ${ST.length}</div><h3 style="font-size:19px;margin:4px 0 6px">${s.n}</h3>
+    <div class="muted" style="font-size:13px;line-height:1.5">${s.what}</div>
+    <div class="sopg" style="grid-template-columns:1fr 1fr;margin-top:12px"><div><span>Responsible</span><b>${s.who}</b></div><div><span>Approves</span><b>${s.ap}</b></div></div>
+    <div class="ndh" style="margin-top:14px">SOP</div><ol class="sopl">${s.steps.map(x=>`<li>${x}</li>`).join("")}</ol>
+    <div class="sopf"><div><div class="ndh">Moves on when</div><div style="font-size:12.5px">${s.exit} <b style="color:${nx.c}">→ ${nx.n}</b></div></div><div><div class="ndh">Measured by</div><div style="font-size:12.5px">${s.kpi}</div></div></div>
+    <div class="ndh" style="margin-top:14px">In this stage now (${L.length})</div><div class="jdocs">${L.length?L.slice(0,10).map(x=>`<span>${x}</span>`).join(""):'<span>None right now</span>'}</div>
+    <div style="display:flex;gap:6px;margin-top:14px"><button class="btn sm sec" onclick="lcSel('${ST[(i-1+ST.length)%ST.length].k}')">← ${ST[(i-1+ST.length)%ST.length].n}</button><button class="btn sm sec" onclick="lcSel('${nx.k}')">${nx.n} →</button></div></div>`; }
+window.lifecycleHTML=()=>`<div class="lcgrid"><div class="card lcwc"><div class="ch"><div><h3>From WCA prospect to loyal customer, and back again</h3><div class="muted" style="font-size:12px">Each circle is a stage, with the number of accounts in it today. Click a stage for who owns it and its SOP.</div></div></div>${wheel()}</div>${panel()}</div>
+  <div class="card" style="margin-top:16px"><div class="ch"><h3>Who owns each stage</h3></div><div style="overflow-x:auto"><table class="raci"><thead><tr><th>#</th><th>Stage</th><th style="text-align:left">Responsible</th><th style="text-align:left">Approves</th><th style="text-align:left">Moves on when</th><th>Accounts</th></tr></thead>
+  <tbody>${ST.map((s,i)=>`<tr onclick="lcSel('${s.k}')" class="${lsel===s.k?"on":""}"><td>${i+1}</td><td><b style="color:${s.c}">${s.n}</b></td><td style="text-align:left">${s.who}</td><td style="text-align:left">${s.ap}</td><td style="text-align:left;font-size:12px">${s.exit}</td><td>${s.list().length}</td></tr>`).join("")}</tbody></table></div></div>`;
+})();
+
+</script>
 <script id="process-js">
 /* ---------- Processes: swimlane flow per product, who does what, and an SOP for every step ---------- */
 (function(){
@@ -4207,7 +4300,7 @@ const P={
   ["dt","fin","Pay duty and fees","Finance Lead (AI)","—","On release",["ACE","Accounting"],["Pay duty through ACH; invoice the importer."],"Importer hasn't paid duty: hold."],
   ["rl","cus","Release and close","Senior Customs Brokerage Manager (AI)","Licensed broker","On release",["ACE"],["Confirm release; keep records 5 years; answer CBP requests within 30 days."],"CBP audit or penalty: licensed broker and owner."]]}
 };
-let pk="aix", sel=null;
+let pk="lc", sel=null;
 window.procProd=k=>{ pk=k; sel=null; render(); };
 window.procSel=id=>{ sel=id; render(); setTimeout(()=>{ const e=document.getElementById("sop"); if(e) e.scrollIntoView({behavior:"smooth",block:"nearest"}); },30); };
 function chart(){ const st=P[pk].steps, lanes=LANES.filter(l=>st.some(s=>s[1]===l[0])), LH=84, LW=118, CW=146, BW=132, BH=58, W=LW+st.length*CW+20, H=lanes.length*LH;
@@ -4230,10 +4323,12 @@ function raci(){ const st=P[pk].steps, cols=LANES.filter(l=>l[0]!=="cust");
   const cell=(s,l)=>s[1]===l[0]?'<b class="rr">R</b>':(s[4]!=="—"&&((l[0]==="own"&&/owner|broker/i.test(s[4]))||(l[0]==="sales"&&/sales/i.test(s[4]))||(l[0]==="fin"&&/finance/i.test(s[4]))||(l[0]==="ops"&&/ocean|operations|transport/i.test(s[4]))))?'<b class="ra">A</b>':(l[0]==="cs"?'<span class="ri">I</span>':"");
   return `<div class="card"><div class="ch"><div><h3>Who does what</h3><div class="muted" style="font-size:12px"><b class="rr">R</b> does the work · <b class="ra">A</b> approves · <span class="ri">I</span> kept informed. Click a row for its SOP.</div></div></div>
     <div style="overflow-x:auto"><table class="raci"><thead><tr><th>#</th><th>Step</th>${cols.map(l=>`<th>${l[1]}</th>`).join("")}</tr></thead><tbody>${st.map((s,i)=>`<tr onclick="procSel('${s[0]}')" class="${sel===s[0]?"on":""}"><td>${i+1}</td><td><b>${s[2]}</b><div class="muted" style="font-size:11px">${s[3]}</div></td>${cols.map(l=>`<td>${cell(s,l)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>`; }
-V.process=()=>{ if(!sel) sel=P[pk].steps[1][0];
+V.process=()=>{ const tabs=`<div class="pchips"><button class="pch ${pk==="lc"?"on":""}" style="--pc:#0b1220" onclick="procProd('lc')">↻ Customer lifecycle</button>${Object.entries(P).map(([k,p])=>`<button class="pch ${pk===k?"on":""}" style="--pc:${(window.PRODUCTS&&PRODUCTS[k]||{c:"#2b59ff"}).c}" onclick="procProd('${k}')">${window.icon&&PRODUCTS&&PRODUCTS[k]?icon(PRODUCTS[k].i):""}${p.n}</button>`).join("")}</div>`;
+  if(pk==="lc") return `<header class="top"><div><h1>Processes</h1><div class="sub">The customer lifecycle, and how each product runs from request to cash. Every stage and step has an owner, an approver and an SOP.</div></div><button class="btn sec" onclick="toast('SOP pack ready to export as a document (demo).')">Export SOP pack</button></header>${tabs}${lifecycleHTML()}`;
+  if(!sel) sel=P[pk].steps[1][0];
   return `<header class="top"><div><h1>Processes</h1><div class="sub">How each product runs from request to cash: which team owns each step, who approves, how long it should take, and the SOP your people and AI teammates follow.</div></div>
     <button class="btn sec" onclick="toast('SOP pack ready to export as a document (demo).')">Export SOP pack</button></header>
-  <div class="pchips">${Object.entries(P).map(([k,p])=>`<button class="pch ${pk===k?"on":""}" style="--pc:${(window.PRODUCTS&&PRODUCTS[k]||{c:"#2b59ff"}).c}" onclick="procProd('${k}')">${window.icon&&PRODUCTS&&PRODUCTS[k]?icon(PRODUCTS[k].i):""}${p.n}</button>`).join("")}</div>
+  ${tabs}
   <div class="card pcard"><div class="ch"><div><h3>${P[pk].n}: process flow</h3><div class="muted" style="font-size:12px">Each row is a team. Click any step to open its SOP.</div></div><div class="lg">${LANES.filter(l=>P[pk].steps.some(s=>s[1]===l[0])).map(l=>`<span><i style="background:${l[2]};width:10px;height:10px;border-radius:3px"></i>${l[1]}</span>`).join("")}</div></div>
     <div class="pwrap">${chart()}</div></div>
   ${sop()}

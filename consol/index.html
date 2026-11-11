@@ -6834,26 +6834,198 @@ window.plJobs=v=>{ P().jobs=+v; render(); };
 </script>
 
 <style id="polish-css">
-/* Naming teammates: small + next to the job title */
-.nmBtn{margin-left:6px;width:20px;height:20px;border-radius:50%;border:1px solid var(--line,#e2e8f0);background:#fff;color:#64748b;font-size:13px;line-height:17px;padding:0;cursor:pointer;vertical-align:1px}
-.nmBtn:hover{border-color:#2b59ff;color:#2b59ff;background:#eef2ff}
-.nmIn{margin-left:6px;width:120px;font:inherit;font-size:12.5px;padding:2px 7px;border:1px solid #2b59ff;border-radius:6px;outline:none}
-/* Polish: deal cards keep their buttons inside */
-.deal .row{flex-wrap:wrap;gap:6px;row-gap:6px}
-.deal .row .pill{flex:0 0 100%;width:max-content;max-width:100%}
-.deal .row .btn{flex:0 0 auto}
-.deal .n{display:flex;align-items:flex-start;gap:6px}
-.deal .ctn{min-width:0}
-/* Polish: no sideways page scroll on small screens; wide tables scroll inside their card */
-@media (max-width:760px){
-  .trWrap{grid-template-columns:minmax(0,1fr)!important}
-  .trWrap>*,.trList,.trList>*{min-width:0;max-width:100%}
-  .trList{position:static}
-  #main table,main table,.main table,table.trTbl{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .btn{white-space:nowrap}
-  span[style*="display:flex;gap:6px"]{flex-wrap:wrap}
-  #main input,main input{min-width:0}
-}
+/* Stacked toasts with undo */
+#toast{display:none!important}
+#tstack{position:fixed;right:20px;bottom:100px;z-index:90;display:flex;flex-direction:column-reverse;gap:8px;align-items:flex-end;pointer-events:none}
+.pl-ts{pointer-events:auto;position:relative;display:flex;align-items:center;gap:12px;min-width:240px;max-width:380px;background:rgba(10,16,32,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:12px 12px 12px 16px;font-size:13px;line-height:1.4;box-shadow:0 18px 40px -12px rgba(6,10,20,.55);overflow:hidden;animation:tsIn .36s cubic-bezier(.2,.9,.25,1.15) both}
+.pl-ts::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(#7cf2c8,#5b8cff)}
+.pl-ts .pl-tm{flex:1}
+.pl-ts .pl-tu{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:8px;padding:5px 10px;font:600 12px inherit;cursor:pointer;white-space:nowrap}
+.pl-ts .pl-tu:hover{background:rgba(255,255,255,.22)}
+.pl-ts .pl-tx{background:none;border:0;color:#8b95a9;cursor:pointer;font-size:15px;padding:0 2px;line-height:1}
+.pl-ts .pl-tx:hover{color:#fff}
+.pl-ts .pl-tbar{position:absolute;left:0;bottom:0;height:2px;background:rgba(124,242,200,.7);animation:tsBar linear forwards}
+.pl-ts:hover .pl-tbar{animation-play-state:paused}
+.pl-ts.out{animation:tsOut .22s ease-in forwards}
+@keyframes tsIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes tsOut{to{opacity:0;transform:translateX(24px) scale(.97)}}
+@keyframes tsBar{from{width:100%}to{width:0}}
+body.has-vbar #tstack{bottom:150px}
+
+/* Screen transitions */
+#main.enter{animation:pgIn .28s cubic-bezier(.2,.8,.2,1) both}
+#main.enter .card{animation:cdIn .38s cubic-bezier(.2,.8,.2,1) both}
+#main.enter .card:nth-of-type(2){animation-delay:.03s}#main.enter .card:nth-of-type(3){animation-delay:.06s}
+#main.enter .card:nth-of-type(4){animation-delay:.09s}#main.enter .card:nth-of-type(5){animation-delay:.12s}
+#main.enter .card:nth-of-type(n+6){animation-delay:.15s}
+@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes cdIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Approved item slides out */
+.pl-out{animation:plOut .26s cubic-bezier(.4,0,.6,1) forwards!important;pointer-events:none}
+@keyframes plOut{to{opacity:0;transform:translateX(36px);filter:blur(1px)}}
+.pl-ok{position:relative}
+.pl-ok::after{content:"✓";position:absolute;right:14px;top:50%;transform:translateY(-50%) scale(.4);width:26px;height:26px;border-radius:50%;background:#22c38e;color:#fff;font:700 14px/26px system-ui;text-align:center;opacity:0;animation:plTick .26s ease-out forwards}
+@keyframes plTick{to{opacity:1;transform:translateY(-50%) scale(1)}}
+
+/* Keyboard focus on approvals */
+.kfocus{outline:2px solid #5b8cff!important;outline-offset:3px;border-radius:12px;box-shadow:0 0 0 6px rgba(91,140,255,.14)!important;transition:outline-color .15s}
+.kbtn{box-shadow:0 0 0 3px rgba(91,140,255,.45)!important}
+.pl-flash{animation:plFlash 1.6s ease-out}
+@keyframes plFlash{0%,30%{box-shadow:0 0 0 3px #5b8cff,0 0 0 9px rgba(91,140,255,.18)}100%{box-shadow:0 0 0 0 transparent}}
+
+/* Keyboard hint and shortcut sheet */
+#khint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(10px);z-index:80;background:rgba(10,16,32,.9);color:#c9d2e3;font-size:12px;padding:7px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.08);opacity:0;pointer-events:none;transition:.25s;white-space:nowrap}
+#khint.show{opacity:1;transform:translateX(-50%)}
+#khint kbd,#ksheet kbd{display:inline-block;min-width:18px;text-align:center;background:rgba(255,255,255,.12);color:#fff;border-radius:5px;padding:1px 5px;font:600 11px ui-monospace,monospace;margin:0 2px}
+#ksheet{position:fixed;inset:0;z-index:95;background:rgba(6,10,20,.45);display:none;align-items:center;justify-content:center}
+#ksheet.show{display:flex}
+#ksheet .kb{background:#0d1526;color:#e8edf6;border-radius:16px;padding:20px 22px;width:min(420px,calc(100vw - 32px));box-shadow:0 30px 60px -20px rgba(0,0,0,.6);animation:tsIn .3s cubic-bezier(.2,.9,.25,1.1) both}
+#ksheet h3{margin:0 0 12px;font-size:15px}
+#ksheet .kr{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid rgba(255,255,255,.06);font-size:13px}
+@media (max-width:760px){#khint{display:none}#tstack{left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));align-items:stretch}.pl-ts{max-width:none}}
+@media (prefers-reduced-motion:reduce){#main.enter,#main.enter .card,.pl-ts,.pl-out{animation:none!important}}
 </style>
+<script id="polish-js">
+(function(){
+  const APPROVE_RE=/^\s*(approve|accept|book|issue|confirm|send|schedule|resolve|mark paid|pay)\b/i;
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  /* ---------- Toast stack ---------- */
+  const stack=document.createElement("div"); stack.id="tstack"; stack.setAttribute("aria-live","polite"); document.body.appendChild(stack);
+  let undoCtx=null, toastSeen=0;
+  function dismiss(el){ if(!el||el._gone) return; el._gone=1; el.classList.add("out"); setTimeout(()=>el.remove(),230); }
+  function showToast(msg,opts){
+    opts=opts||{}; toastSeen=Date.now();
+    const u=opts.undo||(undoCtx&&Date.now()-undoCtx.t<1500?undoCtx:null); if(u===undoCtx) undoCtx=null;
+    const life=u?6000:4200;
+    const el=document.createElement("div"); el.className="pl-ts"; el.setAttribute("role","status");
+    el.innerHTML=`<div class="pl-tm">${msg}</div>${u?'<button class="pl-tu">Undo</button>':""}<button class="pl-tx" aria-label="Dismiss">×</button><div class="pl-tbar" style="animation-duration:${life}ms"></div>`;
+    stack.appendChild(el);
+    while(stack.children.length>3) dismiss(stack.firstElementChild);
+    let left=life, t0=Date.now(), h=setTimeout(()=>dismiss(el),left);
+    el.addEventListener("mouseenter",()=>{ clearTimeout(h); left-=Date.now()-t0; });
+    el.addEventListener("mouseleave",()=>{ t0=Date.now(); h=setTimeout(()=>dismiss(el),Math.max(800,left)); });
+    el.querySelector(".pl-tx").onclick=()=>dismiss(el);
+    if(u) el.querySelector(".pl-tu").onclick=()=>{ try{ S=JSON.parse(u.snap); save(); view=u.view; render(); }catch(e){} dismiss(el); showToast("Undone. Back where it was."); };
+  }
+  window.toast=showToast; toast=showToast;
+  // keep the bar above the voice bar when it is open
+  new MutationObserver(()=>document.body.classList.toggle("has-vbar",!!document.querySelector(".vsheet.show"))).observe(document.body,{subtree:true,attributes:true,attributeFilter:["class"]});
+
+  /* ---------- Screen transitions ---------- */
+  const _render=render; let lastView=view;
+  render=window.render=function(){
+    const changed=view!==lastView; lastView=view; _render.apply(this,arguments);
+    if(changed){ const m=document.getElementById("main"); if(m){ m.classList.remove("enter"); void m.offsetWidth; m.classList.add("enter"); clearTimeout(m._e); m._e=setTimeout(()=>m.classList.remove("enter"),700); } kIdx=-1; }
+    refreshHint();
+  };
+
+  /* ---------- Approve: slide out, then act, with undo ---------- */
+  function rowOf(btn){
+    const r=btn.closest("tr,.it,li,.row,.card,.tk,.dr,[class*='item']");
+    if(!r||r.id==="main"||r.closest("#modalBox")||r.offsetHeight>380) return null; return r;
+  }
+  document.addEventListener("click",e=>{
+    const b=e.target.closest&&e.target.closest("#main button, #main .btn, #modalBox button, #modalBox .btn");
+    if(!b||b._pass||!APPROVE_RE.test(b.textContent||"")) return;
+    undoCtx={snap:JSON.stringify(S),view,t:Date.now()};
+    if(b.closest("#modalBox")) return;
+    const r=rowOf(b);
+    const fire=()=>{ b._pass=1; const before=toastSeen; b.click(); b._pass=0;
+      setTimeout(()=>{ if(r&&r.isConnected) r.classList.remove("pl-out","pl-ok");
+        if(toastSeen===before&&undoCtx&&!document.querySelector(".modal.show")){ showToast("<b>Done.</b> "+esc(b.textContent.trim())); } },350); };
+    if(!r){ fire(); e.stopImmediatePropagation(); e.preventDefault(); return; }
+    e.stopImmediatePropagation(); e.preventDefault();
+    r.classList.add("pl-ok"); setTimeout(()=>r.classList.add("pl-out"),140); setTimeout(fire,400);
+  },true);
+
+  function scrollTo2(el){ let a=el.parentElement;
+    while(a&&a!==document.body){ const o=getComputedStyle(a).overflowY; if(/auto|scroll/.test(o)&&a.scrollHeight>a.clientHeight+4) break; a=a.parentElement; }
+    const r=el.getBoundingClientRect();
+    if(a&&a!==document.body){ const ar=a.getBoundingClientRect(); a.scrollTo({top:a.scrollTop+r.top-ar.top-a.clientHeight/2+r.height/2,behavior:"smooth"}); }
+    else window.scrollTo({top:window.scrollY+r.top-innerHeight/2+r.height/2,behavior:"smooth"}); }
+  /* ---------- Keyboard approving ---------- */
+  let kIdx=-1;
+  const typing=()=>/input|textarea|select/i.test((document.activeElement||{}).tagName||"")||(document.activeElement||{}).isContentEditable;
+  const blocked=()=>typing()||document.querySelector(".cmdk.show,.modal.show,#ksheet.show");
+  function approvals(){ return [...document.querySelectorAll("#main button, #main .btn")].filter(b=>b.offsetParent&&!b.disabled&&APPROVE_RE.test(b.textContent||"")); }
+  function paint(){
+    document.querySelectorAll(".kfocus").forEach(n=>n.classList.remove("kfocus")); document.querySelectorAll(".kbtn").forEach(n=>n.classList.remove("kbtn"));
+    const L=approvals(); if(kIdx<0||!L.length) return; kIdx=Math.min(kIdx,L.length-1);
+    const b=L[kIdx], r=rowOf(b)||b; r.classList.add("kfocus"); b.classList.add("kbtn"); scrollTo2(r);
+  }
+  const hint=document.createElement("div"); hint.id="khint"; document.body.appendChild(hint);
+  let hintTimer;
+  function refreshHint(){ const n=approvals().length; clearTimeout(hintTimer);
+    if(n&&matchMedia("(hover:hover)").matches){ hint.innerHTML=`${n} waiting for you · <kbd>J</kbd><kbd>K</kbd> move · <kbd>A</kbd> approve · <kbd>?</kbd> shortcuts`; hint.classList.add("show"); hintTimer=setTimeout(()=>hint.classList.remove("show"),5000); }
+    else hint.classList.remove("show"); }
+  const sheet=document.createElement("div"); sheet.id="ksheet";
+  sheet.innerHTML=`<div class="kb"><h3>Keyboard shortcuts</h3>
+    <div class="kr"><span>Command bar: screens, jobs, customers</span><span><kbd>⌘</kbd><kbd>K</kbd></span></div>
+    <div class="kr"><span>Next / previous item to approve</span><span><kbd>J</kbd><kbd>K</kbd></span></div>
+    <div class="kr"><span>Approve the highlighted item</span><span><kbd>A</kbd> or <kbd>↵</kbd></span></div>
+    <div class="kr"><span>Undo the last approval</span><span><kbd>U</kbd></span></div>
+    <div class="kr"><span>Talk to your AI team</span><span><kbd>V</kbd></span></div>
+    <div class="kr"><span>Close</span><span><kbd>esc</kbd></span></div></div>`;
+  document.body.appendChild(sheet); sheet.addEventListener("click",e=>{ if(e.target===sheet) sheet.classList.remove("show"); });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&sheet.classList.contains("show")){ sheet.classList.remove("show"); return; }
+    if(e.metaKey||e.ctrlKey||e.altKey||blocked()) return;
+    const k=e.key.toLowerCase();
+    if(e.key==="?"){ e.preventDefault(); sheet.classList.add("show"); return; }
+    if(k==="j"||k==="k"){ const L=approvals(); if(!L.length) return; e.preventDefault(); kIdx=kIdx<0?0:(kIdx+(k==="j"?1:-1)+L.length)%L.length; paint(); hint.classList.remove("show"); return; }
+    if((k==="a"||e.key==="Enter")&&kIdx>=0){ const L=approvals(); const b=L[Math.min(kIdx,L.length-1)]; if(b){ e.preventDefault(); b.click(); setTimeout(paint,520); } return; }
+    if(k==="u"){ const u=stack.querySelector(".pl-ts:last-child .pl-tu"); if(u){ e.preventDefault(); u.click(); } return; }
+    if(e.key==="Escape"&&kIdx>=0){ kIdx=-1; paint(); }
+  });
+
+  /* ---------- Command bar: jobs, customers, quotes, shortcuts ---------- */
+  function flash(needle){ setTimeout(()=>{ const m=document.getElementById("main"); if(!m) return;
+    const c=[...m.querySelectorAll("tr,.it,li,.card,div")].filter(n=>n.textContent.includes(needle)).sort((a,b)=>a.textContent.length-b.textContent.length)[0];
+    if(c){ scrollTo2(c); c.classList.remove("pl-flash"); void c.offsetWidth; c.classList.add("pl-flash"); } },120); }
+  const pi=document.getElementById("cmdQ"), pl=document.getElementById("cmdL");
+  if(pi&&pl){
+    pi.placeholder="Search screens, jobs, customers or quotes…";
+    let recs=[], busy=false;
+    function records(q){
+      q=(q||"").toLowerCase().trim(); const out=[]; if(q.length<2) return out;
+      const hit=s=>String(s||"").toLowerCase().includes(q);
+      if(/short|keyboard|key/.test(q)) out.push({t:"Keyboard shortcuts",g:"Actions",h:"?",run:()=>sheet.classList.add("show")});
+      if(/approv|next|wait/.test(q)) out.push({t:"Approve the next item waiting",g:"Actions",h:"J then A",run:()=>{ const go2=()=>{ kIdx=0; paint(); }; if(approvals().length) go2(); else { go("billing"); setTimeout(go2,450); } }});
+      let J=[]; try{ J=(window.prodJobs||allJobs)(); }catch(e){}
+      J.filter(j=>hit(`${j.id} ${j.acct} ${j.lane}`)).slice(0,6).forEach(j=>{ let pn=j.air?"Air export":""; try{ pn=window.PRODUCTS[j.p].n; }catch(e){}
+        out.push({t:`${j.id} · ${j.acct}`,g:"Jobs",h:pn,air:!!j.air||/air/i.test(pn),run:()=>{ try{ jobsFilter("all"); }catch(e){} go("jobs"); flash(j.id); }}); });
+      const accts=[...new Set([...J.map(j=>j.acct),...(S.deals||[]).map(d=>d.acct)])].filter(Boolean);
+      accts.filter(hit).slice(0,4).forEach(a=>out.push({t:a,g:"Customers",h:"Customer",run:()=>{ go("accounts"); flash(a); }}));
+      (S.quotes||[]).filter(x=>hit(`${x.id} ${x.acct}`)).slice(0,4).forEach(x=>out.push({t:`${x.id} · ${x.acct}`,g:"Quotes",h:x.status||"Quote",run:()=>{ go("pipeline"); flash(x.id); }}));
+      return out;
+    }
+    function addRecs(){ if(busy) return; busy=true;
+      pl.querySelectorAll(".px,.pxg").forEach(n=>n.remove()); recs=records(pi.value);
+      if(recs.length){ const em=pl.querySelector(".empty"); if(em) em.remove(); let g="", h="";
+        recs.forEach((x,i)=>{ if(x.g!==g){ g=x.g; h+=`<div class="grp pxg">${g}</div>`; } h+=`<div class="it px" data-x="${i}"><span class="ii">${x.g==="Jobs"?(x.air?"✈":"▣"):x.g==="Customers"?"◆":x.g==="Quotes"?"＄":"⌘"}</span>${esc(x.t)}<span class="hint">${esc(x.h)}</span></div>`; });
+        pl.insertAdjacentHTML("beforeend",h); }
+      busy=false; }
+    const mine=n=>n.nodeType===1&&n.classList&&(n.classList.contains("px")||n.classList.contains("pxg"));
+    new MutationObserver(ms=>{ if(ms.every(m=>[...m.addedNodes,...m.removedNodes].every(mine))) return; addRecs(); }).observe(pl,{childList:true});
+    pi.addEventListener("input",()=>setTimeout(addRecs,0));
+    const runX=n=>{ const x=recs[+n.dataset.x]; if(x){ document.getElementById("cmdk").classList.remove("show"); x.run(); } };
+    pl.addEventListener("click",e=>{ const n=e.target.closest(".px"); if(n){ e.stopPropagation(); runX(n); } },true);
+    document.addEventListener("keydown",e=>{
+      if(!document.querySelector(".cmdk.show")||!pl.querySelector(".px")) return;
+      const nat=[...pl.querySelectorAll(".it:not(.px)")], mine=[...pl.querySelectorAll(".px")], cur=pl.querySelector(".px.on");
+      const setOn=n=>{ pl.querySelectorAll(".it.on").forEach(x=>x.classList.remove("on")); n.classList.add("on"); n.scrollIntoView({block:"nearest"}); };
+      if(e.key==="ArrowDown"){ if(cur){ e.preventDefault(); e.stopImmediatePropagation(); const i=mine.indexOf(cur); setOn(mine[Math.min(mine.length-1,i+1)]); }
+        else if(!nat.length||nat[nat.length-1].classList.contains("on")){ e.preventDefault(); e.stopImmediatePropagation(); setOn(mine[0]); } }
+      else if(e.key==="ArrowUp"&&cur){ e.preventDefault(); e.stopImmediatePropagation(); const i=mine.indexOf(cur); if(i>0) setOn(mine[i-1]); else if(nat.length) setOn(nat[nat.length-1]); }
+      else if(e.key==="Enter"&&(cur||!nat.length)){ e.preventDefault(); e.stopImmediatePropagation(); runX(cur||mine[0]); }
+    },true);
+  }
+
+  setTimeout(refreshHint,900);
+})();
+</script>
+
 </body>
 </html>

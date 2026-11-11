@@ -6508,8 +6508,31 @@ const nb=document.createElement("button"); nb.dataset.v="photo"; nb.innerHTML=`<
 const MODES={
  damage:{n:"Damage at receiving",d:"Photo or short video of a pallet as it arrives. Get the receipt note, the photos on the job and a claim draft.",q:"Is anything damaged?",ex:"Pallet arrives with a crushed corner"},
  doc:{n:"What is this document?",d:"Photo of any paper or PDF. It says what it is, whether it belongs to a job, and what's missing.",q:"What is this and what do I do with it?",ex:"A document nobody recognises"},
- stack:{n:"Can this be stacked?",d:"Photo of the pallet labels. It reads the handling marks and tells you how to store it.",q:"Is this stackable?",ex:"Pallet with handling labels"}
+ stack:{n:"Can this be stacked?",d:"Photo of the pallet labels. It reads the handling marks and tells you how to store it.",q:"Is this stackable?",ex:"Pallet with handling labels"},
+ dg:{n:"Hazard labels",d:"Photo of the hazard labels and markings. It reads the class and UN number and tells you how to handle, store and book it.",q:"What is this and how do I handle it?",ex:"Box with a hazard label"}
 };
+/* Dangerous goods label samples. Guidance follows the IATA DGR in plain words; a certified DG person always signs off. */
+const DGL={
+ flam:{l:"Flammable liquid",cls:"3",un:"UN1263",psn:"Paint",col:"#d92d20",sym:"🔥",
+   head:"Class 3 flammable liquid: UN1263, Paint. It can fly, but only as declared dangerous goods.",
+   pts:["Label read: red diamond with a flame and “3”. UN1263 Paint marked on the box, packing group II.","Handle: keep it upright, away from heat, sparks and direct sun. Check for leaks or smell before you move it.","Store: in the DG area, separated from oxidisers (Class 5.1). Don't build it with anything leaking.","Book: needs a Shipper's Declaration and a DG acceptance check before tender. Passenger aircraft are allowed within the quantity limit for packing group II; above it, cargo aircraft only.","Stop: don't book it, repack it or relabel it until a certified DG person has checked it."]},
+ li:{l:"Lithium battery",cls:"9",un:"UN3481",psn:"Lithium ion batteries packed with equipment",col:"#111827",sym:"🔋",
+   head:"Class 9 lithium battery mark: UN3481, packed with equipment. Allowed on aircraft within limits.",
+   pts:["Label read: the lithium battery mark (battery picture, phone number) with UN3481.","Handle: no crushed, dented, swollen or warm boxes. If a box is damaged, set it aside and tell the DG person.","Check the UN number: UN3481 (with or in equipment) can go on passenger aircraft within limits. UN3480 (batteries on their own) is cargo aircraft only, at no more than 30% charge.","Book: depending on the battery size it's either fully regulated (Shipper's Declaration) or a lighter section. The DG person decides which.","Store: in the DG area, away from heat."]},
+ cor:{l:"Corrosive",cls:"8",un:"UN1760",psn:"Corrosive liquid, n.o.s.",col:"#111827",sym:"⚗️",
+   head:"Class 8 corrosive: UN1760. Handle with gloves and check for leaks first.",
+   pts:["Label read: black and white diamond with liquid eating a hand and a bar, “8”. UN1760 marked.","Handle: gloves on. Look for staining, wet spots or smell. If it's leaking, don't touch it: isolate the area and call the DG person.","Store: in the DG area, upright, separated from water-reactive goods (Class 4.3).","Book: needs a Shipper's Declaration and acceptance check. Whether it can go on passenger aircraft depends on the packing group and quantity.","Stop: a certified DG person checks it before booking."]},
+ exp:{l:"Explosive",cls:"1.4S",un:"UN0012",psn:"Cartridges for weapons, inert projectile",col:"#f79009",sym:"💥",
+   head:"Class 1 explosive (1.4S): UN0012. Stop and get the DG person. Most explosives can't fly.",
+   pts:["Label read: orange diamond with “1.4” and compatibility group “S”. UN0012 marked.","Handle: don't open, drop or move it more than you have to. Keep it away from heat and other dangerous goods.","Only 1.4S is generally accepted on passenger aircraft. Every other explosive is cargo aircraft only with approvals, or not allowed at all.","Book: needs a Shipper's Declaration, an airline pre-check and a certified DG person's sign-off. Many airlines refuse explosives entirely.","Store: in the DG area, kept apart from all other dangerous goods."]},
+ oxi:{l:"Oxidiser",cls:"5.1",un:"UN1479",psn:"Oxidizing solid, n.o.s.",col:"#fdb022",sym:"⭕",
+   head:"Class 5.1 oxidiser: UN1479. Keep it away from flammables.",
+   pts:["Label read: yellow diamond with a flame over a circle, “5.1”. UN1479 marked.","Handle: keep it dry and away from heat. Never put it next to flammable liquids or gases.","Store: in the DG area, separated from Class 3 flammable liquids, Class 2.1 flammable gases and Class 4 goods.","Book: needs a Shipper's Declaration and acceptance check.","Stop: a certified DG person checks it before booking."]},
+ gas:{l:"Flammable gas",cls:"2.1",un:"UN1950",psn:"Aerosols, flammable",col:"#d92d20",sym:"🧯",
+   head:"Class 2.1 flammable gas: UN1950, aerosols. Allowed within limits. Check the quantity.",
+   pts:["Label read: red diamond with a flame and “2”. UN1950 Aerosols marked.","Handle: no crushed or punctured cans. Keep away from heat and sparks.","Store: in the DG area, separated from oxidisers (Class 5.1).","Book: aerosols can often go as limited quantity. Bigger quantities need a full Shipper's Declaration, and some are cargo aircraft only.","Stop: a certified DG person confirms the quantity and paperwork."]}
+};
+let DGK="flam";
 const ANS={
  damage:{conf:["High","#e3f6ee","#0f7a4f"],job:"SHP-1011 · Lakeshore Cartage · pallet 2 of 6",
    head:"Yes. One pallet is damaged.",
@@ -6524,19 +6547,21 @@ const ANS={
    pts:["Two sides carry the “Do not stack” symbol, plus “This side up” arrows and a fragile mark.","Store it at floor level, one high, and tag the location NS (no stack) in the WMS.","No dangerous goods label is visible.","Confidence is medium because the back of the pallet isn't in the photo. Take one more photo of the back to be sure."],
    next:"Marked as no-stack on the receiving record.",act:"stack"}
 };
+Object.defineProperty(ANS,"dg",{get(){ const d=DGL[DGK]; return {conf:["High","#e3f6ee","#0f7a4f"],job:"Inbound carton · Brightline Imports",head:d.head,pts:d.pts,next:"Job flagged as dangerous goods. It won't be booked until a certified DG person signs off.",act:"dg"}; }});
 let IMG=null;
 function P(){ S.photo=S.photo||{mode:"damage",vid:false,q:"",res:null,hist:[]}; return S.photo; }
 V.photo=()=>{
   const p=P(), M=MODES[p.mode], r=p.res?ANS[p.mode]:null;
-  return `<header class="top"><div><h1>Photo check</h1><div class="sub">Point a phone at it and ask. Three jobs only, because these are the ones it gets right: damage at receiving, unknown documents, and whether a pallet can be stacked. It answers in words or out loud, files the photos to the job, and drafts anything that needs sending. Nothing is sent without you.</div></div></header>
+  return `<header class="top"><div><h1>Photo check</h1><div class="sub">Point a phone at it and ask. Four jobs only, because these are the ones it gets right: damage at receiving, unknown documents, whether a pallet can be stacked, and reading hazard labels. It answers in words or out loud, files the photos to the job, and drafts anything that needs sending. Nothing is sent without you.</div></div></header>
   <div class="phMode">${Object.entries(MODES).map(([k,m])=>`<button class="phM ${p.mode===k?"on":""}" onclick="phMode('${k}')"><b>${m.n}</b><span>${m.d}</span></button>`).join("")}</div>
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:14px">
     <div class="card"><h3 style="margin-top:0">${M.n}</h3>
-      <div class="phShot">${IMG?(p.vid?`<video src="${IMG}" controls muted></video>`:`<img src="${IMG}" alt="Your photo">`):p.sample?`<div style="padding:20px"><div style="font-size:46px">${p.mode==="doc"?"📄":"📦"}</div><div class="muted" style="font-size:13px">Sample: ${M.ex}</div></div>`:`<div style="padding:20px"><div style="font-size:40px">📷</div><div class="muted" style="font-size:13px">Take a photo or a short video (up to 20 seconds)</div></div>`}</div>
+      <div class="phShot">${IMG?(p.vid?`<video src="${IMG}" controls muted></video>`:`<img src="${IMG}" alt="Your photo">`):p.sample?(p.mode==="dg"?`<div style="padding:16px"><div class="dgDia" style="--c:${DGL[DGK].col}"><span>${DGL[DGK].sym}</span><b>${DGL[DGK].cls}</b></div><div class="muted" style="font-size:13px;margin-top:26px">Sample: ${DGL[DGK].l} · ${DGL[DGK].un}</div></div>`:`<div style="padding:20px"><div style="font-size:46px">${p.mode==="doc"?"📄":"📦"}</div><div class="muted" style="font-size:13px">Sample: ${M.ex}</div></div>`):`<div style="padding:20px"><div style="font-size:40px">📷</div><div class="muted" style="font-size:13px">Take a photo or a short video (up to 20 seconds)</div></div>`}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
         <label class="btn sm" style="cursor:pointer">Take photo<input type="file" accept="image/*" capture="environment" style="display:none" onchange="phFile(this)"></label>
         <label class="btn sm sec" style="cursor:pointer">Short video<input type="file" accept="video/*" capture="environment" style="display:none" onchange="phFile(this)"></label>
         <button class="btn sm sec" onclick="phSample()">Use a sample</button></div>
+      ${p.mode==="dg"?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px"><span class="muted" style="font-size:11.5px;align-self:center">Sample label:</span>${Object.entries(DGL).map(([k,d])=>`<button class="btn sm ${DGK===k&&p.sample?"":"sec"}" style="font-size:11.5px;padding:3px 8px" onclick="phDG('${k}')">${d.l}</button>`).join("")}</div>`:""}
       <form onsubmit="event.preventDefault();phAsk(this.q.value)" style="display:flex;gap:6px;margin-top:10px">
         <input name="q" value="${(p.q||M.q).replace(/"/g,"&quot;")}" style="flex:1;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit">
         <button type="button" class="btn sec" title="Ask out loud" onclick="phMic(this.form)">🎤</button><button class="btn">Check</button></form>
@@ -6545,9 +6570,9 @@ V.photo=()=>{
       ${r?`<div class="phAns"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px"><span class="muted" style="font-size:11.5px">${r.job}</span><span class="phConf" style="background:${r.conf[1]};color:${r.conf[2]}">Confidence: ${r.conf[0]}</span></div>
         <div style="font-size:17px;font-weight:700">${r.head}</div><ul>${r.pts.map(x=>`<li>${x}</li>`).join("")}</ul>
         <div style="margin-top:8px;font-size:13px"><b>Next:</b> ${r.next}</div></div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${r.act==="damage"?`<button class="btn sm" onclick="phDraft('damage')">Review claim draft</button>`:r.act==="doc"?`<button class="btn sm" onclick="phDraft('doc')">Review invoice request</button>`:`<button class="btn sm sec" onclick="phMode('stack');phSample()">Add photo of the back</button>`}<button class="btn sm sec" onclick="phSpeak()">🔊 Read it out</button><button class="btn sm sec" onclick="phWrong()">That's wrong</button></div>`
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${r.act==="damage"?`<button class="btn sm" onclick="phDraft('damage')">Review claim draft</button>`:r.act==="doc"?`<button class="btn sm" onclick="phDraft('doc')">Review invoice request</button>`:r.act==="dg"?`<button class="btn sm" onclick="phDGsend()">Send to DG person</button>`:`<button class="btn sm sec" onclick="phMode('stack');phSample()">Add photo of the back</button>`}<button class="btn sm sec" onclick="phSpeak()">🔊 Read it out</button><button class="btn sm sec" onclick="phWrong()">That's wrong</button></div>`
       :`<div class="muted" style="font-size:13px">Take a photo or use a sample, then press Check.</div>`}
-      <div class="muted" style="font-size:11.5px;margin-top:14px">If the photo is blurry, too dark or the labels can't be read, it says so and asks for another photo rather than guessing.</div>
+      <div class="muted" style="font-size:11.5px;margin-top:14px">If the photo is blurry, too dark or the labels can't be read, it says so and asks for another photo rather than guessing.${p.mode==="dg"?" Hazard guidance follows the IATA Dangerous Goods Regulations; a certified DG person always makes the final call.":""}</div>
     </div>
   </div>
   ${p.hist.length?`<div class="card" style="margin-top:14px"><h3 style="margin-top:0">Recent checks</h3>${p.hist.slice(0,6).map(h=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)">${h.t} <span class="muted">· ${MODES[h.m].n} · ${h.d}</span></div>`).join("")}</div>`:""}`;
@@ -6557,6 +6582,8 @@ window.phFile=inp=>{ const f=inp.files&&inp.files[0]; if(!f) return; const p=P()
   if(p.vid){ IMG=URL.createObjectURL(f); render(); return; }
   const rd=new FileReader(); rd.onload=()=>{ const im=new Image(); im.onload=()=>{ const c=document.createElement("canvas"), k=Math.min(1,640/Math.max(im.width,im.height)); c.width=im.width*k; c.height=im.height*k; c.getContext("2d").drawImage(im,0,0,c.width,c.height); IMG=c.toDataURL("image/jpeg",.7); render(); }; im.src=rd.result; }; rd.readAsDataURL(f); };
 window.phSample=()=>{const p=P();IMG=null;p.sample=true;p.res=null;render();};
+window.phDG=k=>{ DGK=k; const p=P(); IMG=null; p.sample=true; p.res=null; render(); };
+window.phDGsend=()=>{ const d=DGL[DGK]; try{log("ops",`DG check requested: ${d.un} ${d.psn} (Class ${d.cls})`);}catch(e){} toast(`Sent to your certified DG person: ${d.un}, Class ${d.cls}. The job stays on hold until they sign off.`); };
 window.phAsk=q=>{ const p=P(); if(!IMG&&!p.sample){ toast("Take a photo or use a sample first"); return; } p.q=q; p.res=true;
   p.hist.unshift({t:ANS[p.mode].head+" "+ANS[p.mode].job,m:p.mode,d:new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})});
   try{log("ops","Photo check: "+ANS[p.mode].head+" ("+ANS[p.mode].job+")");}catch(e){} render(); };
@@ -6570,6 +6597,8 @@ window.phDraft=k=>{
   toast("Draft is waiting in Assistant. Nothing has been sent."); go("assistant");
 };
 })();
+
+document.head.insertAdjacentHTML("beforeend",`<style>.dgDia{width:110px;height:110px;margin:0 auto;transform:rotate(45deg);border:5px solid var(--c);border-radius:8px;background:#fff;display:grid;place-items:center;box-shadow:inset 0 0 0 3px #fff,inset 0 0 0 5px var(--c)}.dgDia>*{transform:rotate(-45deg)}.dgDia span{font-size:34px;margin-top:-18px}.dgDia b{position:absolute;font-size:16px;bottom:14px;right:14px;transform:rotate(-45deg)}</style>`);
 </script>
 
 <style id="levels-css">

@@ -7214,6 +7214,42 @@ body.has-vbar #tstack{bottom:150px}
   try{ relabel(); inject(); }catch(e){}
 })();
 </script>
+<script id="chat-expiry-js">
+/* ---------- Chats clear after 60 minutes. To keep a record, send the minutes. ---------- */
+(function(){
+  if(window.__chatExpiry) return; window.__chatExpiry=true;
+  const TTL=60*60*1000; let first=!!(S&&S.chat);
+  const plain=h=>{ const d=document.createElement("div"); d.innerHTML=String(h||"").replace(/<\/(tr|p|div|li)>/g,"\n").replace(/<\/t[dh]>/g," | ").replace(/<br\s*\/?>/g,"\n"); return d.textContent.replace(/[ \t]+/g," ").replace(/\n\s*\n+/g,"\n").trim(); };
+  function sweep(){ const C=S&&S.chat; if(!C||!C.th) return false; const now=Date.now(); let ch=false, init=first; first=false;
+    Object.keys(C.th).forEach(k=>{ const th=C.th[k];
+      th.forEach((m,i)=>{ if(i===0&&m.who==="ai") m.keep=1; if(m.ts==null){ if(init&&!m.keep&&!m.tmp){ m.ts=0; } else m.ts=now; } });
+      const keep=th.filter(m=>m.keep||m.tmp||now-m.ts<TTL); if(keep.length!==th.length){ C.th[k]=keep; ch=true; } });
+    if(ch) save(); return ch; }
+  function oldest(){ const C=S.chat, k=C&&C.open, th=(C&&C.th&&C.th[k])||[]; const t=th.filter(m=>!m.keep&&!m.tmp&&m.ts).map(m=>m.ts); return t.length?Math.min(...t):null; }
+  function minutes(){ const C=S.chat, w=chWho(C.open), th=(C.th[C.open]||[]).filter(m=>!m.keep&&!m.tmp), d=new Date();
+    const stamp=d.toLocaleDateString("en-US",{weekday:"short",day:"numeric",month:"short"})+" "+d.toTimeString().slice(0,5);
+    const L=[`Minutes: chat with ${w.n}, ${stamp}`,""]; let q=null;
+    th.forEach(m=>{ const t=plain(m.t); if(m.who==="me"){ q=t; L.push("Asked: "+t); } else L.push("Answer"+(m.by?" ("+m.by+")":"")+": "+(t.length>600?t.slice(0,600)+"…":t)); });
+    L.push("","Sent from Consol. The chat itself clears after 60 minutes."); return L.join("\n"); }
+  const CH={slack:{n:"Slack",to:"#sales",btn:"Slack #sales"},email:{n:"Email",to:"you@northstarfreight.example",btn:"your email"},text:{n:"Text",to:"your mobile",btn:"your mobile"}};
+  window.chMinutes=function(ch){ ch=ch||"slack"; const th=(S.chat.th[S.chat.open]||[]).filter(m=>!m.keep&&!m.tmp);
+    if(!th.length){ toast("Nothing to send yet, this chat is empty."); return; } S._mn={ch};
+    $("#modalBox").innerHTML=`<h3 style="margin-top:0">Send the minutes</h3><div class="muted" style="font-size:12px;margin-bottom:8px">Check the text first. Nothing is sent until you press the button.</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px">${Object.keys(CH).map(k=>`<button class="btn sm ${k===ch?"":"sec"}" onclick="chMinutes('${k}')">${CH[k].n}</button>`).join("")}</div>
+      <div class="muted" style="font-size:12px;margin-bottom:4px">To: <b style="color:var(--ink)">${CH[ch].to}</b></div>
+      <textarea id="mn_txt" style="width:100%;min-height:220px;font:inherit;font-size:13px;padding:10px;border:1px solid var(--line);border-radius:8px">${minutes().replace(/&/g,"&amp;").replace(/</g,"&lt;")}</textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn sec" onclick="closeM()">Cancel</button><button class="btn" onclick="chMinutesSend()">Send to ${CH[ch].btn}</button></div>`;
+    $("#modal").classList.add("show"); };
+  window.chMinutesSend=function(){ const ch=(S._mn||{}).ch||"slack"; closeM(); log(ch==="slack"?"slack":"mail",`Chat minutes sent by ${CH[ch].n.toLowerCase()} to ${CH[ch].to}`); save(); toast(`<b>Minutes sent</b> by ${CH[ch].n.toLowerCase()} to ${CH[ch].to}. This chat still clears after 60 minutes.`); };
+  function note(){ if(view!=="chat") return; const m=document.getElementById("main"), w=m&&m.querySelector(".chatwrap"); if(!w||m.querySelector("#chnote")) return;
+    const o=oldest(), left=o?Math.max(1,Math.ceil((o+TTL-Date.now())/60000)):null;
+    const el=document.createElement("div"); el.id="chnote"; el.className="banner"; el.style.cssText="margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap";
+    el.innerHTML=`<span><b>Chats clear after 60 minutes.</b> ${left?`This one starts clearing in ${left} min. `:""}Want a record? Send the minutes by Slack, email or text.</span><button class="btn sm" onclick="chMinutes('slack')">Send the minutes</button>`; w.parentNode.insertBefore(el,w); }
+  const _r=render; render=window.render=function(){ sweep(); _r.apply(this,arguments); try{ note(); }catch(e){} };
+  setInterval(()=>{ if(sweep()&&view==="chat"&&!document.querySelector(".modal.show")) render(); },30000);
+  try{ if(sweep()) render(); }catch(e){}
+})();
+</script>
 
 </body>
 </html>

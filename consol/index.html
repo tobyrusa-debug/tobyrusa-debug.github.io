@@ -1491,7 +1491,7 @@ function seed(){
       {d:"Oct 28",kind:"saved",amt:184,src:"Finance manager",what:"Duplicate screening bill rejected before payment",ref:"SHP-0991"},
       {d:"Oct 30",kind:"recovered",amt:420,src:"Finance manager",what:"Claim won: airline offload, priority surcharge refunded",ref:"CL-0"},
       {d:"Nov 2",kind:"made",amt:612,src:"Sales manager",what:"Win-back booking from a lost account",ref:"SHP-0998"},
-      {d:"Nov 4",kind:"time",amt:270,src:"Customer service manager",what:"36 customer questions answered automatically (6 min each)",ref:"Support"},
+      {d:"Nov 4",kind:"time",amt:162,src:"Customer service manager",what:"36 customer questions answered automatically (6 min each)",ref:"Support"},
       {d:"Nov 5",kind:"lost",amt:95,src:"Finance manager",what:"Claim lost: inside-delivery charge was in the contract",ref:"CL-00"}
     ],
     nextT:303, nextI:5008, v:19,
@@ -7122,7 +7122,7 @@ body.has-vbar #tstack{bottom:150px}
   function dealSpec(){ const d=S.deals.filter(x=>["Qualified","Quoted"].includes(x.stage)).sort((a,b)=>b.value-a.value)[0]; if(!d) return null;
     return {label:`Win <b>${money(d.value)}/yr</b>`, sub:`${d.acct} · ${d.stage.toLowerCase()}`,
       run(){ closeWon(d.id); return {amt:d.value,head:"Account won",sub:`${d.acct} · transition plan started, go-live in 21 days`}; }, check:()=>d.stage==="Won"}; }
-  function valueNet(){ return sum(S.value||[],v=>v.kind==="lost"?-v.amt:v.amt); }
+  function valueNet(){ return window.vlProfit?Math.round(window.vlProfit()):sum(S.value||[],v=>v.kind==="lost"?-v.amt:v.amt); }
   const find=(re,scope)=>()=>$$("#main button",scope&&scope()).find(b=>b.offsetParent&&!b.classList.contains("wincta")&&!b.disabled&&re.test((b.dataset.o||b.textContent).trim()));
   const proxy=(re,label,sub)=>{ const f=find(re), b=f(); if(!b) return null; return {label:typeof label==="function"?label(b,rowOf(b)):label, sub:typeof sub==="function"?sub(b,rowOf(b)):sub, run(){ const x=f(); x&&x.click(); }}; };
 
@@ -7282,6 +7282,81 @@ body.has-vbar #tstack{bottom:150px}
     document.querySelectorAll(".bankchip").forEach(c=>{ c.textContent="Banked to date "+money(t); c.title="See your progress"; c.onclick=()=>go("progress"); });
     if(view==="progress"){ const g=document.getElementById("cbG"),v=document.getElementById("cbV"); if(g) g.textContent="Autopilot"; if(v) v.textContent="Progress"; }
     const nv=document.querySelector('#nav button[data-v="progress"]'); if(nv) nv.classList.toggle("on",view==="progress"); }catch(e){} };
+})();
+</script>
+<style id="vl-css">
+.vl-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.vl-seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}.vl-seg button{border:0;background:transparent;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer;color:var(--muted)}.vl-seg button.on{background:var(--brand);color:#fff;font-weight:650}
+.vl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:12px}
+.vl-k{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}.vl-k .l{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.vl-k .v{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:5px 0 3px;font-variant-numeric:tabular-nums}.vl-k .d{font-size:12px;color:var(--muted);line-height:1.45}
+.vl-k.pos{border-color:#bfe3d4;background:linear-gradient(180deg,#f3fbf7,#fff)}.vl-k.pos .v{color:var(--ok)}
+.vl-own{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--muted);background:#eef1f6;border-radius:6px;padding:2px 7px;margin-left:6px;text-transform:none;vertical-align:1px}
+.vl-t{width:100%;border-collapse:collapse;font-size:13px}.vl-t th{text-align:right;font-size:11.5px;color:var(--muted);font-weight:650;padding:7px 8px;border-bottom:1px solid var(--line)}.vl-t th:first-child,.vl-t td:first-child{text-align:left}
+.vl-t td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.vl-t tr:last-child td{border:0}.vl-t tfoot td{font-weight:700;border-top:2px solid var(--line)}
+</style>
+<script id="vl-js">
+/* ---------- Value: tasks done, time saved, cost per task, cost per hour, revenue, cost and profit for the owner ---------- */
+(function(){
+  if(window.__vl) return; window.__vl=true;
+  const BENCH={"Portal booking":16,"Documents and AES":20,"Customer answer":6,"Invoice":5,"Supplier bill check":5,"Quote":12,"Claim":25,"Collection chase":8,"Shipment update":10,"Other task":8};
+  const COST={"Sales manager":.55,"Operations manager":.35,"Finance manager":.45,"Customer service manager":.12};
+  const TYPE=(what,ref)=>{ const t=(what||"")+" "+(ref||""); return /portal/i.test(t)?"Portal booking":/AES|document|SHP-.*(depart|milestone)|tender/i.test(t)?"Documents and AES":/question|answer|ticket|support/i.test(t)?"Customer answer":/invoice|INV-|collect|paid/i.test(t)?"Invoice":/bill|duplicate|contract/i.test(t)?"Supplier bill check":/quote|win-back|booked|account won|deal/i.test(t)?"Quote":/claim|CL-|recover|rebill/i.test(t)?"Claim":/depart|shipment|SHP-/i.test(t)?"Shipment update":"Other task"; };
+  const SEED=()=>[
+    {mo:"Oct",agent:"Sales manager",type:"Quote",n:210,val:0,kind:"time"},
+    {mo:"Oct",agent:"Sales manager",type:"Portal booking",n:38,val:9840,kind:"made"},
+    {mo:"Oct",agent:"Operations manager",type:"Documents and AES",n:342,val:0,kind:"time"},
+    {mo:"Oct",agent:"Finance manager",type:"Supplier bill check",n:212,val:2160,kind:"saved"},
+    {mo:"Oct",agent:"Finance manager",type:"Invoice",n:140,val:0,kind:"time"},
+    {mo:"Oct",agent:"Finance manager",type:"Claim",n:2,val:420-95,kind:"recovered"},
+    {mo:"Oct",agent:"Customer service manager",type:"Customer answer",n:480,val:0,kind:"time"},
+    {mo:"Nov",agent:"Sales manager",type:"Quote",n:41,val:612,kind:"made"},
+    {mo:"Nov",agent:"Operations manager",type:"Documents and AES",n:58,val:0,kind:"time"},
+    {mo:"Nov",agent:"Finance manager",type:"Invoice",n:24,val:0,kind:"time"},
+    {mo:"Nov",agent:"Customer service manager",type:"Customer answer",n:36,val:0,kind:"time"}];
+  const TL=()=>{ if(!S.tl){ S.tl=SEED(); } return S.tl; };
+  const _val=val; val=window.val=function(kind,amt,src,what,ref){ _val.apply(this,arguments);
+    try{ if(!amt) return; window.__tlv=Date.now(); const kd=kind==="lost"?"lost":kind; TL().push({mo:"Nov",agent:src,type:TYPE(what,ref),n:1,val:kind==="time"?0:(kind==="lost"?-amt:amt),kind:kd}); }catch(e){} };
+  /* wins from the main buttons also log the task that produced them (unless val() already did) */
+  const _ar=window.achRecord; if(_ar) window.achRecord=function(r){ const before=TL().length; _ar.apply(this,arguments);
+    try{ const h=String(r&&r.head||""); if(/summary copied/i.test(h)) return; const k=/^(collected|invoice sent)/i.test(h)?["Finance manager","Invoice",0,"time"]:/^recovered/i.test(h)?["Finance manager","Claim",r.amt||0,"recovered"]:/^won and booked/i.test(h)?["Sales manager","Quote",+((String(r.sub||"").replace(/,/g,"").match(/\$([\d.]+) margin/)||[0,0])[1])||0,"made"]:/^account won/i.test(h)?["Sales manager","Quote",0,"time"]:/^deal held/i.test(h)?["Customer service manager","Customer answer",0,"time"]:["Operations manager","Shipment update",0,"time"];
+      if(TL().length===before&&Date.now()-(window.__tlv||0)>1500) TL().push({mo:"Nov",agent:k[0],type:k[1],n:1,val:k[2],kind:k[3]}); }catch(e){} };
+  const rate=()=>(S.rateMin||0.75)*60;
+  function calc(mo){ const R=TL().filter(r=>r.mo===mo), hr=rate(), days=mo==="Oct"?31:13, sub=SUB_MONTH*(days/30);
+    const A={}, T={}; const add=(M,k,r)=>{ const x=M[k]=M[k]||{n:0,h:0,use:0,rev:0,avoid:0,lost:0}; const mn=BENCH[r.type]||8; x.n+=r.n; x.h+=r.n*mn/60; x.use+=r.n*(COST[r.agent]||.4)*1;
+      if(r.kind==="made"||r.kind==="recovered") x.rev+=Math.max(0,r.val); else if(r.kind==="saved") x.avoid+=Math.max(0,r.val); else if(r.kind==="lost") x.lost+=Math.abs(r.val); };
+    R.forEach(r=>{ add(A,r.agent,r); add(T,r.type,r); });
+    const tot=Object.values(A).reduce((a,x)=>({n:a.n+x.n,h:a.h+x.h,use:a.use+x.use,rev:a.rev+x.rev,avoid:a.avoid+x.avoid,lost:a.lost+x.lost}),{n:0,h:0,use:0,rev:0,avoid:0,lost:0});
+    const timeVal=tot.h*hr, cost=tot.use+sub, value=tot.rev+tot.avoid+timeVal-tot.lost, profit=value-cost;
+    return {A,T,tot,timeVal,sub,days,cost,value,profit,roi:cost?profit/cost:0,hr}; }
+  const m0=n=>money(Math.round(n)), n0=n=>Math.round(n).toLocaleString("en-US"), h1=n=>(Math.round(n*10)/10).toLocaleString("en-US");
+  window.vlProfit=()=>calc(S._vm||"Nov").profit;
+  const base=V.value;
+  V.value=()=>{ const mo=S._vm||"Nov", c=calc(mo), t=c.tot, perTask=t.n?c.cost/t.n:0, perHour=t.h?c.cost/t.h:0, tl=mo==="Oct"?"October (full month)":"November to date";
+    const orig=base(), hdEnd=orig.indexOf("</header>"), tableAt=orig.indexOf('<div class="card" style="margin-top:14px"><h3>Every action, with its value</h3>');
+    const rows=(M)=>Object.entries(M).sort((a,b)=>b[1].n-a[1].n).map(([k,x])=>{ const v=x.rev+x.avoid-x.lost+x.h*c.hr, cost=x.use; return `<tr><td>${k}</td><td>${n0(x.n)}</td><td>${h1(x.h)}</td><td>${m0(v)}</td><td>${money(Math.round(x.use*100)/100)}</td><td>${x.n?"$"+(x.use/x.n).toFixed(2):"–"}</td></tr>`; }).join("");
+    const byAgent=Object.entries(c.A).sort((a,b)=>b[1].n-a[1].n).map(([k,x])=>{ const v=x.rev+x.avoid-x.lost+x.h*c.hr; return `<tr><td>${k}</td><td>${n0(x.n)}</td><td>${h1(x.h)}</td><td>${m0(x.rev)}</td><td>${m0(x.avoid)}</td><td>${m0(v)}</td><td>$${x.n?(x.use/x.n).toFixed(2):"0.00"}</td><td>$${x.h?(x.use/x.h).toFixed(2):"0.00"}</td></tr>`; }).join("");
+    const bench=Object.keys(BENCH).map(k=>`${k} ${BENCH[k]} min`).join(" · ");
+    return `<header class="top"><div><h1>Value delivered</h1><div class="sub">What the AI team costs and what it delivers: tasks done, time saved, margin made, cost avoided and profit. For the owner and managers.</div></div></header>
+    <div class="vl-h"><div class="vl-seg">${["Nov","Oct"].map(m=>`<button class="${m===mo?"on":""}" onclick="S._vm='${m}';render()">${m==="Nov"?"November to date":"October"}</button>`).join("")}</div><div class="muted" style="font-size:12px">${tl}</div></div>
+    <div class="vl-grid">
+      <div class="vl-k"><div class="l">Revenue side</div><div class="v">${m0(t.rev)}</div><div class="d">Margin made and money recovered by the AI team</div></div>
+      <div class="vl-k"><div class="l">Cost side</div><div class="v">${m0(t.avoid+c.timeVal)}</div><div class="d">${m0(t.avoid)} cost avoided + ${m0(c.timeVal)} staff time saved (${h1(t.h)} hours at ${money(c.hr)}/hour)${t.lost?`<br>${m0(t.lost)} lost or written off`:""}</div></div>
+      <div class="vl-k"><div class="l">What the AI team cost</div><div class="v">${m0(c.cost)}</div><div class="d">${m0(c.sub)} subscription${mo==="Oct"?"":" so far"} + ${m0(t.use)} usage across ${n0(t.n)} tasks</div></div>
+      <div class="vl-k pos"><div class="l">Net profit</div><div class="v">${m0(c.profit)}</div><div class="d">Total value ${m0(c.value)} minus cost · <b>${c.roi.toFixed(1)}× return</b> on what you paid</div></div>
+    </div>
+    <div class="vl-grid">
+      <div class="vl-k"><div class="l">Tasks completed</div><div class="v">${n0(t.n)}</div><div class="d">Every task is logged with the teammate and the task type</div></div>
+      <div class="vl-k"><div class="l">Hours of work delivered</div><div class="v">${h1(t.h)}</div><div class="d">Equal to ${(t.h/160).toFixed(1)} full-time staff months</div></div>
+      <div class="vl-k"><div class="l">Cost per task <span class="vl-own">Owner and managers</span></div><div class="v">$${perTask.toFixed(2)}</div><div class="d">All-in cost divided by tasks. Usage alone is $${t.n?(t.use/t.n).toFixed(2):"0.00"} per task</div></div>
+      <div class="vl-k"><div class="l">Cost per hour of work <span class="vl-own">Owner and managers</span></div><div class="v">$${perHour.toFixed(2)}</div><div class="d">Against ${money(c.hr)} per hour for staff (${perHour?Math.max(0,Math.round((1-perHour/c.hr)*100)):0}% lower)</div></div>
+    </div>
+    <div class="card" style="margin-bottom:12px"><h3>By AI teammate</h3><div style="overflow-x:auto"><table class="vl-t"><thead><tr><th>Teammate</th><th>Tasks</th><th>Hours saved</th><th>Margin and recoveries</th><th>Cost avoided</th><th>Total value</th><th>Usage cost per task</th><th>Usage cost per hour</th></tr></thead><tbody>${byAgent}</tbody></table></div></div>
+    <div class="card" style="margin-bottom:12px"><h3>By task type</h3><div style="overflow-x:auto"><table class="vl-t"><thead><tr><th>Task</th><th>Tasks</th><th>Hours saved</th><th>Value</th><th>Usage cost</th><th>Cost per task</th></tr></thead><tbody>${rows(c.T)}</tbody></table></div></div>
+    <div class="card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><div><b>Loaded staff cost per hour</b><div class="muted" style="font-size:12px">Used to value the time saved. Set by the owner.</div></div><input type="number" value="${c.hr.toFixed(0)}" style="width:90px;border:1px solid var(--line);border-radius:8px;padding:7px" onchange="S.rateMin=(+this.value||45)/60;save();render()"></div></div>
+    ${tableAt>0?orig.slice(tableAt):""}
+    <div class="muted" style="font-size:11.5px;margin-top:8px;line-height:1.55">How this is measured: time saved is tasks multiplied by the minutes a person takes (${bench}). Margin, recoveries and cost avoided are the amounts logged on each action. Usage cost is the logged cost of each task. October rows are sample history.</div>`; };
+  const rb=document.getElementById("resetBtn"); if(rb) rb.addEventListener("click",()=>{ setTimeout(()=>{ try{ delete S.tl; }catch(e){} },0); });
 })();
 </script>
 <script id="chat-expiry-js">

@@ -7071,9 +7071,10 @@ body.has-vbar #tstack{bottom:150px}
 
   /* ---------- the win moment ---------- */
   function pop(r){
+    try{ if(window.achRecord) window.achRecord(r); }catch(e){}
     const old=document.querySelector(".winpop"); if(old) old.remove();
     const el=document.createElement("div"); el.className="winpop"; el.setAttribute("role","status");
-    el.innerHTML=(r.amt?'<div class="wp-amt">+$0</div>':'<div class="wp-tick">✓</div>')+'<div class="wp-t"><b>'+r.head+'</b><span>'+(r.sub||"")+'</span></div>'+(r.undo?'<button class="wp-u">Undo</button>':"")+'<div class="wp-conf"></div>';
+    el.innerHTML=(r.amt?'<div class="wp-amt">+$0</div>':'<div class="wp-tick">✓</div>')+'<div class="wp-t"><b>'+r.head+'</b><span>'+(r.sub||"")+'</span>'+(r.ms?'<div class="wp-ms">✓ Milestone reached: '+r.ms+'</div>':"")+'</div>'+(r.undo?'<button class="wp-u">Undo</button>':"")+'<div class="wp-conf"></div>';
     document.body.appendChild(el); requestAnimationFrame(()=>el.classList.add("show"));
     const still=!matchMedia("(prefers-reduced-motion: reduce)").matches;
     if(r.amt){ window.__banked+=r.amt; const a=el.querySelector(".wp-amt"), t0=performance.now(), D=still?700:1;
@@ -7212,6 +7213,75 @@ body.has-vbar #tstack{bottom:150px}
   render=window.render=function(){ _r.apply(this,arguments); try{ relabel(); inject(); }catch(e){ console.error(e); } };
   const rb=document.getElementById("resetBtn"); if(rb) rb.addEventListener("click",()=>{ window.__banked=0; });
   try{ relabel(); inject(); }catch(e){}
+})();
+</script>
+<style id="ach-css">
+.ach-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.ach-kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.ach-kpi b{display:block;font-size:22px;letter-spacing:-.01em}.ach-kpi span{font-size:12px;color:var(--muted)}
+.ach-next{display:flex;gap:16px;align-items:center;flex-wrap:wrap;border:1px solid #bfe3d4;background:var(--ok-soft);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.ach-bar{height:8px;border-radius:99px;background:#e6e9ef;overflow:hidden;min-width:140px;flex:1}.ach-bar i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.3,1)}
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ach-card{border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:#fff;display:flex;flex-direction:column;gap:6px}
+.ach-card.on{border-color:#bfe3d4;background:linear-gradient(180deg,#f3fbf7,#fff)}
+.ach-card .ah{display:flex;gap:9px;align-items:center;font-weight:650;font-size:13.5px}
+.ach-medal{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;background:#eceff4;color:#8a93a3}.ach-card.on .ach-medal{background:var(--ok);color:#fff}
+.ach-medal svg{width:15px;height:15px}
+.ach-card .ad{font-size:12px;color:var(--muted);line-height:1.45}.ach-card .am{font-size:11.5px;color:var(--muted)}.ach-card.on .am{color:var(--ok);font-weight:600}
+.ach-log{display:flex;flex-direction:column}.ach-log div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.ach-log div:last-child{border:0}
+.ach-log small{display:block;color:var(--muted);font-size:11.5px}.ach-log b.amt{color:var(--ok);white-space:nowrap}
+.bankchip{cursor:pointer}
+.wp-ms{margin-top:6px;font-size:11.5px;font-weight:700;color:var(--ok);display:flex;gap:6px;align-items:center}
+</style>
+<script id="ach-js">
+/* ---------- Progress: every real win is logged, milestones unlock only from the log ---------- */
+(function(){
+  if(window.__ach) return; window.__ach=true;
+  const PATH={award:'<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>',check:'<path d="M20 6 9 17l-5-5"/>'};
+  const svg=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${PATH[n]||""}</svg>`;
+  const KIND=h=>/^(collected|invoice sent)/i.test(h)?"cash":/^recovered/i.test(h)?"recovered":/^won and booked/i.test(h)?"quotes":/^account won/i.test(h)?"accounts":/^deal held/i.test(h)?"held":/summary copied/i.test(h)?null:/^S-?\d|·/.test(h)?"ships":"other";
+  const A=()=>(S.ach=S.ach||{log:[],earned:{}});
+  const sum=(k)=>A().log.filter(e=>!k||e.k===k).reduce((a,e)=>a+(e.amt||0),0), cnt=k=>A().log.filter(e=>e.k===k).length;
+  const total=()=>A().log.filter(e=>e.k==="cash"||e.k==="recovered"||e.k==="quotes").reduce((a,e)=>a+(e.amt||0),0);
+  const M=[
+   {id:"b10",g:"Value banked",t:"$10,000 banked",d:"Collections, recoveries and booked quotes reach $10,000.",v:total,n:1e4,f:money},
+   {id:"b25",g:"Value banked",t:"$25,000 banked",d:"Cumulative value banked reaches $25,000.",v:total,n:25e3,f:money},
+   {id:"b50",g:"Value banked",t:"$50,000 banked",d:"Cumulative value banked reaches $50,000.",v:total,n:5e4,f:money},
+   {id:"b100",g:"Value banked",t:"$100,000 banked",d:"Cumulative value banked reaches $100,000.",v:total,n:1e5,f:money},
+   {id:"c1",g:"Collections",t:"First collection",d:"Your first invoice sent for payment through Consol.",v:()=>cnt("cash"),n:1},
+   {id:"c3",g:"Collections",t:"Three collections",d:"Three collection actions completed.",v:()=>cnt("cash"),n:3},
+   {id:"r1",g:"Recoveries",t:"First recovery",d:"A cost the customer owed was rebilled and recovered.",v:()=>cnt("recovered"),n:1},
+   {id:"r5",g:"Recoveries",t:"$5,000 recovered",d:"Cumulative recoveries reach $5,000.",v:()=>sum("recovered"),n:5e3,f:money},
+   {id:"q1",g:"Commercial",t:"First quote booked",d:"A quote accepted and booked.",v:()=>cnt("quotes"),n:1},
+   {id:"q5",g:"Commercial",t:"Five quotes booked",d:"Five quotes accepted and booked.",v:()=>cnt("quotes"),n:5},
+   {id:"a1",g:"Commercial",t:"First account won",d:"A deal closed and the transition plan started.",v:()=>cnt("accounts"),n:1},
+   {id:"a3",g:"Commercial",t:"Three accounts won",d:"Three deals closed won.",v:()=>cnt("accounts"),n:3},
+   {id:"s1",g:"Operations",t:"First shipment moved",d:"A shipment advanced and invoiced.",v:()=>cnt("ships"),n:1},
+   {id:"s5",g:"Operations",t:"Five shipments moved",d:"Five shipments advanced and invoiced.",v:()=>cnt("ships"),n:5}
+  ];
+  window.achRecord=function(r){ if(!r||!r.head) return; const k=KIND(String(r.head)); if(!k) return; const a=A();
+    a.log.unshift({ts:Date.now(),k,head:String(r.head).replace(/<[^>]+>/g,""),sub:String(r.sub||"").replace(/<[^>]+>/g,""),amt:r.amt||0});
+    const hit=[]; M.forEach(m=>{ if(!a.earned[m.id]&&m.v()>=m.n){ a.earned[m.id]=Date.now(); hit.push(m.t); } });
+    if(hit.length) r.ms=hit.join(", "); save(); };
+  const when=ts=>{ const d=new Date(ts); return d.toLocaleDateString("en-US",{day:"numeric",month:"short"})+" · "+d.toTimeString().slice(0,5); };
+  V.progress=()=>{ const a=A(), tot=total(), done=M.filter(m=>a.earned[m.id]), todo=M.filter(m=>!a.earned[m.id]);
+    const nx=todo.map(m=>({m,p:Math.min(1,m.v()/m.n)})).sort((x,y)=>y.p-x.p)[0];
+    const row=(m)=>{ const on=!!a.earned[m.id], cur=Math.min(m.v(),m.n), f=m.f||(x=>String(Math.round(x))), p=Math.round(Math.min(1,m.v()/m.n)*100);
+      return `<div class="ach-card ${on?"on":""}"><div class="ah"><span class="ach-medal">${svg(on?"check":"award")}</span>${m.t}</div><div class="ad">${m.d}</div>${on?`<div class="am">Reached ${when(a.earned[m.id])}</div>`:`<div class="ach-bar"><i style="width:${p}%"></i></div><div class="am">${f(cur)} of ${f(m.n)}</div>`}</div>`; };
+    const groups=[...new Set(M.map(m=>m.g))];
+    return `<header class="top"><div><h1>Progress</h1><div class="sub">What your team has delivered through Consol. Only completed actions count, and every one is logged below.</div></div></header>
+    <div class="ach-top"><div class="ach-kpi"><b>${money(tot)}</b><span>Value banked</span></div><div class="ach-kpi"><b>${money(sum("cash"))}</b><span>Sent for collection · ${cnt("cash")}</span></div><div class="ach-kpi"><b>${money(sum("recovered"))}</b><span>Recovered · ${cnt("recovered")}</span></div><div class="ach-kpi"><b>${cnt("quotes")}</b><span>Quotes booked · ${money(sum("quotes"))}</span></div><div class="ach-kpi"><b>${money(sum("accounts"))}</b><span>Annual value of accounts won · ${cnt("accounts")}</span></div><div class="ach-kpi"><b>${done.length} of ${M.length}</b><span>Milestones reached</span></div></div>
+    ${nx?`<div class="ach-next"><div><div style="font-size:11.5px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.06em">Next milestone</div><div style="font-weight:650;margin-top:2px">${nx.m.t}</div><div class="muted" style="font-size:12px">${(nx.m.f||(x=>Math.round(x)))(Math.min(nx.m.v(),nx.m.n))} of ${(nx.m.f||(x=>x))(nx.m.n)}</div></div><div class="ach-bar"><i style="width:${Math.round(nx.p*100)}%"></i></div></div>`:`<div class="ach-next"><b>All milestones reached.</b></div>`}
+    ${groups.map(g=>`<div class="card" style="margin-bottom:12px"><h3>${g}</h3><div class="ach-grid">${M.filter(m=>m.g===g).map(row).join("")}</div></div>`).join("")}
+    <div class="card"><h3>Activity log</h3>${a.log.length?`<div class="ach-log">${a.log.map(e=>`<div><span><b>${e.head}</b><small>${e.sub} · ${when(e.ts)}</small></span>${e.amt?`<b class="amt">+${money(e.amt)}</b>`:""}</div>`).join("")}</div>`:`<div class="muted" style="font-size:13px">Nothing logged yet. Collect an invoice, book a quote or recover a cost and it appears here.</div>`}</div>`; };
+  /* nav entry */
+  const dash=document.querySelector('#nav button[data-v="dashboard"]'); if(dash&&!document.querySelector('#nav button[data-v="progress"]')){
+    const b=document.createElement("button"); b.dataset.v="progress"; b.innerHTML='<span class="ico">'+svg("award")+'</span>Progress'; b.onclick=()=>go("progress"); dash.after(b); }
+  /* the banked chip links to the log and shows the running total */
+  const _r=render; render=window.render=function(){ _r.apply(this,arguments); try{ const t=total();
+    document.querySelectorAll(".bankchip").forEach(c=>{ c.textContent="Banked to date "+money(t); c.title="See your progress"; c.onclick=()=>go("progress"); });
+    if(view==="progress"){ const g=document.getElementById("cbG"),v=document.getElementById("cbV"); if(g) g.textContent="Autopilot"; if(v) v.textContent="Progress"; }
+    const nv=document.querySelector('#nav button[data-v="progress"]'); if(nv) nv.classList.toggle("on",view==="progress"); }catch(e){} };
 })();
 </script>
 <script id="chat-expiry-js">

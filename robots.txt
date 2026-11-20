@@ -1,0 +1,17 @@
+# /consol/ itself is left crawlable on purpose so search engines can read its
+# noindex tag and drop it. Everything else Consol-related is blocked outright.
+User-agent: *
+Disallow: /consol/templates/
+Disallow: /consol-feed/
+Disallow: /__grok/
+
+User-agent: GPTBot
+Disallow: /consol
+User-agent: CCBot
+Disallow: /consol
+User-agent: Google-Extended
+Disallow: /consol
+User-agent: anthropic-ai
+Disallow: /consol
+User-agent: ClaudeBot
+Disallow: /consol
